@@ -141,15 +141,6 @@ function Classroom() {
             </ul>
           </nav>
         </div>
-        <div className="profile-pic2">
-          <img
-            src={profileImage}
-            className="logo"
-            alt="RILL"
-            onClick={() => setOpenProfile((prev) => !prev)}
-          />
-          {openProfile && <DropDownProfile />}
-        </div>
       </div>
       <div className="class-content">{renderTab()}</div>
     </div>

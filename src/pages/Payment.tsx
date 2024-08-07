@@ -58,6 +58,7 @@ const Payment = () => {
     <div className="payment-containerStyles">
       <div className="payment-shokoy">
         <h2>Pricing plans for all subscriptions</h2>
+        <p className="p-payment">Choose an affordable plan that’s packed with the best features <br/>for engaging your audience.</p>
         <div className="payment-cardStyles-container">
           <div className="payment-cardStyles">
             <h3>Moissanite</h3>

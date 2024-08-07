@@ -59,7 +59,7 @@ function Classes() {
     <div className="class-background">
       <header>
         <h1>MY CLASSES</h1>
-        <div className="profile-pic2">
+        {/* <div className="profile-pic2">
           <img
             src={profileImage}
             className="logo"
@@ -67,15 +67,17 @@ function Classes() {
             onClick={() => setOpenProfile((prev) => !prev)}
           />
           {openProfile && <DropDownProfile />}
-        </div>
+        </div> */}
       </header>
       <div className="class-container">
         {classes.map((classItem, index) => (
           <ClassCard key={index} class={classItem} />
         ))}
-        <button className="create-classbtn" onClick={openModal}>
-          {user.token.type === "T" ? "Create Class +" : "Join Class +"}
-        </button>
+        <div className="button-container">
+          <button className="create-classbtn" onClick={openModal}>
+            {user.token.type === "T" ? "Create Class +" : "Join Class +"}
+          </button>
+        </div>
         {modalOpen && (
           <ClassModal
             closeModal={closeModal}

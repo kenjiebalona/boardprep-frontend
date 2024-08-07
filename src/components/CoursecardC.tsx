@@ -6,7 +6,9 @@ interface CourseCardProps {
   course_title: string;
   short_description: string;
   image: string;
-  onSelectCourse: (courseId: string, courseTitle: string) => void;
+  onSelectCourse: (courseId: string) => void;
+  showButton: boolean;
+  small: boolean;
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({
@@ -15,14 +17,16 @@ const CourseCard: React.FC<CourseCardProps> = ({
   short_description,
   image,
   onSelectCourse,
+  showButton,
+  small,
 }) => {
   const handleSelectCourse = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    onSelectCourse(id, course_title);
+    onSelectCourse(id);
   };
 
   return (
-    <div className="coursecard">
+    <div className={`coursecard ${small ? "small" : ""}`}>
       <div className="imagebox">
         <img src={image} alt={course_title} className="img" />
       </div>
@@ -30,9 +34,11 @@ const CourseCard: React.FC<CourseCardProps> = ({
         <h3>{course_title}</h3>
         <p>{short_description}</p>
       </div>
-      <button className="interactive-button" onClick={handleSelectCourse}>
-        Edit Course
-      </button>
+      {showButton && (
+        <button className="interactive-button" onClick={handleSelectCourse}>
+          Edit Course
+        </button>
+      )}
     </div>
   );
 };

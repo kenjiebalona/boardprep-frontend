@@ -18,8 +18,7 @@ function SigninModal({ closeModal, userType }: SigninModalProps) {
 
   useEffect(() => {
     if (user.isAuth) {
-      const targetRoute =
-        userType === "content-creator" ? "/content" : "/classes";
+      const targetRoute = "/dashboard";
       console.log(targetRoute);
       navigate(targetRoute);
       closeModal();
@@ -30,8 +29,7 @@ function SigninModal({ closeModal, userType }: SigninModalProps) {
     e.preventDefault();
     try {
       await dispatch(signIn({ username, password }));
-      const targetRoute =
-        userType === "content-creator" ? "/content" : "/classes";
+      const targetRoute = "/dashboard";
       navigate(targetRoute);
     } catch (err) {
       console.log(err);

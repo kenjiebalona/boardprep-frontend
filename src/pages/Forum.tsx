@@ -116,7 +116,7 @@ const Forum = () => {
           <button className="form-pili-item" onClick={handleTopButton}>Top</button>
           <button className="form-pili-item" onClick={handleHotButton}>Hot</button>
         </div>
-        <div>
+        <div className='btn-post'>
           <button className="user-c" onClick={openCreatePost}>Create Post</button>
         </div>
         {createPost && (

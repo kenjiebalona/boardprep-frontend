@@ -21,7 +21,6 @@ const AdminDashboard: React.FC = () => {
   const [isCreateCourseModalOpen, setIsCreateCourseModalOpen] = useState(false);
   const navigate = useNavigate();
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
-  const [openProfile, setOpenProfile] = useState(false);
 
   useEffect(() => {
     fetchCourses();
@@ -63,44 +62,34 @@ const AdminDashboard: React.FC = () => {
     );
     setFilteredCourses(filtered);
   };
+
   return (
     <div className="admin-dashboard-background">
-      <div className="admin-header">
+      <header className="admin-header">
+        <h1>Course Management</h1>
         <div className="search">
           <Searchbar onSearch={handleSearch} />
         </div>
-        <div className="profile-pic2">
-          <img
-            src={profileImage}
-            className="logo"
-            alt="RILL"
-            onClick={() => setOpenProfile((prev) => !prev)}
-          />
-          {openProfile && <DropDownProfile />}
-        </div>
-      </div>
-
-      <header className="admin-header">
-        <h1>Course Management</h1>
-        <button className="create-course-btn" onClick={handleCreateCourse}>
-          Create Course
-        </button>
+        
       </header>
       <div className="course-list">
-        {filteredCourses.map(
-          (
-            course // Use filteredCourses here
-          ) => (
-            <CourseCard
-              key={course.course_id}
-              id={course.course_id}
-              course_title={course.course_title}
-              short_description={course.short_description}
-              image={course.image}
-              onSelectCourse={handleSelectCourse}
-            />
-          )
-        )}
+        {filteredCourses.map((course) => (
+          <CourseCard
+            key={course.course_id}
+            id={course.course_id}
+            course_title={course.course_title}
+            short_description={course.short_description}
+            image={course.image}
+            onSelectCourse={handleSelectCourse}
+            showButton={true}
+            small={false}
+          />
+        ))}
+        <div className="button-container-two">
+          <button className="create-course-btn" onClick={handleCreateCourse}>
+            Create Course +
+          </button>
+        </div>
       </div>
 
       {isCreateCourseModalOpen && (
@@ -113,4 +102,5 @@ const AdminDashboard: React.FC = () => {
     </div>
   );
 };
+
 export default AdminDashboard;

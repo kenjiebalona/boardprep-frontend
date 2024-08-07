@@ -40,7 +40,7 @@ function Home() {
       <div className="content">
         <div className="ct">
           <h3 className="ct-title">
-            Embrace Success with BoardPrep: Tailored for Triumph
+            Embrace Success with BoardPrep: <br />Tailored for Triumph
           </h3>
           <p className="ct-p">
             BoardPrep is your gateway to a tailored learning experience designed

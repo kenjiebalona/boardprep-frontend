@@ -1,0 +1,68 @@
+.MainDash{
+    display: flex;
+    margin-left: 40px;
+    color: white;
+    padding: 20px;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 33px;
+    overflow: auto;
+    flex-direction: row;
+    padding-right: 20px !important;
+}
+
+.MainDash-two{
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.right-side {
+    display: flex;
+    flex-direction: column;
+    margin-right: 135px;
+}
+
+.profile-h2{
+    margin-bottom: 30px;
+    margin-top: -20px;
+    font-weight: bold;
+}
+
+h3{
+    margin-bottom: 20px;
+}
+
+.ClassesContainer{
+  display: flex;
+  flex-direction: row;
+}
+
+.overview{
+  margin-bottom: 20px;
+}
+
+.class-card.small, .coursecard.small {
+  display: flex;
+  width: 200px; 
+  height: 210px; 
+  font-size: 0.8em; 
+  margin-right: 20px;
+  
+  .logo {
+    width: 220px;
+    height: 100px;
+  }
+  
+  .card-text {
+    .card-title {
+      font-size: 1em; 
+    }
+    
+    .card-duration, .card-description {
+      font-size: 0.8em; 
+    }
+  }
+}
+  

@@ -66,25 +66,18 @@ body {
   color: white;
 }
 
-.ani-user {
-  position: relative;
-  top: 150px;
-  width: 600px;
-  height: 600px;
-  left: 250px;
-}
 
 .bp-img-user {
   position: absolute;
-  width: 600px;
-  height: 600px;
+  width: 500px;
+  height: 350px;
   z-index: 100;
 }
 
 .cardo-user {
   position: absolute;
-  width: 600px;
-  height: 600px;
+  width: 500px;
+  height: 350px;
   background: var(--clr-1);
 }
 

@@ -8,7 +8,7 @@
     display: flex;
     width: 90%;
     margin: auto;
-    padding-top: 35px;
+    padding-top: 25px;
     align-items: center;
     justify-content: space-between;
     .left-header {
@@ -49,6 +49,7 @@
         .active {
           color: #B650F4;
           border-bottom: 1px solid #B650F4;
+          background-color: transparent;
         }
       }
     }

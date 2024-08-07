@@ -40,7 +40,6 @@ function ClassModal({ closeModal, classes, setClasses }: ClassModalProps) {
   const [selectedCourseTitle, setSelectedCourseTitle] = useState("");
   const [courses, setCourses] = useState<Course[]>([]);
   const [showCourselist, setShowCourselist] = useState(false);
-  const course = "Select Course";
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -75,6 +74,15 @@ function ClassModal({ closeModal, classes, setClasses }: ClassModalProps) {
     e.preventDefault();
     const name = nameRef.current?.value;
     const description = descriptionRef.current?.value;
+
+    // Validate description word count
+    if (description) {
+      const wordCount = description.trim().split(/\s+/).length;
+      if (wordCount > 10) {
+        alert("Class Description should only be 10 words or less.");
+        return;
+      }
+    }
 
     try {
       if (user.token.type === "T") {
@@ -143,7 +151,7 @@ function ClassModal({ closeModal, classes, setClasses }: ClassModalProps) {
           {user.token.type === "T" ? (
             <>
               <input type="text" placeholder="Class Name" ref={nameRef} />
-              <textarea placeholder="Class Description" ref={descriptionRef} />
+              <textarea placeholder="Short Class Description" ref={descriptionRef} />
               <input
                 type="text"
                 placeholder="Select Course"
@@ -151,7 +159,7 @@ function ClassModal({ closeModal, classes, setClasses }: ClassModalProps) {
                 readOnly
                 value={selectedCourseTitle || "Select Course"}
               />
-              <button type="submit">Create Class</button>{" "}
+              <button type="submit">Create Class</button>
             </>
           ) : (
             <>
@@ -164,4 +172,5 @@ function ClassModal({ closeModal, classes, setClasses }: ClassModalProps) {
     </div>
   );
 }
+
 export default ClassModal;

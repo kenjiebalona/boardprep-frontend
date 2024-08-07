@@ -58,12 +58,12 @@ const Teacher = () => {
       </header>
       <div className="content">
         <div className="ct">
-          <h3 className="ct-title">Empower Your Teaching Experience</h3>
+          <h3 className="ct-title">Empower Your Teaching <br/> Experience</h3>
           <p className="ct-p">
             As an educator joining BoardPrep, elevate your teaching with
             insightful<br/> analytics and tools. Track student progress, customize
-            lessons, and<br/> collaborate seamlessly. Our app facilitates tailored
-            guidance for each student's success.
+            lessons, and collaborate <br/>seamlessly. Our app facilitates tailored
+            guidance for each student's success and future.
           </p>
         </div>
         <div className="ani-user">

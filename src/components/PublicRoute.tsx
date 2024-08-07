@@ -11,7 +11,7 @@ function PublicRoute({ children }: any) {
         ? "/content"
         : user.pathname && user.pathname !== "/content"
         ? user.pathname
-        : "/classes"; // change lang sa inyo route pag check
+        : "/dashboard"; // change lang sa inyo route pag check
     return <Navigate to={previousLocation} replace />;
   }
 

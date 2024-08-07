@@ -1,11 +1,12 @@
 @import './toggle.scss';
 
 .materials-page {
-  margin-top: 20px;
+  margin-top: -50px;
   display: flex;
   overflow: auto;
   height: 100%;
   position: relative;
+  padding: 50px;
 
   .syllabus-main {
     position: relative;
@@ -17,6 +18,7 @@
     flex: 0 0 10%; // Make sure to set flex-basis to the width for consistency
     min-width: 200px;
     z-index: 10; // Corrected z-index without %
+    cursor: pointer;
 
     .syllabus-container {
       padding-top: 60px; // Padding to prevent content from hiding behind the toggle
