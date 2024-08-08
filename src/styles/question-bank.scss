@@ -1,0 +1,15 @@
+.question-bank-container{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  padding: 50px;
+  h1{
+    color: white;
+    margin-bottom: 20px;
+    font-size: 28px;
+    margin-left: 20px;
+  }
+  .MuiGrid-item {
+    padding: 10px;
+  }
+}

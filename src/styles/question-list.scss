@@ -1,0 +1,49 @@
+.question-list-container {
+  background-color: #F9F9F9;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.search {
+  margin-top: 0 !important;
+}
+
+.MuiButton-contained {
+  margin-top: 10px;
+  margin-bottom: 13px;
+  background-color: #7D67FF !important;
+  color: #fff;
+
+  &:hover {
+    background-color: #5D3FD3 !important;
+    color: white;
+  }
+}
+
+.list-container {
+  overflow-y: auto;
+  height: calc(29rem - 170px);
+  margin-top: 20px;
+  padding: 10px;
+}
+
+.MuiListItem-root {
+  background-color: #f9f9f9;
+  margin-bottom: 8px !important;
+  border-radius: 4px !important; 
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.12);
+  transition: background-color 0.3s;
+  padding: 10px !important; 
+
+  &:hover,
+  &.active-question,
+  &.Mui-selected {
+    background-color: #191840 !important;
+    color: white !important;
+  }
+}

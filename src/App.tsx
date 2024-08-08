@@ -29,6 +29,7 @@ import Payment from "./pages/Payment";
 import Success from "./pages/Success";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
+import QuestionBank from "./pages/QuestionBank";
 // import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -62,6 +63,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/question-bank"
+                element={
+                  <PrivateRoute>
+                    <QuestionBank />
                   </PrivateRoute>
                 }
               />

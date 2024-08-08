@@ -43,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             return [
                 { path: "/dashboard", name: "Overview", icon: <FaTh /> },
                 { path: "/content", name: "Content", icon: <SiGoogleclassroom /> },
-                { path: "/assignments", name: "Question Bank", icon: <MdAssignment /> },
+                { path: "/question-bank", name: "Question Bank", icon: <MdAssignment /> },
             ];
         } else {
             return [
