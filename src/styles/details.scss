@@ -1,22 +1,15 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat');
 @import './toggle.scss';
 
-body {
-
- overflow: auto;
-  width: 100%;
-  height: 100%;
-  background-color: #0d0b1c;
-}
-
 .dashboard-background {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh; /* Allow the background to extend if content overflows */
   background: #0d0b1c;
-  overflow-y: auto;
   padding-left: 50px;
   padding-right: 60px;
-
+  display: flex;
+  flex-direction: column;
+  overflow: auto; /* Enable scrolling for the entire page */
 }
 
 .top-header {
@@ -62,12 +55,12 @@ body {
   height: 100%;
   position: relative;
   background-color: #0d0b1c;
-  overflow-y: hidden;
+  overflow: auto; /* Enable scrolling for the entire page */
 
   .lesson-content-container {
     background-color: #fefcff;  
     flex: 1 1 90%;
-    height: 28rem;
+    height: fit-content;
     border-radius: 10px;
     margin-right: 5%;
     margin-bottom: 5%;
@@ -226,7 +219,7 @@ body {
   background: #0d0b1c;
   color: white;
   width: 100%;
-  height: 100vh;
+  height: 100%;
 
   .header-course {
     display: flex;
