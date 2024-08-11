@@ -1,168 +1,98 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import React, { useState } from "react";
 import "../styles/syllabus.scss";
-import { useAppSelector } from "../redux/hooks";
-import { selectUser } from "../redux/slices/authSlice";
-import axiosInstance from "../axiosInstance";
+import { FaLock, FaBookOpen } from "react-icons/fa";
+import { BsShieldCheck, BsCheckCircleFill } from "react-icons/bs";
+import { useAppSelector } from '../redux/hooks';
+import { selectUser } from '../redux/slices/authSlice';
 
-interface Lessons {
-  order: number;
-  lesson_title: string;
+interface Lesson {
   lesson_id: string;
-}
-
-interface CourseData {
-  course_id: string;
-  hasMocktest: boolean;
-}
-
-interface ClassData {
-  classId: number;
-  course: string;
+  lesson_title: string;
+  completed: boolean;
+  quiz_id: string;
 }
 
 interface SyllabusProps {
-  syllabus?: { syllabus_id: string }[];
-  lessons: Lessons[];
-  onLessonClick: (lessonContent: string) => void;
+  lessons: Lesson[];
+  onLessonClick: (lessonId: string, isQuiz: boolean) => void;
+  currentLessonIndex: number;
 }
 
-function Syllabus({ syllabus = [], lessons, onLessonClick }: SyllabusProps) {
-  const [currentLessonContent, setCurrentLessonContent] = useState("");
-  const [loadingContent, setLoadingContent] = useState(false);
-  const [error, setError] = useState("");
+function Syllabus({ lessons, onLessonClick, currentLessonIndex }: SyllabusProps) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
-  const { courseId } = useParams<{
-    courseId: string;
-  }>();
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
-  const [courseIdForUser, setCourseIdForUser] = useState<string | null>(null);
-  const [hasMocktest, setHasMocktest] = useState(false);
-  const [fetchedContents, setFetchedContents] = useState<{
-    [key: string]: string;
-  }>({});
 
-  const navigate = useNavigate();
-
-  const classPath = window.location.pathname;
-  console.log(classPath.split("/")[2]);
-  const classId = classPath.split("/")[2];
-
-  const onClickMockTest = () => {
-    const path = userType === 'S' || userType === 'T' ? `/classes/${classId}/mocktest/${courseIdForUser}` : `/courses/${courseId}/mocktest/create`;
-    navigate(path);
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const onClickViewMockTest = () => {
-    navigate(`/courses/${courseId}/mocktest`);
+  const getButtonLabel = () => {
+    if (userType === 'C') return 'Edit';
+    if (userType === 'T') return 'View';
+    return 'Learn';
   };
-
-  const fetchLessonContent = async (lessonId: string) => {
-    if (fetchedContents[lessonId]) {
-      setCurrentLessonContent(fetchedContents[lessonId]);
-      onLessonClick(fetchedContents[lessonId]);
-      return;
-    }
-
-    setLoadingContent(true);
-    try {
-      const response = await axiosInstance.get(`/pages/${lessonId}/1`);
-      const newContent = response.data.content;
-      setCurrentLessonContent(newContent);
-      setFetchedContents({ ...fetchedContents, [lessonId]: newContent });
-      onLessonClick(newContent);
-    } catch (error: any) {
-      if (error.response && error.response.status === 404) {
-        setCurrentLessonContent("");
-        onLessonClick("");
-      } else {
-        console.error("Error fetching lesson content", error);
-        setError("Failed to load lesson content");
-      }
-    } finally {
-      setLoadingContent(false);
-    }
-  };
-
-  useEffect(() => {
-    const fetchCourseDataForUser = async () => {
-      if ((userType === 'S' || userType === 'T') && !courseId) {
-        try {
-          const response = await axiosInstance.get(`/classes/${classId}`);
-          const classData = response.data;
-          console.log(classData);
-          console.log(classData.course);
-
-          if (classData && classData.course) {
-            setCourseIdForUser(classData.course);
-          } else {
-            console.error(`No course found for class ID: ${classId}`);
-          }
-        } catch (error) {
-           console.error('Error fetching course data for user:', error);
-        }
-      }
-    };
-
-    fetchCourseDataForUser();
-  }, [userType, classId]);
-
-  useEffect(() => {
-    const fetchCourseData = async () => {
-      try {
-        const response = await axiosInstance.get(`/courses/`);
-        const courseData: CourseData[] = response.data;
-        console.log(courseData);
-        const currentCourse = courseData.find((crs) => crs.course_id === courseId);
-        console.log(currentCourse);
-        if (currentCourse) {
-            setSelectedCourseId(currentCourse.course_id);
-            setHasMocktest(currentCourse.hasMocktest);
-        } else {
-            setSelectedCourseId(null);
-            setHasMocktest(false);
-        }
-      } catch (error) {
-        console.error("Error fetching class data", error);
-      }
-    };
-
-    fetchCourseData();
-  }, []);
 
   return (
     <div className="syllabus-container">
-      {lessons.map((lesson) => (
-        <div
-          key={lesson.lesson_id}
-          className="title-container"
-          onClick={() => onLessonClick(lesson.lesson_id)}
-          role="button"
-          tabIndex={0}
-        >
-          <h2>{lesson.lesson_title}</h2>
-        </div>
-      ))}
-      <div className="title-container" tabIndex={0} onClick={onClickMockTest}>
+      <div className="title-container" onClick={toggleDropdown}>
         <h2>
-          {userType === "S"
-            ? "Take Mock Test"
-            : userType === "T"
-            ? "View Mock Test"
-            : hasMocktest
-            ? "Edit Mock Test"
-            : "Create Mock Test"}
+          ⦿ LESSONS {isDropdownOpen ? "▾" : "▸"}
         </h2>
       </div>
-      {userType === "C" && hasMocktest && (
-        <div
-          className="title-container"
-          tabIndex={0}
-          onClick={onClickViewMockTest}
-        >
-          <h2>View Mock Test</h2>
+
+      {isDropdownOpen && (
+        <div className="lesson-list">
+          {lessons.map((lesson, index) => (
+            <div key={lesson.lesson_id} className="lesson-container">
+              <div className="lesson-item-cont">
+                <div className="lesson-item-wrapper">
+                  <div
+                    className={`lesson-item ${
+                      userType === 'S' && index > currentLessonIndex ? 'disabled' : ''
+                    }`}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <FaBookOpen className="lesson-icon" /> 
+                    <h3 className="lesson-title">{lesson.lesson_title}</h3>
+                    {lesson.completed && <BsCheckCircleFill className="completed-icon" />} 
+                    {userType === 'S' && index > currentLessonIndex && (
+                      <FaLock className="lock-icon" />
+                    )} 
+                  </div>
+
+                  {(userType !== 'S' || index <= currentLessonIndex) && (
+                    <button
+                      className="learn-button"
+                      onClick={() => onLessonClick(lesson.lesson_id, false)}
+                    >
+                      {getButtonLabel()}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {userType === 'S' && (
+                <div className="quiz-container">
+                  <div
+                    className={`quiz-item ${
+                      index > currentLessonIndex || !lesson.completed ? 'disabled' : ''
+                    }`}
+                    onClick={() =>
+                      index <= currentLessonIndex && lesson.completed && onLessonClick(lesson.quiz_id, true)
+                    }
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <BsShieldCheck className="quiz-icon" /> 
+                  <span className="quiz-label">{lesson.quiz_id}</span>
+                  {index > currentLessonIndex && <FaLock className="quiz-lock-icon" />}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

@@ -64,41 +64,17 @@ body {
   background-color: #0d0b1c;
   overflow-y: hidden;
 
-  .syllabus-main {
-    position: relative;
-    margin-top: 4%;
-    margin-right: 2%;
-    margin-left: 1%;
-    margin-bottom: 1%;
-    transition: margin-left 0.3s, width 0.3s ease;
-    flex: 0 0 10%; // Make sure to set flex-basis to the width for consistency
-    min-width: 200px;
-    z-index: 10; // Corrected z-index without %
-
-    .syllabus-container {
-      padding-top: 60px; // Padding to prevent content from hiding behind the toggle
-      transition: margin 0.3s ease;
-    }
-
-    &.collapsed {
-      margin-left: -200px; // Collapse the sidebar
-      width: 0; // Collapse to width of the toggle button
-      flex-basis: 0;
-    }
-  }
-
   .lesson-content-container {
-    flex: 1 1 90%;
-    width: 830px;
-    height: fit-content;
-    border-radius: 10px;
-    margin-top: 5%;
-    margin-right: 5%;
-    margin-bottom: 10%;
-    padding: 50px;
-    transition: margin 0.3s ease, flex-basis 0.3s ease;
-    box-shadow: 11px 5px 9px 0px rgb(225, 131, 225), -1px -1px 10px rgb(144, 129, 129);
     background-color: #fefcff;  
+    flex: 1 1 90%;
+    height: 28rem;
+    border-radius: 10px;
+    margin-right: 5%;
+    margin-bottom: 5%;
+    padding: 30px;
+    transition: margin 0.3s ease, flex-basis 0.3s ease;
+    box-shadow: 11px 5px 9px 0px rgba(230,104,230,1), -1px -1px 10px rgb(144, 129, 129);
+    overflow: auto;
 
     .lesson-content-container img {
       max-width: 100%;
@@ -115,6 +91,16 @@ body {
     min-height: 300px;
     max-height: 400px;
     overflow-y: auto;
+    border: solid black;
+    margin-bottom: 10px;
+  }
+
+  .toolbar-container{
+    margin-top: 10px;
+    border-right: solid black;
+    border-top: solid black;
+    border-left: solid black;
+    border-color: black;
   }
 
 
@@ -124,18 +110,21 @@ body {
   }
     .pagination {
       position: absolute; // Position it relative to lesson-content-container
-      bottom: 10px; // Adjust as needed to position at the bottom
+      top: 25.5rem; // Adjust as needed to position at the bottom
       left: 50%;
       transform: translateX(-50%);
       overflow: hidden;
-      color:#b650f4
+      color:white;
+      background-color: #201c1c;
+      padding: 10px;
        // Center horizontally
     }
     .pagination {
       display: flex;
       list-style: none;
       overflow: hidden;
-      padding: 0;
+      padding: 6px;
+      border-radius: 4px;
       justify-content: center;
       li {
         margin: 0 5px;
@@ -144,11 +133,11 @@ body {
         a {
           cursor: pointer;
           padding: 5px 10px;
-          border: 1px solid #ccc;
+          border: 2px solid black;
           border-radius: 5px;
         }
         &.active a {
-          background-color: #007bff;
+          background-color: #5D3FD3;
           color: white;
         }
       }
@@ -296,18 +285,22 @@ body {
   
 }
 
-
 .btnDets {
     color: #ffffff;
-    width: 100px;
+    width: 110px;
     height: 34px;
     border-radius: 5px;
-    background: #b650f4;
+    background: #7D67FF;
     margin-left: auto;
-    margin-top: 20px;
+    margin-bottom: 30px;
     cursor: pointer;
     border: none;
     margin: 5px;
+
+    &:hover {
+      background-color: #5D3FD3;
+      color: white;
+    }
   }
 
   .m{

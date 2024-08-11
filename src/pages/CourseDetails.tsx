@@ -31,6 +31,8 @@ interface Lesson {
   lesson_title: string;
   order: number;
   syllabus: string;
+  completed: boolean;
+  quiz_id: string;
 }
 
 function CourseDetails() {
@@ -42,6 +44,7 @@ function CourseDetails() {
   const [isSyllabusCollapsed, setIsSyllabusCollapsed] = useState(false);
   const [selectedPage, setSelectedPage] = useState(null);
   const pageCount = pages.length;
+  const [showEditorContent, setshowEditorContent] = useState(false);
   const [editorContent, setEditorContent] = useState("");
   const [isNewPage, setIsNewPage] = useState(false);
   const [syllabusId, setSyllabusId] = useState("");
@@ -74,21 +77,25 @@ function CourseDetails() {
   useEffect(() => {
     const fetchSyllabusAndFirstLesson = async () => {
       try {
-        const syllabusResponse = await axiosInstance.get(
-          `/syllabi/${courseId}/`
-        );
+        const syllabusResponse = await axiosInstance.get(`/syllabi/${courseId}/`);
         const syllabusData = syllabusResponse.data[0];
-        setLessons(syllabusData.lessons);
-        setLessonsLoaded(true);
         const fetchedSyllabusId = syllabusData.syllabus_id;
         setSyllabusId(fetchedSyllabusId);
-
-        if (syllabusData.lessons.length === 0) {
+  
+        const updatedLessons = syllabusData.lessons.map((lesson: any) => ({
+          ...lesson,
+          completed: false, // default to false; update this as needed based on your logic
+          quiz_id: lesson.quiz_id || "", // ensure quiz_id is available
+        }));
+        setLessons(updatedLessons);
+        setLessonsLoaded(true);
+  
+        if (updatedLessons.length === 0) {
           handleOpenLessonModal();
         }
-
-        if (syllabusData.lessons.length > 0) {
-          const firstLessonId = syllabusData.lessons[0].lesson_id;
+  
+        if (updatedLessons.length > 0) {
+          const firstLessonId = updatedLessons[0].lesson_id;
           setCurrentLesson(firstLessonId);
           await fetchPages(firstLessonId);
         }
@@ -96,14 +103,10 @@ function CourseDetails() {
         console.error("Error fetching syllabus:", error);
       }
     };
-
+  
     if (courseId) {
       fetchSyllabusAndFirstLesson();
     }
-  }, [courseId]);
-
-  useEffect(() => {
-    setLessonsLoaded(false);
   }, [courseId]);
 
   const fetchSyllabus = async () => {
@@ -200,6 +203,7 @@ function CourseDetails() {
   const handleLessonClick = async (lessonId: string) => {
     setCurrentLesson(lessonId);
     await fetchPages(lessonId);
+    setshowEditorContent(true); 
   };
 
   const handlePageClick = async (event: { selected: number }) => {
@@ -366,6 +370,10 @@ function CourseDetails() {
 
   console.log("PageCount:", pageCount);
 
+  const handleBackToSyllabus = () => {
+    setshowEditorContent(false); 
+  };
+
   return (
     <div className="dashboard-background">
       <header className="top-header">
@@ -403,15 +411,36 @@ function CourseDetails() {
           <div className="bars" id="bar3"></div>
         </label>
 
-        <div
-          className={`syllabus-main ${isSyllabusCollapsed ? "collapsed" : ""}`}
-        >
-          <Syllabus lessons={lessons} onLessonClick={handleLessonClick} />
-        </div>
+        
 
         <div className="lesson-content-container">
+        {!showEditorContent && (
+        <Syllabus
+          lessons={lessons}
+          onLessonClick={handleLessonClick}
+          currentLessonIndex={currentLesson ? lessons.findIndex(l => l.lesson_id === currentLesson) : 0}
+        />
+        )}
+        {showEditorContent && (
+            <button className="btnDets" onClick={handleBackToSyllabus} >
+              Back
+            </button>
+          )}
+          {showEditorContent && (
+            <button className="btnDets" onClick={saveEditorContent}>
+              Save Content
+            </button>
+          )}
+          {showEditorContent && (
+            <button className="btnDets" onClick={handleNewPage}>
+              Add New Page
+            </button>
+          )}
+        {showEditorContent && (
           <div className="toolbar-container"></div>
+        )}
           <div className="ck-content">
+          {showEditorContent && (
             <CKEditor
               editor={CustomEditor.Editor}
               config={editorConfiguration}
@@ -419,15 +448,8 @@ function CourseDetails() {
               data={editorContent}
               onChange={handleEditorChange}
             />
-            <button className="btnDets" onClick={saveEditorContent}>
-              Save Content
-            </button>
-            <button className="btnDets" onClick={handleNewPage}>
-              Add New Page
-            </button>
-          </div>
-
-          {pageCount > 1 && (
+          )}
+          {showEditorContent && pageCount > 1 && (
             <ReactPaginate
               previousLabel={currentPage > 0 ? "previous" : ""}
               nextLabel={currentPage < pageCount - 1 ? "next" : ""}
@@ -439,6 +461,7 @@ function CourseDetails() {
               forcePage={currentPage}
             />
           )}
+          </div>
         </div>
 
         {openModal === "course" && (

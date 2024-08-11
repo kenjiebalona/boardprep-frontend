@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import ReactPaginate from "react-paginate";
 import Lessons from "./Lessons";
-import axiosInstance from "../axiosInstance";
 
 interface Page {
   page_number: number;
@@ -31,10 +30,15 @@ const Materials: React.FC<MaterialsProps> = ({ lessonId }) => {
     setCurrentPageIndex(event.selected);
   };
 
+  const handleBackClick = () => {
+    // Implement the functionality to go back
+    console.log("Back button clicked");
+  };
+
   return (
     <div className="materials-container">
       {pages.length > 0 && (
-        <Lessons content={pages[currentPageIndex].content} />
+        <Lessons content={pages[currentPageIndex].content} onBack={handleBackClick} />
       )}
 
       {pages.length > 1 && (

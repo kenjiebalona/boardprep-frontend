@@ -96,7 +96,7 @@ function Classroom() {
           />
         );
       case "Materials":
-        return <Materials courseId={classItem.course} />;
+        return <Materials courseId={classItem.course} studentId={user.token.id} />;
       case "Activities":
         return <ActivitiesTab classId={classItem.classId} />;
       default:
