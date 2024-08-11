@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/syllabus.scss";
 import { FaLock, FaBookOpen } from "react-icons/fa";
 import { BsShieldCheck, BsCheckCircleFill } from "react-icons/bs";
 import { useAppSelector } from '../redux/hooks';
 import { selectUser } from '../redux/slices/authSlice';
+import { TbTargetArrow } from "react-icons/tb";
+import axiosInstance from "../axiosInstance"; 
 
 interface Lesson {
   lesson_id: string;
@@ -16,12 +18,28 @@ interface SyllabusProps {
   lessons: Lesson[];
   onLessonClick: (lessonId: string, isQuiz: boolean) => void;
   currentLessonIndex: number;
+  classId: string; 
 }
 
-function Syllabus({ lessons, onLessonClick, currentLessonIndex }: SyllabusProps) {
+function Syllabus({ lessons, onLessonClick, currentLessonIndex, classId }: SyllabusProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [className, setClassName] = useState("");
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
+
+  useEffect(() => {
+    const fetchClass = async () => {
+      try {
+        console.log("Fetching class with ID:", classId);
+        const response = await axiosInstance.get(`/classes/${classId}/`);
+        setClassName(response.data.className);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchClass();
+  }, [classId]);
+  
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -32,6 +50,8 @@ function Syllabus({ lessons, onLessonClick, currentLessonIndex }: SyllabusProps)
     if (userType === 'T') return 'View';
     return 'Learn';
   };
+
+  const allCompleted = lessons.every(lesson => lesson.completed);
 
   return (
     <div className="syllabus-container">
@@ -86,13 +106,28 @@ function Syllabus({ lessons, onLessonClick, currentLessonIndex }: SyllabusProps)
                     tabIndex={0}
                   >
                     <BsShieldCheck className="quiz-icon" /> 
-                  <span className="quiz-label">{lesson.quiz_id}</span>
+                  <span className="quiz-label">{lesson.lesson_title} Quiz</span>
                   {index > currentLessonIndex && <FaLock className="quiz-lock-icon" />}
                   </div>
                 </div>
               )}
             </div>
           ))}
+
+          {userType === 'S' && (
+          <div className="exam-container">
+            <div
+              className={`exam-item ${!allCompleted ? 'disabled' : ''}`}
+              onClick={() => allCompleted && onLessonClick('final_exam', true)}
+              role="button"
+              tabIndex={0}
+            >
+              <TbTargetArrow className="exam-icon" /> 
+              <h3 className="exam-title">{classId} Exam</h3>
+              {!allCompleted && <FaLock className="exam-lock-icon" />}
+            </div>
+          </div>
+          )}
         </div>
       )}
     </div>

@@ -38,6 +38,7 @@ function Materials({ courseId, studentId }: MaterialsProps) {
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
   const pageCount = pages.length;
+  const classId = courseId;
 
   useEffect(() => {
     const fetchSyllabusAndFirstLesson = async () => {
@@ -115,6 +116,7 @@ function Materials({ courseId, studentId }: MaterialsProps) {
               lessons={lessons} 
               onLessonClick={handleLessonClick} 
               currentLessonIndex={currentLessonIndex} 
+              classId={classId} 
             />
           </div>
         )}

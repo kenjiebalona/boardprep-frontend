@@ -45,6 +45,7 @@ function CourseDetails() {
   const [selectedPage, setSelectedPage] = useState(null);
   const pageCount = pages.length;
   const [showEditorContent, setshowEditorContent] = useState(false);
+  const [classId, setClassId] = useState<string | null>(null);
   const [editorContent, setEditorContent] = useState("");
   const [isNewPage, setIsNewPage] = useState(false);
   const [syllabusId, setSyllabusId] = useState("");
@@ -416,6 +417,7 @@ function CourseDetails() {
         <div className="lesson-content-container">
         {!showEditorContent && (
         <Syllabus
+          classId={classId || ""} 
           lessons={lessons}
           onLessonClick={handleLessonClick}
           currentLessonIndex={currentLesson ? lessons.findIndex(l => l.lesson_id === currentLesson) : 0}
