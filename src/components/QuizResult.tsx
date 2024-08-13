@@ -22,9 +22,20 @@ interface QuizResultProps {
   score: number;
   totalQuestions: number;
   passed: boolean;
+  onTryAgain: () => void;
+  onNextLesson: () => void;
 }
 
-const QuizResult: React.FC<QuizResultProps> = ({ questions, answers, results, score, totalQuestions, passed }) => {
+const QuizResult: React.FC<QuizResultProps> = ({
+  questions,
+  answers,
+  results,
+  score,
+  totalQuestions,
+  passed,
+  onTryAgain,
+  onNextLesson
+}) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const handleToggleDetails = () => {
@@ -82,7 +93,7 @@ const QuizResult: React.FC<QuizResultProps> = ({ questions, answers, results, sc
                       return (
                         <li
                           key={choice.id}
-                          className={`${isSelected ? "selected-choice" : ""}`}
+                          className={isSelected ? "selected-choice" : ""}
                           style={{ backgroundColor: isSelected ? highlightColor : "transparent" }}
                         >
                           {choice.text}
@@ -95,6 +106,18 @@ const QuizResult: React.FC<QuizResultProps> = ({ questions, answers, results, sc
             })}
           </div>
         )}
+        <div className="quiz-result-buttons">
+          {!passed && (
+            <button className="view-results-button" onClick={onTryAgain}>
+              Try Again
+            </button>
+          )}
+          {passed && (
+            <button className="view-results-button" onClick={onNextLesson}>
+              Next Lesson
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

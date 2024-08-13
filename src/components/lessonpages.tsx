@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosInstance";
 import ReactPaginate from "react-paginate";
-import Lessons from "./Lessons";
+import LessonContent from "./Lessons"; 
 
 interface Page {
   page_number: number;
@@ -10,9 +10,21 @@ interface Page {
 
 interface MaterialsProps {
   lessonId: string;
+  markLessonAsCompleted: () => void;
+  userType: string;
+  studentId: string;
+  classInstanceId: number;
+  quizPassed: boolean;
 }
 
-const Materials: React.FC<MaterialsProps> = ({ lessonId }) => {
+const Materials: React.FC<MaterialsProps> = ({
+  lessonId,
+  markLessonAsCompleted,
+  userType,
+  studentId,
+  classInstanceId,
+  quizPassed,
+}) => {
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
@@ -21,7 +33,7 @@ const Materials: React.FC<MaterialsProps> = ({ lessonId }) => {
       .get(`/pages/${lessonId}/`)
       .then((response) => {
         setPages(response.data);
-        setCurrentPageIndex(0); // Reset to the first page when the lesson changes
+        setCurrentPageIndex(0); 
       })
       .catch((error) => console.error("Error fetching pages:", error));
   }, [lessonId]);
@@ -31,14 +43,22 @@ const Materials: React.FC<MaterialsProps> = ({ lessonId }) => {
   };
 
   const handleBackClick = () => {
-    // Implement the functionality to go back
     console.log("Back button clicked");
   };
 
   return (
     <div className="materials-container">
       {pages.length > 0 && (
-        <Lessons content={pages[currentPageIndex].content} onBack={handleBackClick} />
+        <LessonContent
+          content={pages[currentPageIndex].content}
+          onBack={handleBackClick}
+          markLessonAsCompleted={markLessonAsCompleted}
+          userType={userType}
+          studentId={studentId}
+          lessonId={lessonId}
+          classInstanceId={classInstanceId}
+          passed={quizPassed}
+        />
       )}
 
       {pages.length > 1 && (

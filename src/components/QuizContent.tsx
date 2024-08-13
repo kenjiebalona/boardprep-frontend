@@ -34,9 +34,18 @@ interface StudentQuizAttempt {
 interface QuizContentProps {
   studentId: string;
   lessonId: string;
+  classInstanceId: number;
+  onTryAgain: () => void;
+  onNextLesson: () => void;
 }
 
-const QuizContent: React.FC<QuizContentProps> = ({ studentId, lessonId }) => {
+const QuizContent: React.FC<QuizContentProps> = ({
+  studentId,
+  lessonId,
+  classInstanceId,
+  onTryAgain,
+  onNextLesson,
+}) => {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [attempt, setAttempt] = useState<StudentQuizAttempt | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,31 +60,54 @@ const QuizContent: React.FC<QuizContentProps> = ({ studentId, lessonId }) => {
   useEffect(() => {
     const fetchQuizAndAttempt = async () => {
       try {
-        const quizResponse = await axiosInstance.get(`/quizzes/?student_id=${studentId}&lesson_id=${lessonId}`);
+       
+        const allAttemptsResponse = await axiosInstance.get(
+          `/studentQuizAttempt/?student_id=${studentId}`
+        );
+        const allAttempts = allAttemptsResponse.data;
+        console.log("All quiz attempts for student:", allAttempts);
+
+        const quizResponse = await axiosInstance.get(
+          `/quizzes/?student_id=${studentId}&lesson_id=${lessonId}&class_instance_id=${classInstanceId}`
+        );
         let quizData = quizResponse.data[0];
 
         if (!quizData) {
+
           const createQuizResponse = await axiosInstance.post("/quizzes/", {
             student: studentId,
             lesson: lessonId,
+            class_instance: classInstanceId,
             title: `Lesson ${lessonId} Quiz`,
           });
           quizData = createQuizResponse.data;
         }
 
-        setQuiz(quizData);
+        let attemptData = allAttempts.find(
+          (attempt: any) => attempt.quiz === quizData.id
+        );
 
-        const attemptResponse = await axiosInstance.get(`/studentQuizAttempt/?quiz_id=${quizData.id}`);
-        let attemptData = attemptResponse.data[0];
+        if (!attemptData || attemptData.end_time) {
 
-        if (!attemptData) {
-          const createAttemptResponse = await axiosInstance.post("/studentQuizAttempt/", {
-            quiz: quizData.id,
-            total_questions: quizData.questions.length,
+          const createQuizResponse = await axiosInstance.post("/quizzes/", {
+            student: studentId,
+            lesson: lessonId,
+            class_instance: classInstanceId,
+            title: `Lesson ${lessonId} Quiz - New`,
           });
+          quizData = createQuizResponse.data;
+
+          const createAttemptResponse = await axiosInstance.post(
+            "/studentQuizAttempt/",
+            {
+              quiz: quizData.id,
+              total_questions: quizData.questions.length,
+            }
+          );
           attemptData = createAttemptResponse.data;
         }
 
+        setQuiz(quizData);
         setAttempt(attemptData);
       } catch (error) {
         console.error("Error fetching quiz and attempt:", error);
@@ -85,7 +117,7 @@ const QuizContent: React.FC<QuizContentProps> = ({ studentId, lessonId }) => {
     };
 
     fetchQuizAndAttempt();
-  }, [studentId, lessonId]);
+  }, [studentId, lessonId, classInstanceId]);
 
   const handleAnswerChange = (questionId: string, choiceId: string) => {
     setAnswers({
@@ -107,35 +139,51 @@ const QuizContent: React.FC<QuizContentProps> = ({ studentId, lessonId }) => {
 
   const handleSubmit = async () => {
     try {
-      const answersPayload = Object.entries(answers).map(([questionId, choiceId]) => {
-        return {
-          student: studentId,
-          question: questionId,
-          selected_choice: choiceId,
-          quiz_attempt: attempt?.id,
-        };
-      });
+      const answersPayload = Object.entries(answers).map(
+        ([questionId, choiceId]) => {
+          return {
+            student: studentId,
+            question: questionId,
+            selected_choice: choiceId,
+            quiz_attempt: attempt?.id,
+          };
+        }
+      );
 
-      const postAnswersResponse = await axiosInstance.post("/studentAnswers/", answersPayload);
+      const postAnswersResponse = await axiosInstance.post(
+        "/studentAnswers/",
+        answersPayload
+      );
 
       if (postAnswersResponse.status === 201) {
-        const resultsData = postAnswersResponse.data.reduce((acc: { [key: string]: boolean }, item: any) => {
-          acc[item.question] = item.is_correct;
-          return acc;
-        }, {});
+        const resultsData = postAnswersResponse.data.reduce(
+          (acc: { [key: string]: boolean }, item: any) => {
+            acc[item.question] = item.is_correct;
+            return acc;
+          },
+          {}
+        );
 
-        const scoreResponse = await axiosInstance.post("/studentQuizAttempt/calculate_score/", {
-          attempt_id: attempt?.id,
-        });
+        const scoreResponse = await axiosInstance.post(
+          "/studentQuizAttempt/calculate_score/",
+          {
+            attempt_id: attempt?.id,
+          }
+        );
 
         if (scoreResponse.status === 200) {
           const { score, total_questions, passed } = scoreResponse.data;
-          setAttempt((prevAttempt) => prevAttempt ? { ...prevAttempt, score, passed } : null);
+          setAttempt((prevAttempt) =>
+            prevAttempt ? { ...prevAttempt, score, passed } : null
+          );
           setResults(resultsData);
           setShowResults(true);
         }
       } else {
-        console.error("Failed to submit answers. Status code:", postAnswersResponse.status);
+        console.error(
+          "Failed to submit answers. Status code:",
+          postAnswersResponse.status
+        );
       }
     } catch (error) {
       console.error("Error submitting quiz or calculating score:", error);
@@ -151,7 +199,10 @@ const QuizContent: React.FC<QuizContentProps> = ({ studentId, lessonId }) => {
   }
 
   const totalPages = Math.ceil(quiz.questions.length / questionsPerPage);
-  const displayedQuestions = quiz.questions.slice((currentPage - 1) * questionsPerPage, currentPage * questionsPerPage);
+  const displayedQuestions = quiz.questions.slice(
+    (currentPage - 1) * questionsPerPage,
+    currentPage * questionsPerPage
+  );
 
   return (
     <div className="quiz-content">
@@ -163,6 +214,14 @@ const QuizContent: React.FC<QuizContentProps> = ({ studentId, lessonId }) => {
           score={attempt.score ?? 0}
           totalQuestions={quiz.questions.length}
           passed={attempt.passed ?? false}
+          onTryAgain={() => {
+            setShowResults(false);
+            onTryAgain(); 
+          }}
+          onNextLesson={() => {
+            setShowResults(false);
+            onNextLesson();
+          }}
         />
       ) : (
         <>
@@ -172,10 +231,20 @@ const QuizContent: React.FC<QuizContentProps> = ({ studentId, lessonId }) => {
               {displayedQuestions.map((question, index) => (
                 <div
                   key={question.id}
-                  className={`question-block ${flags[question.id] ? "flagged" : ""}`}
+                  className={`question-block ${
+                    flags[question.id] ? "flagged" : ""
+                  }`}
                 >
-                  <p>{(currentPage - 1) * questionsPerPage + index + 1}. {question.text}</p>
-                  <button className="flag-button" onClick={() => handleFlagToggle(question.id)}>🚩</button>
+                  <p>
+                    {(currentPage - 1) * questionsPerPage + index + 1}.{" "}
+                    {question.text}
+                  </p>
+                  <button
+                    className="flag-button"
+                    onClick={() => handleFlagToggle(question.id)}
+                  >
+                    🚩
+                  </button>
                   <ul>
                     {question.choices.map((choice) => (
                       <li key={choice.id}>
@@ -185,7 +254,9 @@ const QuizContent: React.FC<QuizContentProps> = ({ studentId, lessonId }) => {
                             name={`question-${question.id}`}
                             value={choice.id}
                             checked={answers[question.id] === choice.id}
-                            onChange={() => handleAnswerChange(question.id, choice.id)}
+                            onChange={() =>
+                              handleAnswerChange(question.id, choice.id)
+                            }
                           />
                           {choice.text}
                         </label>
@@ -199,13 +270,19 @@ const QuizContent: React.FC<QuizContentProps> = ({ studentId, lessonId }) => {
               {quiz.questions.map((_, index) => (
                 <div
                   key={index}
-                  className={`question-number ${answers[quiz.questions[index].id] ? "answered" : ""} ${flags[quiz.questions[index].id] ? "flagged-box" : ""}`}
-                  onClick={() => handlePageChange(Math.floor(index / questionsPerPage) + 1)}
+                  className={`question-number ${
+                    answers[quiz.questions[index].id] ? "answered" : ""
+                  } ${flags[quiz.questions[index].id] ? "flagged-box" : ""}`}
+                  onClick={() =>
+                    handlePageChange(Math.floor(index / questionsPerPage) + 1)
+                  }
                 >
                   {index + 1}
                 </div>
               ))}
-              <button className="submit-button" onClick={handleSubmit}>Submit</button>
+              <button className="submit-button" onClick={handleSubmit}>
+                Submit
+              </button>
             </div>
           </div>
           <div className="pagination">

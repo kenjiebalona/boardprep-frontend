@@ -1,3 +1,5 @@
+// Classroom.tsx
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import profileImage from "../assets/16.png";
@@ -30,7 +32,8 @@ interface JoinRequest {
 
 function Classroom() {
   const user = useAppSelector(selectUser);
-  const { id: classId } = useParams();
+  const { id } = useParams(); // This retrieves the classId as a string
+  const classId = Number(id); // Convert classId to a number
   const [classItem, setClass] = useState<Class>();
   const [activeLink, setActiveLink] = useState("Posts");
   const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([]);
@@ -96,7 +99,7 @@ function Classroom() {
           />
         );
       case "Materials":
-        return <Materials courseId={classItem.course} studentId={user.token.id} />;
+        return <Materials courseId={classItem.course} studentId={user.token.id} classId={classId} />;
       case "Activities":
         return <ActivitiesTab classId={classItem.classId} />;
       default:

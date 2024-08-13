@@ -3,6 +3,7 @@ import axiosInstance from "../axiosInstance";
 import Syllabus from "./Syllabus";
 import LessonContent from "./Lessons";
 import QuizContent from "./QuizContent";
+import QuizResult from "./QuizResult";
 import "../styles/materials.scss";
 import ReactPaginate from "react-paginate";
 import { useAppSelector } from '../redux/hooks';
@@ -25,9 +26,10 @@ interface Lesson {
 interface MaterialsProps {
   courseId: string;
   studentId: string;
+  classId: number;  
 }
 
-function Materials({ courseId, studentId }: MaterialsProps) {
+function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [lessons, setLessons] = useState<Lesson[]>([]);
@@ -35,10 +37,11 @@ function Materials({ courseId, studentId }: MaterialsProps) {
   const [currentLesson, setCurrentLesson] = useState<string | null>(null);
   const [showLessonContent, setShowLessonContent] = useState(false);
   const [showQuizContent, setShowQuizContent] = useState(false);
+  const [showQuizResult, setShowQuizResult] = useState(false);
+  const [quizResult, setQuizResult] = useState<any>(null);
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
   const pageCount = pages.length;
-  const classId = courseId;
 
   useEffect(() => {
     const fetchSyllabusAndFirstLesson = async () => {
@@ -76,9 +79,20 @@ function Materials({ courseId, studentId }: MaterialsProps) {
     }
   };
 
+  const fetchQuizResult = async (quizId: string) => {
+    try {
+      const response = await axiosInstance.get(`/quizzes/${quizId}/results/${studentId}`);
+      setQuizResult(response.data);
+      setShowQuizResult(true);
+      setShowQuizContent(false);
+    } catch (error) {
+      console.error("Error fetching quiz results:", error);
+    }
+  };
+
   const handleLessonClick = (lessonId: string, isQuiz: boolean) => {
     if (isQuiz && lessons[currentLessonIndex].completed) {
-      setCurrentLesson(lessonId);
+      fetchQuizResult(lessons[currentLessonIndex].quiz_id);
     } else if (!isQuiz) {
       fetchPages(lessonId);
       setCurrentLesson(lessonId);
@@ -105,33 +119,83 @@ function Materials({ courseId, studentId }: MaterialsProps) {
   const handleBackToSyllabus = () => {
     setShowLessonContent(false); 
     setShowQuizContent(false);   
+    setShowQuizResult(false);
+  };
+
+  const handleTryAgain = () => {
+    if (currentLesson) {
+      setShowQuizResult(false); 
+      setShowQuizContent(false); 
+      setShowLessonContent(true); 
+      fetchPages(currentLesson); 
+    }
+  };
+
+  const handleNextLesson = () => {
+    if (currentLessonIndex + 1 < lessons.length) {
+
+      setShowLessonContent(false);
+      setShowQuizContent(false);
+      setShowQuizResult(false);
+      
+      setCurrentLessonIndex(currentLessonIndex + 1);
+      const nextLesson = lessons[currentLessonIndex + 1].lesson_id;
+      setCurrentLesson(nextLesson);
+      
+    } else {
+      setShowLessonContent(false);
+      setShowQuizContent(false);
+      setShowQuizResult(false);
+    }
   };
 
   return (
     <div className="materials-page">
       <div className="lesson-content-container">
-        {!showLessonContent && !showQuizContent && (
+        {!showLessonContent && !showQuizContent && !showQuizResult && (
           <div className="syllabus-section">
             <Syllabus 
               lessons={lessons} 
               onLessonClick={handleLessonClick} 
               currentLessonIndex={currentLessonIndex} 
-              classId={classId} 
+              classId={classId.toString()} 
             />
           </div>
         )}
 
         {showLessonContent && currentLesson && pages.length > 0 && (
           <LessonContent 
-            content={pages[currentPage].content} 
-            onBack={handleBackToSyllabus} 
-          />
+          content={pages[currentPage].content} 
+          onBack={handleBackToSyllabus} 
+          markLessonAsCompleted={markLessonAsCompleted}
+          userType={userType}
+          studentId={studentId}
+          lessonId={currentLesson}
+          classInstanceId={classId}
+          passed={quizResult?.passed ?? false} 
+        />
         )}
 
         {showQuizContent && currentLesson && (
-          <QuizContent 
-            lessonId={currentLesson} 
+          <QuizContent
+            lessonId={currentLesson}
             studentId={studentId}
+            classInstanceId={classId} 
+            onTryAgain={handleTryAgain}
+            onNextLesson={handleNextLesson}
+          />
+        )}
+
+        {showQuizResult && quizResult && (
+          <QuizResult 
+            questions={quizResult.questions} 
+            answers={quizResult.answers} 
+            results={quizResult.results} 
+            score={quizResult.score} 
+            totalQuestions={quizResult.totalQuestions} 
+            passed={quizResult.passed} 
+            onTryAgain={handleTryAgain}
+            onNextLesson={handleNextLesson}
           />
         )}
 
@@ -145,12 +209,6 @@ function Materials({ courseId, studentId }: MaterialsProps) {
             containerClassName={"pagination"}
             activeClassName={"active"}
           />
-        )}
-
-        {showLessonContent && userType !== 'T' && (
-          <button className="btn-mat" onClick={markLessonAsCompleted}>
-            Proceed to Quiz
-          </button>
         )}
       </div>
     </div>
