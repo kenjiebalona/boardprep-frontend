@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,48 +8,52 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import "../styles/card-leaderboard.scss";
 
-interface Data {
-  name: string;
-  trackingId: number;
-  date: string;
-  status: string;
+interface LeaderboardEntry {
+  ranking: number;
+  student_id: string;
+  score: number;
+  time_taken?: string; 
 }
 
-function createData(name: string, trackingId: number, date: string, status: string): Data { 
-  return { name, trackingId, date, status };
-}
+const CardLeaderboard: React.FC<{ studentId: string; showTimeTaken?: boolean }> = ({ studentId, showTimeTaken = false }) => {
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+  const [studentData, setStudentData] = useState<LeaderboardEntry | null>(null);
 
-const rows: Data[] = [
-  createData("Lasania Chiken Fri", 18908424, "2 March 2022", "Approved"),
-  createData("Big Baza Bang ", 18908424, "2 March 2022", "Pending"),
-  createData("Mouth Freshner", 18908424, "2 March 2022", "Approved"),
-];
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/challenges/leaderboards/?student_id=${studentId}`);
+        const data = await response.json();
+        setLeaderboardData(data.leaderboard);
+        setStudentData(data.student || null);
+      } catch (error) {
+        console.error("Error fetching leaderboard data:", error);
+      }
+    };
 
-const CardLeaderboard: React.FC = () => {
+    fetchLeaderboard();
+  }, [studentId]);
+
   return (
-    <div className="leaderboard-container">
-      <h3>LEADERBOARD</h3>
-      <TableContainer
-        component={Paper}
-        className="table-container"
-      >
-        <Table aria-label="simple table">
+    <div className={`leaderboard-container ${showTimeTaken ? 'larger' : ''}`}>
+      <h2>LEADERBOARD</h2>
+      <TableContainer component={Paper} className="table-container">
+        <Table aria-label="leaderboard table">
           <TableHead>
             <TableRow>
+              <TableCell className="table-header">Rank</TableCell>
               <TableCell className="table-header">Username</TableCell>
-              <TableCell align="left" className="table-header">Points</TableCell>
+              <TableCell align="left" className="table-header">Score</TableCell>
+              {showTimeTaken && <TableCell align="left" className="table-header">Time Taken</TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.name}
-                className="table-row"
-              >
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell component="th" align="left">{row.trackingId}</TableCell>
+            {leaderboardData.map((entry) => (
+              <TableRow key={entry.student_id}>
+                <TableCell className="table-body">{entry.ranking}</TableCell>
+                <TableCell className="table-body">{entry.student_id}</TableCell>
+                <TableCell align="left" className="table-body">{entry.score}</TableCell>
+                {showTimeTaken && <TableCell align="left" className="table-body">{entry.time_taken}</TableCell>}
               </TableRow>
             ))}
           </TableBody>
@@ -57,6 +61,6 @@ const CardLeaderboard: React.FC = () => {
       </TableContainer>
     </div>
   );
-}
+};
 
 export default CardLeaderboard;

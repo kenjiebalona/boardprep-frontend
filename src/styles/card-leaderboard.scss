@@ -1,4 +1,9 @@
 .leaderboard-container {
+  .table-body {
+    color: white;
+    margin-right: 5px;
+  }
+
   .MuiTableRow-root {
     padding: 10px;
   }
@@ -7,7 +12,7 @@
     font-weight: bold !important;
   }
 
-  h3 {
+  h2 {
     margin-bottom: 20px;
   }
 
@@ -18,10 +23,9 @@
     color: white;
   }
 
-  th, tr{
+  th, tr {
     color: white;
   }
-  
 
   .MuiTableCell-root {
     border: none !important;
@@ -41,6 +45,14 @@
       flex-direction: column;
       align-items: center;
       width: 23rem;
+    }
+  }
+
+  &.larger {
+    .table-container {
+      width: 33rem; 
+      max-width: 1200px; 
+      margin: 0 auto; 
     }
   }
 }

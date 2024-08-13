@@ -39,7 +39,7 @@ const Dashboard = () => {
     if (user.token.type === "C") {
       fetchCourses();
     }
-  }, []);
+  }, [user.token]);
 
   const fetchClasses = async () => {
     try {
@@ -131,7 +131,7 @@ const Dashboard = () => {
       {user.token.type === "S" && (
         <div className="right-side">
           <CardChallenge />
-          <CardLeaderboard />
+          <CardLeaderboard studentId={user.token.id} showTimeTaken={false} />
         </div>
       )}
     </div>

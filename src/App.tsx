@@ -30,6 +30,7 @@ import Success from "./pages/Success";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import QuestionBank from "./pages/QuestionBank";
+import DailyChallenge from "./pages/DailyChallenge";
 // import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -79,6 +80,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <Classes />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/daily-challenge"
+                element={
+                  <PrivateRoute>
+                    <DailyChallenge />
                   </PrivateRoute>
                 }
               />

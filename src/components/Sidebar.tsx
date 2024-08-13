@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 { path: "/classes", name: "Classes", icon: <SiGoogleclassroom /> },
                 { path: "/assignments", name: "Assignments", icon: <MdAssignment /> },
                 { path: "/exams", name: "Exams", icon: <PiExam /> },
-                { path: "/challenges", name: "Challenges", icon: <TbTargetArrow /> },
+                { path: "/daily-challenge", name: "Challenges", icon: <TbTargetArrow /> },
             ];
         }
     })();
