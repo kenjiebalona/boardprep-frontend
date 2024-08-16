@@ -4,6 +4,7 @@ import Syllabus from "./Syllabus";
 import LessonContent from "./Lessons";
 import QuizContent from "./QuizContent";
 import QuizResult from "./QuizResult";
+import ExamContent from "./ExamContent"; 
 import "../styles/materials.scss";
 import ReactPaginate from "react-paginate";
 import { useAppSelector } from '../redux/hooks';
@@ -23,6 +24,11 @@ interface Lesson {
   quiz_id: string;
 }
 
+interface Course {
+  course_id: string;
+  course_title: string;
+}
+
 interface MaterialsProps {
   courseId: string;
   studentId: string;
@@ -38,36 +44,68 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [showLessonContent, setShowLessonContent] = useState(false);
   const [showQuizContent, setShowQuizContent] = useState(false);
   const [showQuizResult, setShowQuizResult] = useState(false);
+  const [showExamContent, setShowExamContent] = useState(false);
   const [quizResult, setQuizResult] = useState<any>(null);
+  const [courseTitle, setCourseTitle] = useState<string | null>(null);
+  const [allLessonsCompleted, setAllLessonsCompleted] = useState(false);
+  const [examId, setExamId] = useState<number | null>(null);
+
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
   const pageCount = pages.length;
 
   useEffect(() => {
-    const fetchSyllabusAndFirstLesson = async () => {
+    const fetchCourseData = async () => {
       try {
+        const courseResponse = await axiosInstance.get(`/courses/${courseId}/`);
+        const courseData: Course = courseResponse.data;
+        setCourseTitle(courseData.course_title);
+
         const syllabusResponse = await axiosInstance.get(`/syllabi/${courseId}/`);
         const syllabusData = syllabusResponse.data[0];
-        setLessons(
-          syllabusData.lessons.map((lesson: Lesson, index: number) => ({
-            ...lesson,
-            completed: false,
-            quiz_id: `Lesson ${index + 1} Quiz`,
-          }))
-        );
+        
+        const lessonsData = syllabusData.lessons.map((lesson: Lesson, index: number) => ({
+          ...lesson,
+          completed: false,
+          quiz_id: `Lesson ${index + 1} Quiz`,
+        }));
 
-        if (syllabusData.lessons.length > 0) {
+        setLessons(lessonsData);
+        if (lessonsData.length > 0) {
           setCurrentLessonIndex(0);
         }
+        
+        const examResponse = await axiosInstance.get(`/exams/`, {
+          params: {
+            student_id: studentId,
+            class_instance_id: classId,
+            course_id: courseId
+          }
+        });
+        
+        if (Array.isArray(examResponse.data) && examResponse.data.length > 0) {
+          const examData = examResponse.data[0];
+          if (examData && examData.id !== undefined) {
+            setExamId(examData.id);
+          }
+        }
+
       } catch (error) {
-        console.error("Error fetching syllabus:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    if (courseId) {
-      fetchSyllabusAndFirstLesson();
-    }
-  }, [courseId]);
+    fetchCourseData();
+  }, [courseId, studentId, classId]);
+
+  useEffect(() => {
+    const checkAllLessonsCompleted = () => {
+      const completed = lessons.every(lesson => lesson.completed);
+      setAllLessonsCompleted(completed);
+    };
+
+    checkAllLessonsCompleted();
+  }, [lessons]);
 
   const fetchPages = async (lessonId: string) => {
     try {
@@ -91,15 +129,17 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   };
 
   const handleLessonClick = (lessonId: string, isQuiz: boolean) => {
-    if (isQuiz && lessons[currentLessonIndex].completed) {
+    if (isQuiz && lessons[currentLessonIndex]?.completed) {
       fetchQuizResult(lessons[currentLessonIndex].quiz_id);
     } else if (!isQuiz) {
       fetchPages(lessonId);
       setCurrentLesson(lessonId);
-      setShowLessonContent(true); 
-      setShowQuizContent(false); 
+      setShowLessonContent(true);
+      setShowQuizContent(false);
+      setShowQuizResult(false);
+      setShowExamContent(false);
     }
-  };
+  };  
 
   const handlePageClick = (event: { selected: number }) => {
     setCurrentPage(event.selected);
@@ -114,50 +154,71 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
     setShowLessonContent(false); 
     setShowQuizContent(true); 
+    setShowQuizResult(false);
+    setShowExamContent(false);
   };
 
   const handleBackToSyllabus = () => {
     setShowLessonContent(false); 
     setShowQuizContent(false);   
     setShowQuizResult(false);
+    setShowExamContent(false);
   };
 
   const handleTryAgain = () => {
-    if (currentLesson) {
-      setShowQuizResult(false); 
-      setShowQuizContent(false); 
-      setShowLessonContent(true); 
-      fetchPages(currentLesson); 
+    if (currentLessonIndex + 1 < lessons.length) {
+      setShowLessonContent(false);
+      setShowQuizContent(false);
+      setShowQuizResult(false);
+      setShowExamContent(false);
+      
+      setCurrentLessonIndex(currentLessonIndex + 1);
+      const nextLesson = lessons[currentLessonIndex + 1].lesson_id;
+      setCurrentLesson(nextLesson);
+    } else {
+      setShowLessonContent(false);
+      setShowQuizContent(false);
+      setShowQuizResult(false);
+      setShowExamContent(false);
     }
   };
 
   const handleNextLesson = () => {
     if (currentLessonIndex + 1 < lessons.length) {
-
       setShowLessonContent(false);
       setShowQuizContent(false);
       setShowQuizResult(false);
+      setShowExamContent(false);
       
       setCurrentLessonIndex(currentLessonIndex + 1);
       const nextLesson = lessons[currentLessonIndex + 1].lesson_id;
       setCurrentLesson(nextLesson);
-      
     } else {
       setShowLessonContent(false);
       setShowQuizContent(false);
       setShowQuizResult(false);
+      setShowExamContent(false);
     }
+  };
+
+  const handleExamClick = () => {
+    setShowExamContent(true);
+    setShowLessonContent(false);
+    setShowQuizContent(false); 
+    setShowQuizResult(false); 
+    setCurrentLessonIndex(-1); 
   };
 
   return (
     <div className="materials-page">
       <div className="lesson-content-container">
-        {!showLessonContent && !showQuizContent && !showQuizResult && (
+        {!showLessonContent && !showQuizContent && !showQuizResult && !showExamContent && (
           <div className="syllabus-section">
-            <Syllabus 
-              lessons={lessons} 
-              onLessonClick={handleLessonClick} 
-              currentLessonIndex={currentLessonIndex} 
+            <Syllabus
+              lessons={lessons}
+              onLessonClick={handleLessonClick}
+              onExamClick={handleExamClick} 
+              currentLessonIndex={currentLessonIndex}
               classId={classId.toString()} 
             />
           </div>
@@ -165,15 +226,16 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
         {showLessonContent && currentLesson && pages.length > 0 && (
           <LessonContent 
-          content={pages[currentPage].content} 
-          onBack={handleBackToSyllabus} 
-          markLessonAsCompleted={markLessonAsCompleted}
-          userType={userType}
-          studentId={studentId}
-          lessonId={currentLesson}
-          classInstanceId={classId}
-          passed={quizResult?.passed ?? false} 
-        />
+            content={pages[currentPage].content} 
+            onBack={handleBackToSyllabus} 
+            markLessonAsCompleted={markLessonAsCompleted}
+            userType={userType}
+            studentId={studentId}
+            lessonId={currentLesson}
+            classInstanceId={classId}
+            passed={quizResult?.passed ?? false} 
+            examId={examId ?? -1} 
+          />
         )}
 
         {showQuizContent && currentLesson && (
@@ -199,6 +261,17 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           />
         )}
 
+        {showExamContent && (
+          <ExamContent
+            studentId={studentId}
+            classInstanceId={classId}
+            courseId={courseId}
+            title={courseTitle ?? "Final Exam"}
+            onTryAgain={handleTryAgain}
+            onNextLesson={handleNextLesson}
+          />
+        )}
+
         {pageCount > 1 && showLessonContent && currentLesson && (
           <ReactPaginate
             previousLabel={currentPage > 0 ? "previous" : ""}
@@ -211,6 +284,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           />
         )}
       </div>
+
     </div>
   );
 }

@@ -375,6 +375,10 @@ function CourseDetails() {
     setshowEditorContent(false); 
   };
 
+  const handleExamClick = () => {
+    // props
+  };
+
   return (
     <div className="dashboard-background">
       <header className="top-header">
@@ -412,14 +416,13 @@ function CourseDetails() {
           <div className="bars" id="bar3"></div>
         </label>
 
-        
-
         <div className="lesson-content-container">
         {!showEditorContent && (
         <Syllabus
           classId={classId || ""} 
           lessons={lessons}
           onLessonClick={handleLessonClick}
+          onExamClick={handleExamClick}
           currentLessonIndex={currentLesson ? lessons.findIndex(l => l.lesson_id === currentLesson) : 0}
         />
         )}

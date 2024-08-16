@@ -29,7 +29,7 @@
     display: flex;
     flex-direction: column;
   }
-  
+
   .lesson-item {
     background-color: transparent;
     border-radius: 8px;
@@ -146,6 +146,8 @@
     padding: 15px;
     margin-top: 20px;  
     box-shadow: 0px 10px 15px 0px #b650f4;
+    display: flex;
+    flex-direction: column;
   }
   
   .exam-item {
@@ -154,7 +156,6 @@
     cursor: pointer;
     position: relative;
     color: black;
-  
     &.disabled {
       cursor: not-allowed;
       color: #aaa;

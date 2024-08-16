@@ -7,6 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import "../styles/card-leaderboard.scss";
+import axiosInstance from "../axiosInstance";
 
 interface LeaderboardEntry {
   ranking: number;
@@ -22,17 +23,22 @@ const CardLeaderboard: React.FC<{ studentId: string; showTimeTaken?: boolean }> 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/challenges/leaderboards/?student_id=${studentId}`);
-        const data = await response.json();
-        setLeaderboardData(data.leaderboard);
+        const response = await axiosInstance.get(`/challenges/leaderboards/?student_id=${studentId}`);
+        const data = response.data;
+  
+        console.log("Leaderboard data:", data);
+  
+        setLeaderboardData(data.leaderboard || []); 
         setStudentData(data.student || null);
       } catch (error) {
         console.error("Error fetching leaderboard data:", error);
+        setLeaderboardData([]); 
       }
     };
-
+  
     fetchLeaderboard();
   }, [studentId]);
+  
 
   return (
     <div className={`leaderboard-container ${showTimeTaken ? 'larger' : ''}`}>
@@ -48,14 +54,22 @@ const CardLeaderboard: React.FC<{ studentId: string; showTimeTaken?: boolean }> 
             </TableRow>
           </TableHead>
           <TableBody>
-            {leaderboardData.map((entry) => (
-              <TableRow key={entry.student_id}>
-                <TableCell className="table-body">{entry.ranking}</TableCell>
-                <TableCell className="table-body">{entry.student_id}</TableCell>
-                <TableCell align="left" className="table-body">{entry.score}</TableCell>
-                {showTimeTaken && <TableCell align="left" className="table-body">{entry.time_taken}</TableCell>}
+            {leaderboardData.length > 0 ? (
+              leaderboardData.map((entry) => (
+                <TableRow key={entry.student_id}>
+                  <TableCell className="table-body">{entry.ranking}</TableCell>
+                  <TableCell className="table-body">{entry.student_id}</TableCell>
+                  <TableCell align="left" className="table-body">{entry.score}</TableCell>
+                  {showTimeTaken && <TableCell align="left" className="table-body">{entry.time_taken}</TableCell>}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={showTimeTaken ? 4 : 3} className="table-body" align="center">
+                  No challenge attempt yet for today.
+                </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>

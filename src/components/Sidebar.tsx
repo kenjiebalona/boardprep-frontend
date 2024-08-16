@@ -3,7 +3,6 @@ import { FaTh, FaBars, FaUser, FaSignOutAlt, FaMoneyCheckAlt, FaForumbee } from 
 import { TbTargetArrow } from "react-icons/tb";
 import { SiGoogleclassroom } from "react-icons/si";
 import { MdAssignment } from "react-icons/md";
-import { PiExam } from "react-icons/pi";
 import { NavLink, useNavigate } from 'react-router-dom';
 import profileImage from "../assets/16.png";
 import { signOut, selectUser } from '../redux/slices/authSlice';
@@ -22,22 +21,19 @@ interface MenuItem {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false); // Start closed
     const [openProfile, setOpenProfile] = useState(false);
     const [details, setDetails] = useState<any>({});
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectUser);
     const userType = user.token.type;
     const navigate = useNavigate();
-    const toggle = () => setIsOpen(!isOpen);
 
     const menuItems: MenuItem[] = (() => {
         if (userType === 'T') {
             return [
                 { path: "/dashboard", name: "Overview", icon: <FaTh /> },
                 { path: "/classes", name: "Classes", icon: <SiGoogleclassroom /> },
-                { path: "/assignments", name: "Assignments", icon: <MdAssignment /> },
-                { path: "/exams", name: "Exams", icon: <PiExam /> },
             ];
         } else if (userType === 'C') {
             return [
@@ -49,8 +45,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
             return [
                 { path: "/dashboard", name: "Overview", icon: <FaTh /> },
                 { path: "/classes", name: "Classes", icon: <SiGoogleclassroom /> },
-                { path: "/assignments", name: "Assignments", icon: <MdAssignment /> },
-                { path: "/exams", name: "Exams", icon: <PiExam /> },
                 { path: "/daily-challenge", name: "Challenges", icon: <TbTargetArrow /> },
             ];
         }
@@ -100,11 +94,15 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
 
     return (
         <div className="container">
-            <div className={`sidebar ${isOpen ? "" : "collapsed"}`}>
+            <div 
+                className={`sidebar ${isOpen ? "" : "collapsed"}`} 
+                onMouseEnter={() => setIsOpen(true)} 
+                onMouseLeave={() => setIsOpen(false)}
+            >
                 <div className="top_section">
                     <h1 style={{ display: isOpen ? "block" : "none" }} className="logo">BoardPrep</h1>
                     <div style={{ marginLeft: isOpen ? "28px" : "0px", marginBottom: isOpen ? "22px" : "20px" }} className="bars">
-                        <FaBars onClick={toggle} />
+                        <FaBars />
                     </div>
                 </div>
                 {menuItems.map((item, index) => (

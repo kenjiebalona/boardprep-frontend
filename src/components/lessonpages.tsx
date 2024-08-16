@@ -27,6 +27,7 @@ const Materials: React.FC<MaterialsProps> = ({
 }) => {
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [examId, setExamId] = useState<number | null>(null);
 
   useEffect(() => {
     axiosInstance
@@ -58,6 +59,7 @@ const Materials: React.FC<MaterialsProps> = ({
           lessonId={lessonId}
           classInstanceId={classInstanceId}
           passed={quizPassed}
+          examId={examId ?? -1}
         />
       )}
 
