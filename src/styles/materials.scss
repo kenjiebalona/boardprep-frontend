@@ -42,6 +42,7 @@
     transition: margin 0.3s ease, flex-basis 0.3s ease;
     box-shadow: 11px 5px 9px 0px rgba(230,104,230,1), -1px -1px 10px rgb(144, 129, 129);
     overflow: auto; /* Add this to handle overflowing content */
+    background-color: white;
 
     .ck-content {
       padding-left: 30px;
@@ -58,7 +59,7 @@
 
     .pagination {
       position: absolute; // Position it relative to lesson-content-container
-      bottom: 10px; // Adjust as needed to position at the bottom
+      bottom: 60px; // Adjust as needed to position at the bottom
       left: 50%;
       transform: translateX(-50%); // Center horizontally
     }

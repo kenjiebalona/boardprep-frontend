@@ -54,6 +54,28 @@
     margin: 0.9em auto;
     display: table;
 }
+
+.ck-content h1, .ck-content h2, .ck-content h3, .ck-content h4, .ck-content h5, .ck-content h6 {
+    color: black;
+  }
+  
+  .ck-content ul {
+    list-style-type: disc;
+    color: black;
+  }
+  
+  .ck-content ul li {
+    color: black;
+  }
+  
+  .ck-content ol {
+    list-style-type: decimal;
+    color: black;
+  }
+  
+  .ck-content ol li {
+    color: black;
+  }
 /* @ckeditor/ckeditor5-table/theme/table.css */
 .ck-content .table table {
     border-collapse: collapse;
@@ -68,6 +90,7 @@
     min-width: 2em;
     padding: .4em;
     border: 1px solid hsl(0, 0%, 75%);
+    color: black;
 }
 /* @ckeditor/ckeditor5-table/theme/table.css */
 .ck-content .table table th {

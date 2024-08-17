@@ -107,8 +107,8 @@
       left: 50%;
       transform: translateX(-50%);
       overflow: hidden;
-      color:white;
-      background-color: #201c1c;
+      color:white !important;
+      background-color: white;
       padding: 10px;
        // Center horizontally
     }
