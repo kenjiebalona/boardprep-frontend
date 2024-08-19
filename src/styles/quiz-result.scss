@@ -65,6 +65,22 @@
         }
       }
     }
+
+    .view-results-button-two {
+      background-color: #7D67FF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 10px 20px;
+      margin-bottom: 15px;
+      margin-left: 10px !important;
+
+      &:hover {
+        background-color: #5D3FD3;
+      }
+    }
   
     .questions-review {
       width: 100%;

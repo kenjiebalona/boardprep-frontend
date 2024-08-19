@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
 import "../styles/quiz-result.scss"; 
+import axios from "axios"; 
 
 interface Choice {
   id: string;
@@ -16,9 +17,11 @@ interface Question {
 }
 
 interface ExamResultProps {
+  examId: string;
   questions: Question[];
   answers: { [questionId: string]: string };
   results: { [questionId: string]: boolean }; 
+  feedback: string | null; 
   score: number;
   totalQuestions: number;
   passed: boolean;
@@ -27,19 +30,27 @@ interface ExamResultProps {
 }
 
 const ExamResult: React.FC<ExamResultProps> = ({
+  examId,
   questions,
   answers,
   results,
   score,
   totalQuestions,
   passed,
+  feedback,
   onTryAgain,
   onNextLesson
 }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [loadingFeedback, setLoadingFeedback] = useState(false); 
+  const [showFeedback, setShowFeedback] = useState(false);
 
   const handleToggleDetails = () => {
     setShowDetails(!showDetails);
+  };
+
+  const handleToggleFeedback = () => {
+    setShowFeedback(!showFeedback);
   };
 
   const percentage = (score / totalQuestions) * 100;
@@ -117,7 +128,20 @@ const ExamResult: React.FC<ExamResultProps> = ({
               Done
             </button>
           )}
+          <button 
+            className="view-results-button-two" 
+            onClick={handleToggleFeedback}
+            disabled={loadingFeedback} 
+          >
+            {showFeedback ? "Hide Feedback" : "View Feedback"}
+          </button>
         </div>
+        {showFeedback && feedback && (
+          <div className="feedback-section">
+            <h3>Feedback</h3>
+            <p>{feedback}</p>
+          </div>
+        )}
       </div>
     </div>
   );

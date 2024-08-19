@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import ExamResult from "./ExamResult";
 import "../styles/exam-content.scss"; 
+import axios, { AxiosError } from 'axios';
+
 
 interface Choice {
   id: string;
@@ -58,6 +60,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   const questionsPerPage = 5;
 
@@ -283,18 +286,31 @@ const ExamContent: React.FC<ExamContentProps> = ({
             ? { ...prevAttempt, score, total_questions, start_time, end_time, passed }
             : null
         );
+        setFeedback(feedback);
         setShowResults(true);
       } else {
         alert("Failed to submit exam. Please try again later.");
       }
-    } catch (error) {
-      console.error("Error submitting exam:", error);
-      alert("An error occurred while submitting the exam. Please try again later.");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error submitting exam:", error.message);
+        console.error("Error response data:", error.response?.data);
+        alert("An error occurred while submitting the exam. Please try again later.");
+      } else {
+        console.error("Unexpected error:", error);
+        alert("An unexpected error occurred. Please try again later.");
+      }
     }
   };
   
 
   const fetchDetailedResults = async (examId: string, attemptNumber: number) => {
+    if (!attemptNumber) {
+      console.error("Attempt number is missing.");
+      alert("Exam Finished!");
+      return;
+    }
+  
     try {
       const response = await axiosInstance.get(
         `/exams/${examId}/detailed_results/`,
@@ -306,7 +322,6 @@ const ExamContent: React.FC<ExamContentProps> = ({
       console.log("Detailed results response data:", response.data); 
   
       const resultsData = response.data.results || [];
-  
       const resultsMap = resultsData.reduce(
         (acc: { [key: string]: boolean }, item: any) => {
           if (item.id && typeof item.is_correct === 'boolean') {
@@ -319,19 +334,25 @@ const ExamContent: React.FC<ExamContentProps> = ({
   
       setResults(resultsMap);
   
-    } catch (error) {
-      console.error("Error fetching detailed results:", error);
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error fetching detailed results:", error.message);
+        console.error("Error response data:", error.response?.data);
+        console.error("Error response headers:", error.response?.headers);
+      } else {
+        console.error("Unexpected error:", error);
+      }
       alert("An error occurred while fetching detailed results. Please try again later.");
     }
   };
   
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   if (!exam || !attempt) {
-    return <div>Loadinggg...</div>;
+    return <div className="loading">Loadinggg...</div>;
   }
 
   const totalPages = Math.ceil(exam.questions.length / questionsPerPage);
@@ -344,10 +365,12 @@ const ExamContent: React.FC<ExamContentProps> = ({
     <div className="exam-content">
       {showResults ? (
         <ExamResult
+          examId={exam.id} 
           questions={exam.questions}
           answers={answers}
           results={results}
           score={attempt.score ?? 0}
+          feedback={feedback}
           totalQuestions={exam.questions.length}
           passed={attempt.passed ?? false}
           onTryAgain={() => {
