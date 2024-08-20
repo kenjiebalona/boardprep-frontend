@@ -75,19 +75,19 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           setCurrentLessonIndex(0);
         }
         
-        const examResponse = await axiosInstance.get(`/exams/`, {
+        const examResponse = await axiosInstance.get(`/api/exams/student-info/`, {
           params: {
             student_id: studentId,
             class_instance_id: classId,
             course_id: courseId
           }
         });
+
+        console.log('Exam Response:', examResponse.data);  
         
-        if (Array.isArray(examResponse.data) && examResponse.data.length > 0) {
-          const examData = examResponse.data[0];
-          if (examData && examData.id !== undefined) {
-            setExamId(examData.id);
-          }
+        if (examResponse.data && examResponse.data.exams.length > 0) {
+          const examData = examResponse.data.exams[0];
+          setExamId(examData.exam_id);
         }
 
       } catch (error) {
@@ -217,10 +217,12 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             <Syllabus
               lessons={lessons}
               onLessonClick={handleLessonClick}
-              onExamClick={handleExamClick} 
+              onExamClick={handleExamClick}
               currentLessonIndex={currentLessonIndex}
-              classId={classId.toString()} 
+              classId={classId.toString()}
+              courseId={courseId} 
             />
+
           </div>
         )}
 

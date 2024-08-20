@@ -18,40 +18,31 @@ interface Lesson {
 interface SyllabusProps {
   lessons: Lesson[];
   onLessonClick: (lessonId: string, isQuiz: boolean) => void;
-  onExamClick?: () => void; 
+  onExamClick?: () => void;
   currentLessonIndex: number;
-  classId?: string; 
+  classId?: string;
+  courseId: string; 
 }
 
-function Syllabus({ lessons, onLessonClick, onExamClick, currentLessonIndex, classId }: SyllabusProps) {
+function Syllabus({ lessons, onLessonClick, onExamClick, currentLessonIndex, classId, courseId }: SyllabusProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [className, setClassName] = useState("");
   const [updatedLessons, setUpdatedLessons] = useState<Lesson[]>(lessons);
   const [userDetails, setUserDetails] = useState<any>({});
+  const [examPassed, setExamPassed] = useState(false);
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
 
   useEffect(() => {
-    fetchClass();
     fetchUserDetails();
-  }, [classId]);
+  }, []);
 
   useEffect(() => {
     fetchQuizAttempts();
   }, [userDetails, lessons]);
 
-  const fetchClass = async () => {
-    if (userType === 'C') return;
-
-    if (classId) {
-      try {
-        const response = await axiosInstance.get(`/classes/${classId}/`);
-        setClassName(response.data.className);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  };
+useEffect(() => {
+  fetchExamStatus(); 
+}, [userDetails, courseId]);
 
   const fetchUserDetails = async () => {
     try {
@@ -74,8 +65,6 @@ function Syllabus({ lessons, onLessonClick, onExamClick, currentLessonIndex, cla
         const response = await axiosInstance.get(`/quizzes/class/?lesson_id=${lesson.lesson_id}&class_id=${classId}`);
         const attempts = response.data;
 
-        console.log("QUIZ ATTEMPTS:", response.data);
-
         const quizCompleted = attempts.some((attempt: any) => 
           attempt.student === `${userDetails.first_name} ${userDetails.last_name}` && attempt.passed
         );
@@ -86,6 +75,33 @@ function Syllabus({ lessons, onLessonClick, onExamClick, currentLessonIndex, cla
       setUpdatedLessons(updatedLessonsData);
     } catch (err) {
       console.error("Error fetching quiz attempts:", err);
+    }
+  };
+
+  const fetchExamStatus = async () => {
+    console.log('fetchExamStatus called');
+    if (!classId || !userDetails.user_name || !courseId) return;
+  
+    try {
+      const response = await axiosInstance.get('/api/exams/student-info/', {
+        params: {
+          student_id: userDetails.user_name,
+          class_instance_id: classId,
+          course_id: courseId
+        },
+      });
+  
+      console.log('Exam Status Response:', response.data);
+  
+      const exams = response.data.exams || [];
+      const examPassed = exams.length > 0 && exams[0].passed;
+  
+      console.log('Exam Passed:', examPassed); 
+      console.log('All Lessons Completed:', updatedLessons.every(lesson => lesson.completed)); 
+  
+      setExamPassed(examPassed);
+    } catch (err) {
+      console.error("Error fetching exam status:", err);
     }
   };
 
@@ -105,13 +121,13 @@ function Syllabus({ lessons, onLessonClick, onExamClick, currentLessonIndex, cla
   };
 
   const displayedLessons = userType === 'C' ? lessons : updatedLessons;
-  const allCompleted = displayedLessons.every(lesson => lesson.completed);
+  const allLessonsCompleted = displayedLessons.every(lesson => lesson.completed);
 
   return (
     <div className="syllabus-container">
       <div className="title-container" onClick={toggleDropdown}>
         <h2>
-          ⦿ {userType === 'C' ? "Course" : className || "Course"} LESSONS {isDropdownOpen ? "▾" : "▸"}
+          ⦿ {userType === 'C' ? "Course" : courseId || "Course"} LESSONS {isDropdownOpen ? "▾" : "▸"}
         </h2>
       </div>
 
@@ -171,18 +187,19 @@ function Syllabus({ lessons, onLessonClick, onExamClick, currentLessonIndex, cla
             </div>
           ))}
 
-          {userType === 'S' && allCompleted && (
-            <div className="exam-container">
+          {userType === 'S' && (
+            <div className={`exam-container ${allLessonsCompleted ? '' : 'disabled'}`}>
               <div
-                className="exam-item"
-                onClick={onExamClick} 
+                className={`exam-item ${examPassed ? 'completed' : (allLessonsCompleted ? '' : 'disabled')}`}
+                onClick={() => allLessonsCompleted && !examPassed && onExamClick && onExamClick()}
                 role="button"
                 tabIndex={0}
               >
                 <TbTargetArrow className="exam-icon" />
-                <h3 className="exam-title">{className || "Course"} Final Exam</h3>
+                <h3 className="exam-title">{courseId || "Course"} Final Exam</h3>
               </div>
-              {/* <button className="learn-button">Take Exam</button> */}
+              {examPassed && <BsCheckCircleFill className="completed-icon" />}
+              {!allLessonsCompleted && <FaLock className="exam-lock-icon" />}
             </div>
           )}
         </div>

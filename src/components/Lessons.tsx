@@ -34,12 +34,15 @@ const LessonContent: React.FC<LessonContentProps> = ({
   passed,
   examId,
 }) => {
+
+  console.log('Received examId in LessonContent:', examId);
+
   const [quizPassed, setQuizPassed] = useState(passed);
   const [failedLessons, setFailedLessons] = useState<FailedLesson[]>([]);
   const [isFailedLesson, setIsFailedLesson] = useState(false);
   const [showQuizAttempts, setShowQuizAttempts] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => { 
     const fetchQuizStatus = async () => {
       try {
         const response = await axiosInstance.get(
@@ -111,7 +114,7 @@ const LessonContent: React.FC<LessonContentProps> = ({
             className="ck-content"
             dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
           />
-          {userType !== 'T' && !quizPassed && isFailedLesson && (
+          {userType !== 'T' && (!quizPassed || isFailedLesson) && (
             <button className="btn-mat" onClick={markLessonAsCompleted}>
               Proceed to Quiz
             </button>

@@ -424,6 +424,7 @@ function CourseDetails() {
           onLessonClick={handleLessonClick}
           onExamClick={handleExamClick}
           currentLessonIndex={currentLesson ? lessons.findIndex(l => l.lesson_id === currentLesson) : 0}
+          courseId={courseId || ""} 
         />
         )}
         {showEditorContent && (

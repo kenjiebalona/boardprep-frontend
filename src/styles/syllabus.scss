@@ -124,7 +124,7 @@
   
   .completed-icon {
     color: #28a745; 
-    margin: 10px;
+    margin: 18px;
     font-size: 1.2rem;
   }
 
@@ -144,10 +144,10 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 15px;
-    margin-top: 20px;  
+    margin-top: 20px;
     box-shadow: 0px 10px 15px 0px #b650f4;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;    
   }
   
   .exam-item {
@@ -156,6 +156,7 @@
     cursor: pointer;
     position: relative;
     color: black;
+    
     &.disabled {
       cursor: not-allowed;
       color: #aaa;
@@ -163,7 +164,10 @@
   
     .exam-title {
       margin-left: 10px;
-      margin-top: 10px;
+      margin-top: 13px;
+    }
+    &:hover {
+      color: #5D3FD3;
     }
   }
   
@@ -175,9 +179,6 @@
   
   .exam-lock-icon {
     color: #aaa;
-    margin-left: 10px;
     font-size: 1.2rem;
-    margin-top: -5px;
+    margin: 18px;
   }
-  
-  

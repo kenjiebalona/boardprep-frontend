@@ -62,7 +62,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  const questionsPerPage = 5;
+  const questionsPerPage = 2;
 
   const fetchAttemptNumber = async (examId: string) => {
     try {
@@ -275,11 +275,13 @@ const ExamContent: React.FC<ExamContentProps> = ({
         `/exams/${exam.id}/submit/`,
         payload
       );
+
+      console.log("SUBMIT:", submitExamResponse.data);
   
       if (submitExamResponse.status === 200 || submitExamResponse.status === 201) {
-        const { score, feedback, total_questions, start_time, end_time, passed, attempt_number } = submitExamResponse.data;
+        const { score, feedback, total_questions, start_time, end_time, passed } = submitExamResponse.data;
   
-        await fetchDetailedResults(exam.id, attempt_number);
+        await fetchDetailedResults(exam.id, attempt.attempt_number);
   
         setAttempt((prevAttempt) =>
           prevAttempt
