@@ -91,6 +91,32 @@ function CourseDetails() {
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [availableSpecializations, setAvailableSpecializations] = useState<Specialization[]>([]);
  
+  
+async function uploadFile(file: File) {
+  const formData = new FormData();
+  formData.append("upload", file);
+
+  try {
+    const response = await axiosInstance.post("/upload_file/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    
+    const uploadedFileUrl = response.data.url;
+    const isImage = file.type.startsWith("image/");
+    
+    return {
+      url: uploadedFileUrl,
+      isImage,  
+    };
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    throw new Error("File upload failed");
+  }
+}
+
+
   const onUpdateDashboard = async () => {
     fetchSyllabus();
   };
@@ -310,9 +336,8 @@ function CourseDetails() {
     initialContent: editorContent.length ? editorContent : [
       { type: "paragraph", content: "New page content" }
     ],
+    uploadFile,
   });
-  
-  
   
 
   const handleEditorChange = (event: any, editor: any) => {
@@ -329,14 +354,13 @@ function CourseDetails() {
 
     const pageId = isNewPage ? pages.length + 1 : currentPage + 1;
     const method = isNewPage ? "post" : "put";
-    const apiUrl = `/pages/${currentLesson}/${pageId}/`;
+    const apiUrl = `/pages/${currentSubtopic}/`;
 
     try {
       const payload = {
-        page_number: pageId,
-        content: editor.document,  
-        syllabus: "syllabusId", 
-        lesson: currentLesson,
+        page_number: pageId,      
+        content: editor.document, 
+        subtopic: currentSubtopic
       };
 
       await axiosInstance[method](apiUrl, payload);
