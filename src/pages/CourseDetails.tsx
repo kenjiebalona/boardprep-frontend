@@ -112,9 +112,9 @@ function CourseDetails() {
 
       const updatedLessons = syllabusData.lessons.map((lesson: any) => ({
         ...lesson,
-        completed: false, // default to false; update this as needed based on your logic
-        quiz_id: lesson.quiz_id || "", // ensure quiz_id is available
-        topics: lesson.topics || [] // include topics
+        completed: false,
+        quiz_id: lesson.quiz_id || "",
+        topics: lesson.topics || [] 
       }));
       console.log(updatedLessons);
       setLessons(updatedLessons);
@@ -465,7 +465,7 @@ function CourseDetails() {
           <PublishModal
             closeModal={handleClosePublishModal}
             onConfirmPublish={handleConfirmPublish}
-            courseData={courseData} // courseData is guaranteed not to be null here
+            courseData={courseData}
           />
         )}
       </div>
