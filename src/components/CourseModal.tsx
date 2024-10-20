@@ -1,13 +1,19 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { debounce } from "lodash";
-import "../styles/coursemodal.scss";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import axiosInstance from "../axiosInstance";
+import "../styles/coursemodal.scss";
+
+interface Specialization {
+  id: string;
+  name: string;
+}
 
 interface CourseModalProps {
   closeModal: () => void;
   course?: Course | null;
   onUpdateDashboard: () => void;
+  availableSpecializations: Specialization[]; 
 }
 
 interface Course {
@@ -16,12 +22,14 @@ interface Course {
   short_description: string;
   long_description: string;
   image: string;
+  specializations: string[]; 
 }
 
 function CourseModal({
   closeModal,
   course,
   onUpdateDashboard,
+  availableSpecializations, 
 }: CourseModalProps) {
   const courseIdRef = useRef<HTMLInputElement>(null);
   const courseTitleRef = useRef<HTMLInputElement>(null);
@@ -43,6 +51,9 @@ function CourseModal({
     image: false,
   });
   const [isCourseIdAvailable, setIsCourseIdAvailable] = useState(true);
+  const [selectedSpecializations, setSelectedSpecializations] = useState<string[]>(
+    course?.specializations || []
+  );
 
   const checkCourseIdAvailability = async (courseId: string) => {
     try {
@@ -83,6 +94,7 @@ function CourseModal({
     setTouched({ ...touched, [field]: true });
   };
 
+  
   useEffect(() => {
     if (course) {
       setIsEditing(true);
@@ -91,6 +103,13 @@ function CourseModal({
         courseTitleRef.current.value = course.course_title;
       if (shortDescriptionRef.current)
         shortDescriptionRef.current.value = course.short_description;
+
+      if (course.specializations && course.specializations.length > 0) {
+        setSelectedSpecializations(course.specializations);
+        console.log("Course Specializations: ", course.specializations);
+      } else {
+        console.log("No specializations selected for this course.");
+      }
     }
     validateForm();
   }, [course]);
@@ -132,6 +151,18 @@ function CourseModal({
 
   const handleUpdateDashboard = () => {
     closeModal();
+  };
+
+  const handleSpecializationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const options = e.target.options;
+    const selected = [];
+    for (const element of options) {
+      if (element.selected) {
+        selected.push(element.value);
+      }
+    }
+    console.log("Selected Specializations: ", selected);
+    setSelectedSpecializations(selected);
   };
 
   const handleInvalid = (target: HTMLInputElement | HTMLTextAreaElement) => {
@@ -182,6 +213,10 @@ function CourseModal({
           formData.append("short_description", shortDescription || "");
           if (image) formData.append("image", image);
 
+          selectedSpecializations.forEach((spec) => {
+            formData.append("specializations", spec);
+          });
+
           const response = await axiosInstance.put(
             `/courses/${course.course_id}/`,
             formData,
@@ -198,9 +233,9 @@ function CourseModal({
         }
       } else {
         const formData = new FormData();
-        formData.append("course_id", courseId || "");
-        formData.append("course_title", courseTitle || "");
-        formData.append("short_description", shortDescription || "");
+        formData.append("course_id", courseId ?? "");
+        formData.append("course_title", courseTitle ?? "");
+        formData.append("short_description", shortDescription ?? "");
         if (image) formData.append("image", image);
 
         const response = await axiosInstance.post("/courses/", formData, {
@@ -232,6 +267,7 @@ function CourseModal({
       console.error("Error in POST/PUT request:", err);
     }
   };
+
 
   return (
     <div className="main-modal">
@@ -299,6 +335,24 @@ function CourseModal({
             {formErrors.shortDescription && touched.shortDescription && (
               <div className="error-message">{formErrors.shortDescription}</div>
             )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="specializations">Specializations</label>
+            <select
+              id="specializations"
+              name="specializations"
+              multiple
+              value={selectedSpecializations}
+              onChange={handleSpecializationChange}
+              className="form-control"
+            >
+              {availableSpecializations.map((spec) => (
+                <option key={spec.id} value={spec.id}>
+                  {spec.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">

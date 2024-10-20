@@ -1,19 +1,22 @@
+import { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../axiosInstance";
 import CourseCard from "../components/CoursecardC";
 import CourseModal from "../components/CourseModal";
-import "../styles/admin.scss";
 import Searchbar from "../components/SearchBar";
-import { AxiosResponse } from "axios";
-import DropDownProfile from "../components/DropDownProfile";
-import profileImage from "../assets/16.png";
-import axiosInstance from "../axiosInstance";
+import "../styles/admin.scss";
 
+interface Specialization {
+  id: string;
+  name: string;
+}
 interface Course {
   course_id: string;
   course_title: string;
   short_description: string;
   image: string;
+  specializations: string[]; 
 }
 
 const AdminDashboard: React.FC = () => {
@@ -21,9 +24,11 @@ const AdminDashboard: React.FC = () => {
   const [isCreateCourseModalOpen, setIsCreateCourseModalOpen] = useState(false);
   const navigate = useNavigate();
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const [availableSpecializations, setAvailableSpecializations] = useState<Specialization[]>([]);
 
   useEffect(() => {
     fetchCourses();
+    fetchSpecializations();
   }, []);
 
   const fetchCourses = async () => {
@@ -35,6 +40,17 @@ const AdminDashboard: React.FC = () => {
       console.error("Error fetching courses:", error);
     }
   };
+
+  const fetchSpecializations = async () => {
+    try {
+      const response: AxiosResponse = await axiosInstance.get("/specializations/");
+      setAvailableSpecializations(response.data);
+      console.log(response.data)
+    } catch (error) {
+      console.error("Error fetching specializations:", error);
+    }
+  };
+  
 
   const handleCreateCourse = () => {
     setIsCreateCourseModalOpen(true);
@@ -97,6 +113,7 @@ const AdminDashboard: React.FC = () => {
           closeModal={handleCloseCreateCourseModal}
           course={null}
           onUpdateDashboard={fetchCourses}
+          availableSpecializations={availableSpecializations} 
         />
       )}
     </div>

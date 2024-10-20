@@ -13,6 +13,10 @@ import PublishModal from "../components/PublishModal";
 import Syllabus from "../components/Syllabus";
 import "../styles/details.scss";
 
+interface Specialization {
+  id: string;
+  name: string;
+}
 interface SyllabusProps {
   lessons: Lesson[];
   onLessonClick: (lessonId: string) => Promise<void>;
@@ -30,6 +34,7 @@ interface Course {
   long_description: string;
   image: string;
   is_published: boolean;
+  specializations: string[]; 
 }
 
 interface Page {
@@ -84,10 +89,15 @@ function CourseDetails() {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [lessonsLoaded, setLessonsLoaded] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
+  const [availableSpecializations, setAvailableSpecializations] = useState<Specialization[]>([]);
  
   const onUpdateDashboard = async () => {
     fetchSyllabus();
   };
+
+  useEffect(() => {
+    fetchSpecializations();
+  }, []);
 
   useEffect(() => {
     console.log("Lessons length:", lessons.length);
@@ -137,6 +147,15 @@ function CourseDetails() {
     }
   };
 
+  const fetchSpecializations = async () => {
+    try {
+      const response = await axiosInstance.get("/specializations/");
+      setAvailableSpecializations(response.data);
+    } catch (error) {
+      console.error("Error fetching specializations:", error);
+    }
+  };
+  
 
   const fetchSyllabus = async () => {
     try {
@@ -449,6 +468,7 @@ function CourseDetails() {
             closeModal={handleCloseModal}
             course={courseData}
             onUpdateDashboard={onUpdateDashboard}
+            availableSpecializations={availableSpecializations} 
           />
         )}
 
