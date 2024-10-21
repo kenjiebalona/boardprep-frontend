@@ -24,6 +24,36 @@
   .lesson-container {
     margin-bottom: 15px;
   }
+
+  .bullet-objectives{
+    margin-left: 30px;
+  }
+
+  .lesson-objectives{
+    margin-top: -25px;
+    margin-left: 50px;
+  }
+
+  .topic-item{
+    margin-bottom: 15px;
+    margin-left: 35px;
+    margin-top: 20px;
+    margin-right: 35px;
+    background-color: black;
+    border-radius: 5px;
+    color: white;
+    padding: 10px;
+  }
+
+  .subtopic-item{
+    margin-left: 35px;
+    margin-top: 20px;
+    margin-right: 35px;
+    background-color: grey;
+    border-radius: 5px;
+    color: white;
+    padding: 10px;
+  }
   
   .lesson-item-wrapper {
     display: flex;
@@ -39,10 +69,17 @@
     color: black;
     margin-bottom: 10px;
     position: relative;
+    cursor: pointer; /* Always set pointer cursor */
   
     &.disabled {
       cursor: not-allowed;
       color: #aaa;
+  
+      // Allow content creators to still click
+      &[data-user-type="C"] {
+        cursor: pointer;
+        color: inherit;
+      }
     }
   
     h3 {
@@ -64,7 +101,7 @@
     border: none;
     padding: 5px 10px;
     border-radius: 4px;
-    margin-top: -20px;
+    margin-top: 20px;
     margin-left: 20px;
     margin-right: 20px;
     margin-bottom: 20px;

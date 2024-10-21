@@ -49,6 +49,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [courseTitle, setCourseTitle] = useState<string | null>(null);
   const [allLessonsCompleted, setAllLessonsCompleted] = useState(false);
   const [examId, setExamId] = useState<number | null>(null);
+  const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null); // New state for current subtopic
+  const [currentTopic, setCurrentTopic] = useState<string | null>(null);
 
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
@@ -107,14 +109,28 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     checkAllLessonsCompleted();
   }, [lessons]);
 
-  const fetchPages = async (lessonId: string) => {
+  const fetchPages = async (subtopicId: string) => {
     try {
-      const response = await axiosInstance.get(`/pages/${lessonId}/`);
+      const response = await axiosInstance.get(`/pages/${subtopicId}/`);
       setPages(response.data);
       setCurrentPage(0);
     } catch (error) {
       console.error("Error fetching pages:", error);
     }
+  };
+
+  const handleSubtopicClick = (subtopicId: string) => {
+    console.log('Subtopic clicked:', subtopicId); // Add this line for debugging
+    setCurrentSubtopic(subtopicId); // Set the current subtopic
+    fetchPages(subtopicId); // Fetch pages for the clicked subtopic
+    
+  };
+
+  const handleTopicClick = (subtopicId: string) => {
+    console.log('Topic clicked:', subtopicId); // Add this line for debugging
+    setCurrentSubtopic(subtopicId); // Set the current subtopic
+    fetchPages(subtopicId); // Fetch pages for the clicked subtopic
+    
   };
 
   const fetchQuizResult = async (quizId: string) => {
@@ -217,12 +233,13 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             <Syllabus
               lessons={lessons}
               onLessonClick={handleLessonClick}
-              onExamClick={handleExamClick}
-              currentLessonIndex={currentLessonIndex}
+              onSubtopicClick={handleSubtopicClick}
+              onTopicClick={handleTopicClick}
+              currentLesson={currentLesson}
+              currentSubtopic={currentSubtopic} // Pass currentSubtopic
               classId={classId.toString()}
               courseId={courseId} 
             />
-
           </div>
         )}
 

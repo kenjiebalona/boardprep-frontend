@@ -17,6 +17,7 @@ interface Specialization {
   id: string;
   name: string;
 }
+
 interface SyllabusProps {
   lessons: Lesson[];
   onLessonClick: (lessonId: string) => Promise<void>;
@@ -66,7 +67,6 @@ interface Subtopic {
   order: number;
 }
 
-
 function CourseDetails() {
   const { courseId } = useParams<{ courseId: string }>();
   const [topics, setTopics] = useState([]);
@@ -90,7 +90,50 @@ function CourseDetails() {
   const [lessonsLoaded, setLessonsLoaded] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [availableSpecializations, setAvailableSpecializations] = useState<Specialization[]>([]);
- 
+  const [blockType, setBlockType] = useState<string | null>(null);
+  const [difficulty, setDifficulty] = useState<string | null>(null);
+  const [showBlockForm, setShowBlockForm] = useState(false);
+
+  const handleCreateBlockClick = () => {
+    setShowBlockForm(true);
+  };
+
+  const handleBlockTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBlockType(event.target.value);
+  };
+
+  const handleDifficultyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDifficulty(event.target.value);
+  };
+
+  const handleConfirmBlock = async () => {
+    if (!blockType || !difficulty) {
+      alert("Please select both block type and difficulty.");
+      return;
+    }
+
+    console.log("Current Page ID:", currentPage);
+
+    try {
+      const payload = {
+        blocks: [
+          {
+            block_type: blockType,
+            difficulty: difficulty,
+            content: editorContent, // Include the content from BlockNote
+          },
+        ],
+        page: currentPage, // Replace with actual page ID dynamically
+      };
+
+      const response = await axiosInstance.post("/content-blocks/", payload); // Ensure correct API route
+      console.log("Blocks created successfully:", response.data);
+      setShowBlockForm(false);
+    } catch (error) {
+      console.error("Error creating blocks:", error);
+    }
+  };
+
   
 async function uploadFile(file: File) {
   const formData = new FormData();
@@ -256,24 +299,32 @@ async function uploadFile(file: File) {
     setOpenModal(null);
   };
 
-  const fetchPages = async (lessonId: String) => {
+  const fetchPages = async (subtopicId: string) => {
+    if (!subtopicId) {
+      console.error("Subtopic ID is undefined"); // Log if undefined
+      return;
+  }
+  
     try {
-      const response = await axiosInstance.get(`/pages/${lessonId}/`);
-      setPages(response.data);
+        const response = await axiosInstance.get(`/pages/${subtopicId}/`);
+        console.log("Fetched pages:", response.data); // Log the response
 
-      if (response.data.length > 0) {
-        setEditorContent(response.data[0].content);
-        setCurrentPage(0);
-        setIsNewPage(false);
-      } else {
-        setEditorContent([]);
-        setCurrentPage(0);
-        setIsNewPage(true);
-      }
+        setPages(response.data);
+
+        if (response.data.length > 0) {
+            setEditorContent(response.data[0].content);
+            setCurrentPage(response.data[0].page_number); // Use page_number as the current page ID
+            setIsNewPage(false);
+        } else {
+            setEditorContent([]);
+            setCurrentPage(0); // Reset current page if no pages are found
+            setIsNewPage(true);
+        }
     } catch (error) {
-      console.error("Error fetching pages:", error);
+        console.error("Error fetching pages:", error);
     }
-  };
+};
+
 
   const handleLessonClick = async (lessonId: string) => {
     setCurrentLesson(lessonId);
@@ -303,7 +354,13 @@ async function uploadFile(file: File) {
   
 
   const handleSubtopicClick = (subtopicId: string) => {
+    if (!subtopicId) {
+      console.error("Subtopic ID is undefined"); // Add a log for debugging
+      return;
+  }
     setCurrentSubtopic(subtopicId);
+    fetchPages(subtopicId);
+    setshowEditorContent(true);  // Call fetchPages with the selected subtopicId
   };
 
   const handlePageClick = async (event: { selected: number }) => {
@@ -400,6 +457,10 @@ async function uploadFile(file: File) {
     // props
   };
 
+  const handleCancelBlock = () => {
+    setShowBlockForm(false);  // assuming you use setShowBlockForm to manage form visibility
+  };
+
   return (
     <div className="dashboard-background">
       <header className="top-header">
@@ -463,6 +524,49 @@ async function uploadFile(file: File) {
             <button className="btnDets" onClick={handleNewPage}>
               Add New Page
             </button>
+          )}
+
+          {showEditorContent && (
+            <button className="btnDets3" onClick={handleCreateBlockClick}>
+              Create New Block
+            </button>
+          )}
+
+          {showEditorContent && showBlockForm && (
+            <div className="create-block-form">
+              <h3>Select Block Type</h3>
+              {['Objective', 'Lesson', 'Example'].map((type) => (
+                <div key={type}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="blockType"
+                      value={type}
+                      onChange={handleBlockTypeChange}
+                    />
+                    {type}
+                  </label>
+                </div>
+              ))}
+              <h3 className="diff-title">Select Difficulty</h3>
+              {['Beginner', 'Intermediate', 'Advanced'].map((level) => (
+                <div key={level}>
+                  <label>
+                    <input
+                      type="radio"
+                      name="difficulty"
+                      value={level}
+                      onChange={handleDifficultyChange}
+                    />
+                    {level}
+                  </label>
+                </div>
+              ))}
+              <div className="form-buttons">
+                <button className="btnDets2" onClick={handleConfirmBlock}>Create Block</button>
+                <button className="btnDets2" onClick={handleCancelBlock}>Cancel</button>
+              </div>
+            </div>
           )}
 
           {showEditorContent && (
