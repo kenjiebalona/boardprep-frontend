@@ -84,7 +84,7 @@ function Syllabus({
   };
 
   // Log the lessons array
-  console.log("Lessons data:", );
+  console.log("Lessons data:", lessons);
 
   return (
     <div className="syllabus-container">
@@ -167,7 +167,11 @@ function Syllabus({
                                 <div
                                   key={subtopic.subtopic_id}
                                   className={`subtopic-item ${currentSubtopic === subtopic.subtopic_id ? 'active' : ''}`}
-                                  onClick={() => handleSubtopicClick(subtopic.subtopic_id)}
+                                  onClick={() => {
+                                    console.log('Subtopic ID:', subtopic.subtopic_id);
+                                    onSubtopicClick(subtopic.subtopic_id);
+                                  }}
+                                  
                                   role="button"
                                   tabIndex={0}
                                 >
