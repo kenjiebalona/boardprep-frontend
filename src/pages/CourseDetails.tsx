@@ -13,6 +13,10 @@ import PublishModal from "../components/PublishModal";
 import Syllabus from "../components/Syllabus";
 import "../styles/details.scss";
 
+interface Objective {
+  text: string;
+}
+
 interface Specialization {
   id: string;
   name: string;
@@ -49,6 +53,7 @@ interface Topic {
   topic_title: string;
   order: number;
   subtopics: Subtopic[];
+  learning_objectives: Objective[];
 }
 
 interface Lesson {
@@ -58,7 +63,8 @@ interface Lesson {
   syllabus: string;
   completed: boolean;
   quiz_id: string;
-  topics: Topic[];  // Add this property to the Lesson interface
+  topics: Topic[]; 
+  learning_objectives: Objective[];
 }
 
 interface Subtopic {
@@ -313,7 +319,7 @@ async function uploadFile(file: File) {
 
         if (response.data.length > 0) {
             setEditorContent(response.data[0].content);
-            setCurrentPage(response.data[0].page_number); // Use page_number as the current page ID
+            setCurrentPage(response.data[0].page_number); 
             setIsNewPage(false);
         } else {
             setEditorContent([]);
@@ -354,13 +360,9 @@ async function uploadFile(file: File) {
   
 
   const handleSubtopicClick = (subtopicId: string) => {
-    if (!subtopicId) {
-      console.error("Subtopic ID is undefined"); // Add a log for debugging
-      return;
-  }
-    setCurrentSubtopic(subtopicId);
-    fetchPages(subtopicId);
-    setshowEditorContent(true);  // Call fetchPages with the selected subtopicId
+    setCurrentSubtopic(subtopicId);  
+    fetchPages(subtopicId);  
+    setshowEditorContent(true);  
   };
 
   const handlePageClick = async (event: { selected: number }) => {
@@ -390,11 +392,12 @@ async function uploadFile(file: File) {
   };
 
   const editor = useCreateBlockNote({
-    initialContent: editorContent.length ? editorContent : [
+    initialContent: editorContent && editorContent.length ? editorContent : [
       { type: "paragraph", content: "New page content" }
     ],
     uploadFile,
   });
+  
   
 
   const handleEditorChange = (event: any, editor: any) => {
