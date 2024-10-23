@@ -12,6 +12,7 @@ import LessonsModal from "../components/LessonsModal";
 import PublishModal from "../components/PublishModal";
 import Syllabus from "../components/Syllabus";
 import "../styles/details.scss";
+import { AxiosError } from "axios";
 
 interface Objective {
   text: string;
@@ -43,6 +44,7 @@ interface Course {
 }
 
 interface Page {
+  page_id: string;
   page_number: number;
   content: Block[];
   syllabus: string;
@@ -114,32 +116,71 @@ function CourseDetails() {
 
   const handleConfirmBlock = async () => {
     if (!blockType || !difficulty) {
-      alert("Please select both block type and difficulty.");
-      return;
+       alert("Please select both block type and difficulty.");
+       return;
     }
-
-    console.log("Current Page ID:", currentPage);
-
+ 
+    const formattedBlockType = blockType.toLowerCase();
+    const formattedDifficulty = difficulty.toLowerCase();
+ 
     try {
-      const payload = {
-        blocks: [
-          {
-            block_type: blockType,
-            difficulty: difficulty,
-            content: editorContent, // Include the content from BlockNote
-          },
-        ],
-        page: currentPage, // Replace with actual page ID dynamically
-      };
-
-      const response = await axiosInstance.post("/content-blocks/", payload); // Ensure correct API route
-      console.log("Blocks created successfully:", response.data);
-      setShowBlockForm(false);
-    } catch (error) {
-      console.error("Error creating blocks:", error);
+       console.log("Fetched pages:", pages);
+ 
+       if (pages.length === 0) {
+          alert("No pages available. Please fetch or create pages before adding blocks.");
+          return;
+       }
+ 
+       const currentPageData = pages.find(page => page.page_number === currentPage);
+       console.log("currentPageData:", currentPageData);
+ 
+       if (!currentPageData || !currentPageData.page_id) {
+          alert("Please select a valid page.");
+          console.error("Invalid currentPage value:", currentPage, "Pages available:", pages);
+          return;
+       }
+ 
+       const pageId = currentPageData.page_id;  
+       console.log("sadasdasda:", pageId);
+ 
+       const serializedContent = editorContent && editorContent.length ? JSON.stringify(editorContent) : "Default content";
+ 
+       const payload = {
+          page: pageId,  
+          blocks: [
+             {
+                block_type: formattedBlockType,
+                difficulty: formattedDifficulty,
+                content: serializedContent,
+                file: null,
+             },
+          ],
+       };
+ 
+       const fileInputElement = document.getElementById('fileUploadInput') as HTMLInputElement | null;
+ 
+       if (fileInputElement && fileInputElement.files && fileInputElement.files.length > 0) {
+          const file = fileInputElement.files[0];
+          const uploadedFile = await uploadFile(file);
+          payload.blocks[0].file = uploadedFile.url;
+       }
+ 
+       console.log("Payload to be sent:", payload);
+ 
+       const response = await axiosInstance.post("/content-blocks/", payload); 
+       console.log("Blocks created successfully:", response.data);
+       setShowBlockForm(false);
+ 
+    } catch (err) {
+       const error = err as AxiosError;
+       console.error("Error creating blocks:", error);
+       if (error.response) {
+          console.error("Response data:", error.response.data);
+       } else {
+          console.error("Error message:", error.message);
+       }
     }
-  };
-
+ }; 
   
 async function uploadFile(file: File) {
   const formData = new FormData();
