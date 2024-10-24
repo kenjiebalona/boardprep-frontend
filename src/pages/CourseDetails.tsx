@@ -339,13 +339,13 @@ async function uploadFile(file: File) {
 
   const fetchPages = async (subtopicId: string) => {
     if (!subtopicId) {
-      console.error("Subtopic ID is undefined"); // Log if undefined
+      console.error("Subtopic ID is undefined"); 
       return;
   }
   
     try {
         const response = await axiosInstance.get(`/pages/${subtopicId}/`);
-        console.log("Fetched pages:", response.data); // Log the response
+        console.log("Fetched pages:", response.data); 
 
         setPages(response.data);
         if (response.data.length > 0) {
@@ -353,10 +353,10 @@ async function uploadFile(file: File) {
             setCurrentPage(response.data[0].page_number); 
             setPageId(response.data[0].page_id); 
             setIsNewPage(false);
-            await fetchContentBlocks(currentPage); 
+            await fetchContentBlocks(response.data[0].page_number); 
         } else {
             setEditorContent([]);
-            setCurrentPage(0); // Reset current page if no pages are found
+            setCurrentPage(0); 
             setIsNewPage(true);
         }
     } catch (error) {
