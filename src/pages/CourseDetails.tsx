@@ -12,8 +12,14 @@ import LessonsModal from "../components/LessonsModal";
 import PublishModal from "../components/PublishModal";
 import Syllabus from "../components/Syllabus";
 import "../styles/details.scss";
-import { AxiosError } from "axios";
 
+interface BlockFormData {
+  page: number;
+  block_type: string;
+  difficulty: string;
+  content: string;
+  file: File | null;
+}
 interface Objective {
   text: string;
 }
@@ -83,6 +89,10 @@ function CourseDetails() {
   const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null)
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [pageId, setPageId] = useState(0);
+  const [block, setCurrentBlock] = useState(0);
+  const [contentBlocks, setContentBlocks] = useState<Block[]>([]);
+  const [hasBlock, setHasBlock] = useState(false);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentLesson, setCurrentLesson] = useState<string | null>(null);
   const [isSyllabusCollapsed, setIsSyllabusCollapsed] = useState(false);
@@ -102,6 +112,20 @@ function CourseDetails() {
   const [difficulty, setDifficulty] = useState<string | null>(null);
   const [showBlockForm, setShowBlockForm] = useState(false);
 
+  const fetchContentBlocks = async (pageId: number) => {
+    try {
+      const response = await axiosInstance.get(`/pages/${pageId}/content_blocks/`);
+      const blocks = response.data;
+      setContentBlocks(blocks);
+      setHasBlock(blocks.length > 0);  
+      if (blocks.length > 0) {
+        setEditorContent(blocks); 
+      }
+    } catch (error) {
+      console.error("Error fetching content blocks:", error);
+    }
+  };
+
   const handleCreateBlockClick = () => {
     setShowBlockForm(true);
   };
@@ -119,66 +143,33 @@ function CourseDetails() {
        alert("Please select both block type and difficulty.");
        return;
     }
- 
-    const formattedBlockType = blockType.toLowerCase();
-    const formattedDifficulty = difficulty.toLowerCase();
- 
+
+    console.log("Current Page ID:", pageId);
+    console.log("Editor content before sending:", editorContent);
+
     try {
-       console.log("Fetched pages:", pages);
- 
-       if (pages.length === 0) {
-          alert("No pages available. Please fetch or create pages before adding blocks.");
-          return;
-       }
- 
-       const currentPageData = pages.find(page => page.page_number === currentPage);
-       console.log("currentPageData:", currentPageData);
- 
-       if (!currentPageData || !currentPageData.page_id) {
-          alert("Please select a valid page.");
-          console.error("Invalid currentPage value:", currentPage, "Pages available:", pages);
-          return;
-       }
- 
-       const pageId = currentPageData.page_id;  
-       console.log("sadasdasda:", pageId);
- 
-       const serializedContent = editorContent && editorContent.length ? JSON.stringify(editorContent) : "Default content";
- 
-       const payload = {
-          page: pageId,  
-          blocks: [
-             {
-                block_type: formattedBlockType,
-                difficulty: formattedDifficulty,
-                content: serializedContent,
-                file: null,
-             },
-          ],
-       };
- 
-       const fileInputElement = document.getElementById('fileUploadInput') as HTMLInputElement | null;
- 
-       if (fileInputElement && fileInputElement.files && fileInputElement.files.length > 0) {
-          const file = fileInputElement.files[0];
-          const uploadedFile = await uploadFile(file);
-          payload.blocks[0].file = uploadedFile.url;
-       }
- 
-       console.log("Payload to be sent:", payload);
- 
-       const response = await axiosInstance.post("/content-blocks/", payload); 
-       console.log("Blocks created successfully:", response.data);
-       setShowBlockForm(false);
- 
-    } catch (err) {
-       const error = err as AxiosError;
-       console.error("Error creating blocks:", error);
-       if (error.response) {
-          console.error("Response data:", error.response.data);
-       } else {
-          console.error("Error message:", error.message);
-       }
+      const blockContent = editorContent && editorContent.length ? 
+      (typeof editorContent === 'string' ? editorContent : JSON.stringify(editorContent)) : 'No content';
+
+      const blockData: BlockFormData = {
+          page: pageId, 
+          block_type: blockType.toLowerCase(),
+          difficulty: difficulty.toLowerCase(),
+          content: blockContent,
+          file: null,
+      };
+
+      const payload = {
+          blocks: [blockData]
+      };
+
+      console.log(payload)
+      const response = await axiosInstance.post("/content-blocks/", payload); 
+      console.log("Blocks created successfully:", response.data);
+      setHasBlock(true); 
+      setShowBlockForm(false);
+    } catch (error) {
+      console.error("Error creating blocks:", error);
     }
  }; 
   
@@ -357,11 +348,12 @@ async function uploadFile(file: File) {
         console.log("Fetched pages:", response.data); // Log the response
 
         setPages(response.data);
-
         if (response.data.length > 0) {
             setEditorContent(response.data[0].content);
             setCurrentPage(response.data[0].page_number); 
+            setPageId(response.data[0].page_id); 
             setIsNewPage(false);
+            await fetchContentBlocks(currentPage); 
         } else {
             setEditorContent([]);
             setCurrentPage(0); // Reset current page if no pages are found
@@ -440,10 +432,9 @@ async function uploadFile(file: File) {
   });
   
   
-
-  const handleEditorChange = (event: any, editor: any) => {
-    const data = editor.getData();
-    setEditorContent(data);
+  const handleEditorChange = () => {
+    const data = editor.document;
+    setEditorContent(data || []);
     console.log("Editor content (should be HTML):", data);
   };
 
@@ -613,12 +604,11 @@ async function uploadFile(file: File) {
             </div>
           )}
 
-          {showEditorContent && (
-            <div className="blocknote-editor">
-                   <BlockNoteView editor={editor} />
-                  
-            </div>
-          )}
+        {hasBlock && (  // Condition to display the editor only if hasBlock is true
+              <div className="blocknote-editor">
+                <BlockNoteView editor={editor} onChange={handleEditorChange} />
+              </div>
+            )}
 
           {showEditorContent && pageCount > 1 && (
             <ReactPaginate

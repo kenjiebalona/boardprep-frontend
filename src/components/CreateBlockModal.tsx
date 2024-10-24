@@ -25,10 +25,10 @@ const CreateBlockModal: React.FC<CreateBlockModalProps> = ({ closeModal, lessonI
       await axiosInstance.post('/content-blocks/', {
         block_type: blockType,
         difficulty: difficulty,
-        lesson: lessonId, // Adjust this based on your backend requirement
+        lesson: lessonId, 
       });
-      onBlockCreated(); // Trigger a refresh or update
-      closeModal(); // Close the modal
+      onBlockCreated(); 
+      closeModal(); 
     } catch (error) {
       console.error("Error creating content block:", error);
     }
