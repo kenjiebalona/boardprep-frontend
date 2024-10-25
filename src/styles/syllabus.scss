@@ -34,25 +34,35 @@
     margin-left: 50px;
   }
 
-  .topic-item{
+  .topic-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
     margin-bottom: 15px;
     margin-left: 35px;
-    margin-top: 20px;
     margin-right: 35px;
-    background-color: black;
-    border-radius: 5px;
-    color: white;
     padding: 10px;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    margin-top: 15px;
+  
+    .chevron-icon {
+      margin-left: auto;
+      font-size: 1.2rem;
+    }
   }
 
   .subtopic-item{
     margin-left: 35px;
-    margin-top: 20px;
+    margin-top: 15px;
     margin-right: 35px;
     background-color: grey;
     border-radius: 5px;
     color: white;
     padding: 10px;
+    margin-bottom: 20px;
   }
   
   .lesson-item-wrapper {
@@ -69,13 +79,12 @@
     color: black;
     margin-bottom: 10px;
     position: relative;
-    cursor: pointer; /* Always set pointer cursor */
+    cursor: pointer; 
   
     &.disabled {
       cursor: not-allowed;
       color: #aaa;
   
-      // Allow content creators to still click
       &[data-user-type="C"] {
         cursor: pointer;
         color: inherit;

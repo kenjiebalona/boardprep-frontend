@@ -53,17 +53,18 @@ function Syllabus({
   currentTopic,
   currentSubtopic,
 }: SyllabusProps) {
-  const [dropdownState, setDropdownState] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [openLessonId, setOpenLessonId] = useState<string | null>(null);
+  const [openTopicId, setOpenTopicId] = useState<string | null>(null);
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
 
   const toggleDropdown = (lessonId: string) => {
-    setDropdownState((prevState) => ({
-      ...prevState,
-      [lessonId]: !prevState[lessonId],
-    }));
+    setOpenLessonId((prevLessonId) => (prevLessonId === lessonId ? null : lessonId));
+    console.log("Toggled openLessonId:", lessonId);
+  };
+
+  const toggleTopicDropdown = (topicId: string) => {
+    setOpenTopicId((prevTopicId) => (prevTopicId === topicId ? null : topicId));
   };
 
   const getButtonLabel = () => {
@@ -96,7 +97,6 @@ function Syllabus({
 
       <div className="lesson-list">
         {lessons.map((lesson) => {
-          // Log lesson objectives
           console.log(
             `Learning objectives for lesson "${lesson.lesson_title}":`,
             lesson.learning_objectives
@@ -119,14 +119,14 @@ function Syllabus({
                     {lesson.completed && (
                       <BsCheckCircleFill className="completed-icon" />
                     )}
-                    {dropdownState[lesson.lesson_id] ? (
+                    {openLessonId === lesson.lesson_id ? (
                       <FaChevronUp className="chevron-icon" />
                     ) : (
                       <FaChevronDown className="chevron-icon" />
                     )}
                   </div>
 
-                  {dropdownState[lesson.lesson_id] && (
+                  {openLessonId === lesson.lesson_id && (
                     <div className="topics-container">
                       {/* Render lesson objectives */}
                       {lesson.learning_objectives &&
@@ -158,11 +158,12 @@ function Syllabus({
                               className={`topic-item ${
                                 currentTopic === topic.topic_id ? "active" : ""
                               }`}
-                              onClick={() => handleTopicClick(topic.topic_id)}
+                              onClick={() => toggleTopicDropdown(topic.topic_id)}
                               role="button"
                               tabIndex={0}
                             >
                               <span>{topic.topic_title}</span>
+                              {openTopicId === topic.topic_id ? <FaChevronUp className="chevron-icon" /> : <FaChevronDown className="chevron-icon" />}
                             </div>
 
                             {/* Render topic objectives */}
@@ -180,22 +181,13 @@ function Syllabus({
                                 </div>
                               )}
 
+                            {openTopicId === topic.topic_id && (
                             <div className="subtopics-container">
                               {topic.subtopics.map((subtopic) => (
                                 <div
                                   key={subtopic.subtopic_id}
-                                  className={`subtopic-item ${
-                                    currentSubtopic === subtopic.subtopic_id
-                                      ? "active"
-                                      : ""
-                                  }`}
-                                  onClick={() => {
-                                    console.log(
-                                      "Subtopic ID:",
-                                      subtopic.subtopic_id
-                                    );
-                                    onSubtopicClick(subtopic.subtopic_id);
-                                  }}
+                                  className={`subtopic-item ${currentSubtopic === subtopic.subtopic_id ? "active" : ""}`}
+                                  onClick={() => onSubtopicClick(subtopic.subtopic_id)}
                                   role="button"
                                   tabIndex={0}
                                 >
@@ -203,18 +195,21 @@ function Syllabus({
                                 </div>
                               ))}
                             </div>
+                          )}
                           </div>
                         );
                       })}
                     </div>
                   )}
 
+                {userType !== "C" && (
                   <button
                     className="learn-button"
                     onClick={() => handleLessonClick(lesson.lesson_id)}
                   >
                     {getButtonLabel()}
                   </button>
+                )}
                 </div>
               </div>
             </div>
