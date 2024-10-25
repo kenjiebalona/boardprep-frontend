@@ -146,14 +146,11 @@ function CourseDetails() {
   const handleContentChange = (index: number, updatedContent: Block[]) => {
     const updatedBlocks = [...contentBlocks];
 
-    const updatedBlock: ExtendedBlock = {
+    updatedBlocks[index] = {
       ...(updatedContent[0] as ExtendedBlock),
-      block_type:
-        (updatedContent[0] as ExtendedBlock).block_type || "Unknown Type",
-      block_id: Number((updatedContent[0] as ExtendedBlock).block_id) || -1, // Convert to number and handle missing IDs
+      block_id: updatedBlocks[index].block_id,
+      block_type: updatedBlocks[index].block_type,
     };
-
-    updatedBlocks[index] = updatedBlock;
     setContentBlocks(updatedBlocks);
   };
 
@@ -678,7 +675,7 @@ function CourseDetails() {
           {showEditorContent &&
             hasBlock &&
             contentBlocks.map((block, index) => (
-              <div className="content-blocks" key={block.block_id || index}>
+              <div className="content-blocks" key={index}>
                 <div className="block-type-label">{block.block_type}</div>
                 <button
                   className="delete-block-btn"
@@ -688,7 +685,7 @@ function CourseDetails() {
                   -
                 </button>
                 <ContentBlockEditor
-                  key={block.block_id || index}
+                  key={index}
                   blockData={block}
                   onChange={(updatedContent) =>
                     handleContentChange(index, updatedContent)
