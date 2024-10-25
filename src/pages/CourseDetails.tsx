@@ -13,6 +13,7 @@ import LessonsModal from "../components/LessonsModal";
 import PublishModal from "../components/PublishModal";
 import Syllabus from "../components/Syllabus";
 import "../styles/details.scss";
+import { c } from "vite/dist/node/types.d-aGj9QkWt";
 
 interface BlockFormData {
   page: number;
@@ -148,8 +149,7 @@ function CourseDetails() {
 
     updatedBlocks[index] = {
       ...(updatedContent[0] as ExtendedBlock),
-      block_id: updatedBlocks[index].block_id,
-      block_type: updatedBlocks[index].block_type,
+      ...updatedBlocks[index],
     };
     setContentBlocks(updatedBlocks);
   };
@@ -293,7 +293,7 @@ function CourseDetails() {
           setCurrentTopic(firstTopic.topic_title);
           if (firstTopic.subtopics.length > 0) {
             const firstSubtopic = firstTopic.subtopics[0];
-            setCurrentSubtopic(firstSubtopic.subtopic_title);
+            setCurrentSubtopic(firstSubtopic.subtopic_id);
           }
         }
         await fetchPages(firstLesson.lesson_id);
@@ -423,7 +423,7 @@ function CourseDetails() {
       setCurrentTopic(firstTopic.topic_title);
       if (firstTopic.subtopics.length > 0) {
         const firstSubtopic = firstTopic.subtopics[0];
-        setCurrentSubtopic(firstSubtopic.subtopic_title);
+        setCurrentSubtopic(firstSubtopic.subtopic_id);
       }
     }
     await fetchPages(lessonId);
@@ -442,7 +442,7 @@ function CourseDetails() {
       selectedTopic.subtopics.length > 0
     ) {
       const firstSubtopic = selectedTopic.subtopics[0];
-      setCurrentSubtopic(firstSubtopic.subtopic_title);
+      setCurrentSubtopic(firstSubtopic.subtopic_id);
     }
   };
 
@@ -502,21 +502,18 @@ function CourseDetails() {
   };
 
   const saveEditorContent = async () => {
-    if (!currentLesson || !syllabusId) {
-      console.error("No current lesson or syllabus ID selected");
-      return;
-    }
-
     const pageId = isNewPage ? pages.length + 1 : currentPage + 1;
     const method = isNewPage ? "post" : "put";
-    const apiUrl = `/pages/${currentSubtopic}/`;
+    const apiUrl = `/pages/`;
 
     try {
       const payload = {
         page_number: pageId,
-        content: editor.document,
+        content_blocks: contentBlocks,
         subtopic: currentSubtopic,
       };
+
+      console.log("Payload:", payload);
 
       await axiosInstance[method](apiUrl, payload);
       console.log("Page saved successfully");
