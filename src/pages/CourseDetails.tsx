@@ -1,19 +1,18 @@
 import { Block } from "@blocknote/core";
 import "@blocknote/core/fonts/inter.css";
-import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { useEffect, useState } from "react";
+import { FaMinusCircle } from 'react-icons/fa';
 import ReactPaginate from "react-paginate";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
+import ContentBlockEditor from "../components/ContentBlockEditor";
 import CourseModal from "../components/CourseModal";
 import LessonsModal from "../components/LessonsModal";
 import PublishModal from "../components/PublishModal";
 import Syllabus from "../components/Syllabus";
 import "../styles/details.scss";
-import ContentBlockEditor from "../components/ContentBlockEditor";
-import { FaMinusCircle } from 'react-icons/fa'; 
 
 interface BlockFormData {
   page: number;
@@ -394,7 +393,7 @@ async function uploadFile(file: File) {
             setCurrentPage(response.data[0].page_number); 
             setPageId(response.data[0].page_id); 
             setIsNewPage(false);
-            await fetchContentBlocks(response.data[0].page_number); 
+            await fetchContentBlocks(response.data[0].page_id); 
         } else {
             setEditorContent([]);
             setCurrentPage(0); 
