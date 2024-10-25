@@ -84,7 +84,7 @@ interface Subtopic {
 
 type ExtendedBlock = Block & {
   block_type: string;
-  block_id: string;
+  block_id: number;
 };
 
 function CourseDetails() {
@@ -125,7 +125,7 @@ function CourseDetails() {
       const blocks: ExtendedBlock[] = response.data.map((block: any) => ({
         ...block,
         block_type: block.block_type || 'Unknown Type',
-        block_id: block.block_id,        
+        block_id: Number(block.block_id),        
       }) as ExtendedBlock);
   
       setContentBlocks(blocks);
@@ -142,7 +142,7 @@ function CourseDetails() {
     const updatedBlock: ExtendedBlock = {
       ...(updatedContent[0] as ExtendedBlock),
       block_type: (updatedContent[0] as ExtendedBlock).block_type || 'Unknown Type',
-      block_id: (updatedContent[0] as ExtendedBlock).block_id || 'temp-id',
+      block_id: Number((updatedContent[0] as ExtendedBlock).block_id) || -1, // Convert to number and handle missing IDs
     };
   
     updatedBlocks[index] = updatedBlock;
@@ -183,9 +183,7 @@ function CourseDetails() {
     console.log("Editor content before sending:", editorContent);
   
     try {
-      const blockContent = editorContent && editorContent.length
-        ? (typeof editorContent === 'string' ? editorContent : JSON.stringify(editorContent))
-        : 'No content';
+      const blockContent = JSON.stringify("");
   
       const blockData: BlockFormData = {
         page: pageId,
@@ -659,14 +657,14 @@ async function uploadFile(file: File) {
             <div className="content-blocks" key={block.block_id || index}>
               <div className="block-type-label">
                 {block.block_type}
-                <button
+              </div>
+              <button
                   className="delete-block-btn"
                   onClick={() => handleDeleteBlock(Number(block.block_id))}
                   aria-label="Delete block"
                 >
-                </button>
-              </div>
-                <FaMinusCircle className="minus-circle"/>
+                  -
+              </button>
               <ContentBlockEditor
                 key={block.block_id || index}
                 blockData={block}
