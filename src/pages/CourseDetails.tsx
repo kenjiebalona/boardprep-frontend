@@ -293,7 +293,7 @@ function CourseDetails() {
           setCurrentTopic(firstTopic.topic_title);
           if (firstTopic.subtopics.length > 0) {
             const firstSubtopic = firstTopic.subtopics[0];
-            setCurrentSubtopic(firstSubtopic.subtopic_id);
+            setCurrentSubtopic(firstSubtopic.subtopic_title);
           }
         }
         await fetchPages(firstLesson.lesson_id);
@@ -423,7 +423,7 @@ function CourseDetails() {
       setCurrentTopic(firstTopic.topic_title);
       if (firstTopic.subtopics.length > 0) {
         const firstSubtopic = firstTopic.subtopics[0];
-        setCurrentSubtopic(firstSubtopic.subtopic_id);
+        setCurrentSubtopic(firstSubtopic.subtopic_title);
       }
     }
     await fetchPages(lessonId);
@@ -442,7 +442,7 @@ function CourseDetails() {
       selectedTopic.subtopics.length > 0
     ) {
       const firstSubtopic = selectedTopic.subtopics[0];
-      setCurrentSubtopic(firstSubtopic.subtopic_id);
+      setCurrentSubtopic(firstSubtopic.subtopic_title);
     }
   };
 
