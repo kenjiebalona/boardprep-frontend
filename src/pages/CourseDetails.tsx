@@ -1,13 +1,12 @@
 import { Block } from "@blocknote/core";
 import "@blocknote/core/fonts/inter.css";
+import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { useEffect, useState } from "react";
-import { FaMinusCircle } from 'react-icons/fa';
 import ReactPaginate from "react-paginate";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
-import ContentBlockEditor from "../components/ContentBlockEditor";
 import CourseModal from "../components/CourseModal";
 import LessonsModal from "../components/LessonsModal";
 import PublishModal from "../components/PublishModal";
@@ -47,7 +46,7 @@ interface Course {
   long_description: string;
   image: string;
   is_published: boolean;
-  specializations: string[]; 
+  specializations: string[];
 }
 
 interface Page {
@@ -72,7 +71,7 @@ interface Lesson {
   syllabus: string;
   completed: boolean;
   quiz_id: string;
-  topics: Topic[]; 
+  topics: Topic[];
   learning_objectives: Objective[];
 }
 
@@ -82,22 +81,17 @@ interface Subtopic {
   order: number;
 }
 
-type ExtendedBlock = Block & {
-  block_type: string;
-  block_id: string;
-};
-
 function CourseDetails() {
   const { courseId } = useParams<{ courseId: string }>();
   const [topics, setTopics] = useState([]);
   const [subtopics, setSubtopics] = useState([]);
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
-  const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null)
+  const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null);
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageId, setPageId] = useState(0);
   const [block, setCurrentBlock] = useState(0);
-  const [contentBlocks, setContentBlocks] = useState<ExtendedBlock[]>([]);
+  const [contentBlocks, setContentBlocks] = useState<Block[]>([]);
   const [hasBlock, setHasBlock] = useState(false);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentLesson, setCurrentLesson] = useState<string | null>(null);
@@ -105,7 +99,7 @@ function CourseDetails() {
   const pageCount = pages.length;
   const [showEditorContent, setshowEditorContent] = useState(false);
   const [classId, setClassId] = useState<string | null>(null);
-  const [editorContent, setEditorContent] = useState<ExtendedBlock[]>([]);
+  const [editorContent, setEditorContent] = useState<Block[]>([]);
   const [isNewPage, setIsNewPage] = useState(false);
   const [syllabusId, setSyllabusId] = useState("");
   const [courseData, setCourseData] = useState<Course | null>(null);
@@ -113,63 +107,42 @@ function CourseDetails() {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [lessonsLoaded, setLessonsLoaded] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
-  const [availableSpecializations, setAvailableSpecializations] = useState<Specialization[]>([]);
+  const [availableSpecializations, setAvailableSpecializations] = useState<
+    Specialization[]
+  >([]);
   const [blockType, setBlockType] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
   const [showBlockForm, setShowBlockForm] = useState(false);
 
   const fetchContentBlocks = async (pageId: number) => {
     try {
-      const response = await axiosInstance.get(`/pages/${pageId}/content_blocks/`);
-  
-      const blocks: ExtendedBlock[] = response.data.map((block: any) => ({
-        ...block,
-        block_type: block.block_type || 'Unknown Type',
-        block_id: block.block_id,        
-      }) as ExtendedBlock);
-  
+      const response = await axiosInstance.get(
+        `/pages/${pageId}/content_blocks/`
+      );
+      const blocks = response.data;
       setContentBlocks(blocks);
       setHasBlock(blocks.length > 0);
-      setEditorContent(blocks);
+      if (blocks.length > 0) {
+        setEditorContent(blocks);
+      }
     } catch (error) {
       console.error("Error fetching content blocks:", error);
     }
   };
 
-  const handleContentChange = (index: number, updatedContent: Block[]) => {
-    const updatedBlocks = [...contentBlocks];
-  
-    const updatedBlock: ExtendedBlock = {
-      ...(updatedContent[0] as ExtendedBlock),
-      block_type: (updatedContent[0] as ExtendedBlock).block_type || 'Unknown Type',
-      block_id: (updatedContent[0] as ExtendedBlock).block_id || 'temp-id',
-    };
-  
-    updatedBlocks[index] = updatedBlock;
-    setContentBlocks(updatedBlocks);
-  };
-
-  const handleDeleteBlock = async (blockId: number) => {
-    try {
-      await axiosInstance.delete(`/content-blocks/${blockId}/`);
-      console.log(`Block with ID ${blockId} deleted successfully from the database.`);
-
-      setContentBlocks((prevBlocks) => prevBlocks.filter((block) => Number(block.block_id) !== blockId));
-    } catch (error) {
-      console.error("Error deleting block:", error);
-      alert("Failed to delete the block. Please try again.");
-    }
-};
-
   const handleCreateBlockClick = () => {
     setShowBlockForm(true);
   };
 
-  const handleBlockTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBlockTypeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setBlockType(event.target.value);
   };
 
-  const handleDifficultyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDifficultyChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setDifficulty(event.target.value);
   };
 
@@ -178,15 +151,18 @@ function CourseDetails() {
       alert("Please select both block type and difficulty.");
       return;
     }
-  
+
     console.log("Current Page ID:", pageId);
     console.log("Editor content before sending:", editorContent);
-  
+
     try {
-      const blockContent = editorContent && editorContent.length
-        ? (typeof editorContent === 'string' ? editorContent : JSON.stringify(editorContent))
-        : 'No content';
-  
+      const blockContent =
+        editorContent && editorContent.length
+          ? typeof editorContent === "string"
+            ? editorContent
+            : JSON.stringify(editorContent)
+          : "No content";
+
       const blockData: BlockFormData = {
         page: pageId,
         block_type: blockType.toLowerCase(),
@@ -194,49 +170,44 @@ function CourseDetails() {
         content: blockContent,
         file: null,
       };
-  
-      const payload = { blocks: [blockData] };
-  
-      console.log("Payload:", payload);
+
+      const payload = {
+        blocks: [blockData],
+      };
+
+      console.log(payload);
       const response = await axiosInstance.post("/content-blocks/", payload);
-  
-      const createdBlock = response.data.blocks[0];  
-      console.log("Block created successfully:", createdBlock);
-  
-      setContentBlocks((prevBlocks) => [...prevBlocks, createdBlock]);
-      setEditorContent((prevContent) => [...prevContent, createdBlock]);
-  
+      console.log("Blocks created successfully:", response.data);
       setHasBlock(true);
       setShowBlockForm(false);
     } catch (error) {
       console.error("Error creating blocks:", error);
     }
   };
-  
-async function uploadFile(file: File) {
-  const formData = new FormData();
-  formData.append("upload", file);
 
-  try {
-    const response = await axiosInstance.post("/upload_file/", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    
-    const uploadedFileUrl = response.data.url;
-    const isImage = file.type.startsWith("image/");
-    
-    return {
-      url: uploadedFileUrl,
-      isImage,  
-    };
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    throw new Error("File upload failed");
+  async function uploadFile(file: File) {
+    const formData = new FormData();
+    formData.append("upload", file);
+
+    try {
+      const response = await axiosInstance.post("/upload_file/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const uploadedFileUrl = response.data.url;
+      const isImage = file.type.startsWith("image/");
+
+      return {
+        url: uploadedFileUrl,
+        isImage,
+      };
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      throw new Error("File upload failed");
+    }
   }
-}
-
 
   const onUpdateDashboard = async () => {
     fetchSyllabus();
@@ -252,7 +223,6 @@ async function uploadFile(file: File) {
       handleOpenLessonModal();
     }
   }, [lessons, lessonsLoaded]);
-
 
   useEffect(() => {
     if (courseId) {
@@ -271,7 +241,7 @@ async function uploadFile(file: File) {
         ...lesson,
         completed: false,
         quiz_id: lesson.quiz_id || "",
-        topics: lesson.topics || [] 
+        topics: lesson.topics || [],
       }));
       console.log(updatedLessons);
       setLessons(updatedLessons);
@@ -302,7 +272,6 @@ async function uploadFile(file: File) {
       console.error("Error fetching specializations:", error);
     }
   };
-  
 
   const fetchSyllabus = async () => {
     try {
@@ -322,7 +291,6 @@ async function uploadFile(file: File) {
       fetchSyllabus();
     }
   }, [courseId]);
-  
 
   const handleCheckboxChange = () => {
     setIsSyllabusCollapsed(!isSyllabusCollapsed);
@@ -379,36 +347,39 @@ async function uploadFile(file: File) {
 
   const fetchPages = async (subtopicId: string) => {
     if (!subtopicId) {
-      console.error("Subtopic ID is undefined"); 
+      console.error("Subtopic ID is undefined");
       return;
-  }
-  
-    try {
-        const response = await axiosInstance.get(`/pages/${subtopicId}/`);
-        console.log("Fetched pages:", response.data); 
-
-        setPages(response.data);
-        if (response.data.length > 0) {
-            setEditorContent(response.data[0].content);
-            setCurrentPage(response.data[0].page_number); 
-            setPageId(response.data[0].page_id); 
-            setIsNewPage(false);
-            await fetchContentBlocks(response.data[0].page_id); 
-        } else {
-            setEditorContent([]);
-            setCurrentPage(0); 
-            setIsNewPage(true);
-        }
-    } catch (error) {
-        console.error("Error fetching pages:", error);
     }
-};
 
+    try {
+      const response = await axiosInstance.get(`/pages/${subtopicId}/`);
+      console.log("Fetched pages:", response.data);
+
+      setPages(response.data);
+      if (response.data.length > 0) {
+        setEditorContent(response.data[0].content);
+        setCurrentPage(response.data[0].page_number);
+        setPageId(response.data[0].page_id);
+        setIsNewPage(false);
+        await fetchContentBlocks(response.data[0].page_number);
+      } else {
+        setEditorContent([]);
+        setCurrentPage(0);
+        setIsNewPage(true);
+      }
+    } catch (error) {
+      console.error("Error fetching pages:", error);
+    }
+  };
 
   const handleLessonClick = async (lessonId: string) => {
     setCurrentLesson(lessonId);
-    const selectedLesson = lessons.find(l => l.lesson_id === lessonId);
-    if (selectedLesson && Array.isArray(selectedLesson.topics) && selectedLesson.topics.length > 0) {
+    const selectedLesson = lessons.find((l) => l.lesson_id === lessonId);
+    if (
+      selectedLesson &&
+      Array.isArray(selectedLesson.topics) &&
+      selectedLesson.topics.length > 0
+    ) {
       const firstTopic = selectedLesson.topics[0];
       setCurrentTopic(firstTopic.topic_title);
       if (firstTopic.subtopics.length > 0) {
@@ -417,25 +388,29 @@ async function uploadFile(file: File) {
       }
     }
     await fetchPages(lessonId);
-    setshowEditorContent(true); 
+    setshowEditorContent(true);
   };
-
 
   const handleTopicClick = (topicId: string) => {
     setCurrentTopic(topicId);
-    const selectedLesson = lessons.find(l => l.lesson_id === currentLesson);
-    const selectedTopic = selectedLesson?.topics.find(t => t.topic_title === topicId);
-    if (selectedTopic && Array.isArray(selectedTopic.subtopics) && selectedTopic.subtopics.length > 0) {
+    const selectedLesson = lessons.find((l) => l.lesson_id === currentLesson);
+    const selectedTopic = selectedLesson?.topics.find(
+      (t) => t.topic_title === topicId
+    );
+    if (
+      selectedTopic &&
+      Array.isArray(selectedTopic.subtopics) &&
+      selectedTopic.subtopics.length > 0
+    ) {
       const firstSubtopic = selectedTopic.subtopics[0];
       setCurrentSubtopic(firstSubtopic.subtopic_title);
     }
   };
-  
 
   const handleSubtopicClick = (subtopicId: string) => {
-    setCurrentSubtopic(subtopicId);  
-    fetchPages(subtopicId);  
-    setshowEditorContent(true);  
+    setCurrentSubtopic(subtopicId);
+    fetchPages(subtopicId);
+    setshowEditorContent(true);
   };
 
   const handlePageClick = async (event: { selected: number }) => {
@@ -465,27 +440,18 @@ async function uploadFile(file: File) {
   };
 
   const editor = useCreateBlockNote({
-    initialContent: editorContent && editorContent.length ? editorContent : [
-      { type: "paragraph", content: "New page content" }
-    ],
+    initialContent:
+      editorContent && editorContent.length
+        ? editorContent
+        : [{ type: "paragraph", content: "New page content" }],
     uploadFile,
   });
-  
-  
+
   const handleEditorChange = () => {
     const data = editor.document;
-
-    const extendedBlocks = data.map((block: Block) => {
-        return {
-            ...(block as ExtendedBlock), 
-            block_type: (block as ExtendedBlock).block_type || 'Unknown Type', 
-            block_id: (block as ExtendedBlock).block_id || -1, 
-        } as ExtendedBlock;
-    });
-
-    setEditorContent(extendedBlocks);
-    console.log("Editor content (should be HTML):", extendedBlocks);
-};
+    setEditorContent(data || []);
+    console.log("Editor content (should be HTML):", data);
+  };
 
   const saveEditorContent = async () => {
     if (!currentLesson || !syllabusId) {
@@ -499,9 +465,9 @@ async function uploadFile(file: File) {
 
     try {
       const payload = {
-        page_number: pageId,      
-        content: editor.document, 
-        subtopic: currentSubtopic
+        page_number: pageId,
+        content: editor.document,
+        subtopic: currentSubtopic,
       };
 
       await axiosInstance[method](apiUrl, payload);
@@ -530,11 +496,10 @@ async function uploadFile(file: File) {
     toolbar: ["mediaEmbed"],
   };
 
-
   console.log("PageCount:", pageCount);
 
   const handleBackToSyllabus = () => {
-    setshowEditorContent(false); 
+    setshowEditorContent(false);
   };
 
   const handleExamClick = () => {
@@ -542,7 +507,7 @@ async function uploadFile(file: File) {
   };
 
   const handleCancelBlock = () => {
-    setShowBlockForm(false);  
+    setShowBlockForm(false); // assuming you use setShowBlockForm to manage form visibility
   };
 
   return (
@@ -585,17 +550,17 @@ async function uploadFile(file: File) {
         <div className="lesson-content-container">
           {!showEditorContent && (
             <Syllabus
-            lessons={lessons}
-            onLessonClick={handleLessonClick}
-            onTopicClick={handleTopicClick}
-            onSubtopicClick={handleSubtopicClick}
-            currentLesson={currentLesson}
-            currentTopic={currentTopic}
-            currentSubtopic={currentSubtopic}
-          />
+              lessons={lessons}
+              onLessonClick={handleLessonClick}
+              onTopicClick={handleTopicClick}
+              onSubtopicClick={handleSubtopicClick}
+              currentLesson={currentLesson}
+              currentTopic={currentTopic}
+              currentSubtopic={currentSubtopic}
+            />
           )}
-        {showEditorContent && (
-            <button className="btnDets" onClick={handleBackToSyllabus} >
+          {showEditorContent && (
+            <button className="btnDets" onClick={handleBackToSyllabus}>
               Back
             </button>
           )}
@@ -618,62 +583,50 @@ async function uploadFile(file: File) {
 
           {showEditorContent && showBlockForm && (
             <div className="create-block-form">
-              <h3 className="h-title">Select Block Type</h3>
-              <div className="option-group">
-                {['Objective', 'Lesson', 'Example'].map((type) => (
-                  <div key={type} className="option">
+              <h3>Select Block Type</h3>
+              {["Objective", "Lesson", "Example"].map((type) => (
+                <div key={type}>
+                  <label>
                     <input
                       type="radio"
                       name="blockType"
                       value={type}
                       onChange={handleBlockTypeChange}
                     />
-                    <label>{type}</label>
-                  </div>
-                ))}
-              </div>
-
+                    {type}
+                  </label>
+                </div>
+              ))}
               <h3 className="diff-title">Select Difficulty</h3>
-              <div className="option-group">
-                {['Beginner', 'Intermediate', 'Advanced'].map((level) => (
-                  <div key={level} className="option">
+              {["Beginner", "Intermediate", "Advanced"].map((level) => (
+                <div key={level}>
+                  <label>
                     <input
                       type="radio"
                       name="difficulty"
                       value={level}
                       onChange={handleDifficultyChange}
                     />
-                    <label className="input">{level}</label>
-                  </div>
-                ))}
-              </div>
-
+                    {level}
+                  </label>
+                </div>
+              ))}
               <div className="form-buttons">
-                <button className="btnDets2" onClick={handleConfirmBlock}>Create Block</button>
-                <button className="btnDets2" onClick={handleCancelBlock}>Cancel</button>
+                <button className="btnDets2" onClick={handleConfirmBlock}>
+                  Create Block
+                </button>
+                <button className="btnDets2" onClick={handleCancelBlock}>
+                  Cancel
+                </button>
               </div>
             </div>
           )}
 
-          {showEditorContent && hasBlock && contentBlocks.map((block, index) => (
-            <div className="content-blocks" key={block.block_id || index}>
-              <div className="block-type-label">
-                {block.block_type}
-                <button
-                  className="delete-block-btn"
-                  onClick={() => handleDeleteBlock(Number(block.block_id))}
-                  aria-label="Delete block"
-                >
-                </button>
-              </div>
-                <FaMinusCircle className="minus-circle"/>
-              <ContentBlockEditor
-                key={block.block_id || index}
-                blockData={block}
-                onChange={(updatedContent) => handleContentChange(index, updatedContent)}
-              />
+          {hasBlock && ( // Condition to display the editor only if hasBlock is true
+            <div className="blocknote-editor">
+              <BlockNoteView editor={editor} onChange={handleEditorChange} />
             </div>
-          ))}
+          )}
 
           {showEditorContent && pageCount > 1 && (
             <ReactPaginate
@@ -687,35 +640,35 @@ async function uploadFile(file: File) {
               forcePage={currentPage}
             />
           )}
-          </div>
         </div>
-
-        {openModal === "course" && (
-          <CourseModal
-            closeModal={handleCloseModal}
-            course={courseData}
-            onUpdateDashboard={onUpdateDashboard}
-            availableSpecializations={availableSpecializations} 
-          />
-        )}
-
-        {openModal === "lesson" && (
-          <LessonsModal
-            closeModal={handleCloseModal}
-            syllabusId={syllabusId}
-            onUpdateDashboard={onUpdateDashboard}
-            initialLessonId={selectedLesson?.lesson_id}
-            initialLessonTitle={selectedLesson?.lesson_title}
-          />
-        )}
-        {showPublishModal && courseData && (
-          <PublishModal
-            closeModal={handleClosePublishModal}
-            onConfirmPublish={handleConfirmPublish}
-            courseData={courseData}
-          />
-        )}
       </div>
+
+      {openModal === "course" && (
+        <CourseModal
+          closeModal={handleCloseModal}
+          course={courseData}
+          onUpdateDashboard={onUpdateDashboard}
+          availableSpecializations={availableSpecializations}
+        />
+      )}
+
+      {openModal === "lesson" && (
+        <LessonsModal
+          closeModal={handleCloseModal}
+          syllabusId={syllabusId}
+          onUpdateDashboard={onUpdateDashboard}
+          initialLessonId={selectedLesson?.lesson_id}
+          initialLessonTitle={selectedLesson?.lesson_title}
+        />
+      )}
+      {showPublishModal && courseData && (
+        <PublishModal
+          closeModal={handleClosePublishModal}
+          onConfirmPublish={handleConfirmPublish}
+          courseData={courseData}
+        />
+      )}
+    </div>
   );
 }
 
