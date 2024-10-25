@@ -12,6 +12,8 @@ import LessonsModal from "../components/LessonsModal";
 import PublishModal from "../components/PublishModal";
 import Syllabus from "../components/Syllabus";
 import "../styles/details.scss";
+import ContentBlockEditor from "../components/ContentBlockEditor";
+import { FaMinusCircle } from 'react-icons/fa'; 
 
 interface BlockFormData {
   page: number;
@@ -81,6 +83,11 @@ interface Subtopic {
   order: number;
 }
 
+type ExtendedBlock = Block & {
+  block_type: string;
+  block_id: string;
+};
+
 function CourseDetails() {
   const { courseId } = useParams<{ courseId: string }>();
   const [topics, setTopics] = useState([]);
@@ -91,7 +98,7 @@ function CourseDetails() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageId, setPageId] = useState(0);
   const [block, setCurrentBlock] = useState(0);
-  const [contentBlocks, setContentBlocks] = useState<Block[]>([]);
+  const [contentBlocks, setContentBlocks] = useState<ExtendedBlock[]>([]);
   const [hasBlock, setHasBlock] = useState(false);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentLesson, setCurrentLesson] = useState<string | null>(null);
@@ -99,7 +106,7 @@ function CourseDetails() {
   const pageCount = pages.length;
   const [showEditorContent, setshowEditorContent] = useState(false);
   const [classId, setClassId] = useState<string | null>(null);
-  const [editorContent, setEditorContent] = useState<Block[]>([]);
+  const [editorContent, setEditorContent] = useState<ExtendedBlock[]>([]);
   const [isNewPage, setIsNewPage] = useState(false);
   const [syllabusId, setSyllabusId] = useState("");
   const [courseData, setCourseData] = useState<Course | null>(null);
@@ -115,16 +122,45 @@ function CourseDetails() {
   const fetchContentBlocks = async (pageId: number) => {
     try {
       const response = await axiosInstance.get(`/pages/${pageId}/content_blocks/`);
-      const blocks = response.data;
+  
+      const blocks: ExtendedBlock[] = response.data.map((block: any) => ({
+        ...block,
+        block_type: block.block_type || 'Unknown Type',
+        block_id: block.block_id,        
+      }) as ExtendedBlock);
+  
       setContentBlocks(blocks);
-      setHasBlock(blocks.length > 0);  
-      if (blocks.length > 0) {
-        setEditorContent(blocks); 
-      }
+      setHasBlock(blocks.length > 0);
+      setEditorContent(blocks);
     } catch (error) {
       console.error("Error fetching content blocks:", error);
     }
   };
+
+  const handleContentChange = (index: number, updatedContent: Block[]) => {
+    const updatedBlocks = [...contentBlocks];
+  
+    const updatedBlock: ExtendedBlock = {
+      ...(updatedContent[0] as ExtendedBlock),
+      block_type: (updatedContent[0] as ExtendedBlock).block_type || 'Unknown Type',
+      block_id: (updatedContent[0] as ExtendedBlock).block_id || 'temp-id',
+    };
+  
+    updatedBlocks[index] = updatedBlock;
+    setContentBlocks(updatedBlocks);
+  };
+
+  const handleDeleteBlock = async (blockId: number) => {
+    try {
+      await axiosInstance.delete(`/content-blocks/${blockId}/`);
+      console.log(`Block with ID ${blockId} deleted successfully from the database.`);
+
+      setContentBlocks((prevBlocks) => prevBlocks.filter((block) => Number(block.block_id) !== blockId));
+    } catch (error) {
+      console.error("Error deleting block:", error);
+      alert("Failed to delete the block. Please try again.");
+    }
+};
 
   const handleCreateBlockClick = () => {
     setShowBlockForm(true);
@@ -140,38 +176,43 @@ function CourseDetails() {
 
   const handleConfirmBlock = async () => {
     if (!blockType || !difficulty) {
-       alert("Please select both block type and difficulty.");
-       return;
+      alert("Please select both block type and difficulty.");
+      return;
     }
-
+  
     console.log("Current Page ID:", pageId);
     console.log("Editor content before sending:", editorContent);
-
+  
     try {
-      const blockContent = editorContent && editorContent.length ? 
-      (typeof editorContent === 'string' ? editorContent : JSON.stringify(editorContent)) : 'No content';
-
+      const blockContent = editorContent && editorContent.length
+        ? (typeof editorContent === 'string' ? editorContent : JSON.stringify(editorContent))
+        : 'No content';
+  
       const blockData: BlockFormData = {
-          page: pageId, 
-          block_type: blockType.toLowerCase(),
-          difficulty: difficulty.toLowerCase(),
-          content: blockContent,
-          file: null,
+        page: pageId,
+        block_type: blockType.toLowerCase(),
+        difficulty: difficulty.toLowerCase(),
+        content: blockContent,
+        file: null,
       };
-
-      const payload = {
-          blocks: [blockData]
-      };
-
-      console.log(payload)
-      const response = await axiosInstance.post("/content-blocks/", payload); 
-      console.log("Blocks created successfully:", response.data);
-      setHasBlock(true); 
+  
+      const payload = { blocks: [blockData] };
+  
+      console.log("Payload:", payload);
+      const response = await axiosInstance.post("/content-blocks/", payload);
+  
+      const createdBlock = response.data.blocks[0];  
+      console.log("Block created successfully:", createdBlock);
+  
+      setContentBlocks((prevBlocks) => [...prevBlocks, createdBlock]);
+      setEditorContent((prevContent) => [...prevContent, createdBlock]);
+  
+      setHasBlock(true);
       setShowBlockForm(false);
     } catch (error) {
       console.error("Error creating blocks:", error);
     }
- }; 
+  };
   
 async function uploadFile(file: File) {
   const formData = new FormData();
@@ -434,9 +475,18 @@ async function uploadFile(file: File) {
   
   const handleEditorChange = () => {
     const data = editor.document;
-    setEditorContent(data || []);
-    console.log("Editor content (should be HTML):", data);
-  };
+
+    const extendedBlocks = data.map((block: Block) => {
+        return {
+            ...(block as ExtendedBlock), 
+            block_type: (block as ExtendedBlock).block_type || 'Unknown Type', 
+            block_id: (block as ExtendedBlock).block_id || -1, 
+        } as ExtendedBlock;
+    });
+
+    setEditorContent(extendedBlocks);
+    console.log("Editor content (should be HTML):", extendedBlocks);
+};
 
   const saveEditorContent = async () => {
     if (!currentLesson || !syllabusId) {
@@ -493,7 +543,7 @@ async function uploadFile(file: File) {
   };
 
   const handleCancelBlock = () => {
-    setShowBlockForm(false);  // assuming you use setShowBlockForm to manage form visibility
+    setShowBlockForm(false);  
   };
 
   return (
@@ -569,34 +619,36 @@ async function uploadFile(file: File) {
 
           {showEditorContent && showBlockForm && (
             <div className="create-block-form">
-              <h3>Select Block Type</h3>
-              {['Objective', 'Lesson', 'Example'].map((type) => (
-                <div key={type}>
-                  <label>
+              <h3 className="h-title">Select Block Type</h3>
+              <div className="option-group">
+                {['Objective', 'Lesson', 'Example'].map((type) => (
+                  <div key={type} className="option">
                     <input
                       type="radio"
                       name="blockType"
                       value={type}
                       onChange={handleBlockTypeChange}
                     />
-                    {type}
-                  </label>
-                </div>
-              ))}
+                    <label>{type}</label>
+                  </div>
+                ))}
+              </div>
+
               <h3 className="diff-title">Select Difficulty</h3>
-              {['Beginner', 'Intermediate', 'Advanced'].map((level) => (
-                <div key={level}>
-                  <label>
+              <div className="option-group">
+                {['Beginner', 'Intermediate', 'Advanced'].map((level) => (
+                  <div key={level} className="option">
                     <input
                       type="radio"
                       name="difficulty"
                       value={level}
                       onChange={handleDifficultyChange}
                     />
-                    {level}
-                  </label>
-                </div>
-              ))}
+                    <label className="input">{level}</label>
+                  </div>
+                ))}
+              </div>
+
               <div className="form-buttons">
                 <button className="btnDets2" onClick={handleConfirmBlock}>Create Block</button>
                 <button className="btnDets2" onClick={handleCancelBlock}>Cancel</button>
@@ -604,11 +656,25 @@ async function uploadFile(file: File) {
             </div>
           )}
 
-        {hasBlock && (  // Condition to display the editor only if hasBlock is true
-              <div className="blocknote-editor">
-                <BlockNoteView editor={editor} onChange={handleEditorChange} />
+          {showEditorContent && hasBlock && contentBlocks.map((block, index) => (
+            <div className="content-blocks" key={block.block_id || index}>
+              <div className="block-type-label">
+                {block.block_type}
+                <button
+                  className="delete-block-btn"
+                  onClick={() => handleDeleteBlock(Number(block.block_id))}
+                  aria-label="Delete block"
+                >
+                </button>
               </div>
-            )}
+                <FaMinusCircle className="minus-circle"/>
+              <ContentBlockEditor
+                key={block.block_id || index}
+                blockData={block}
+                onChange={(updatedContent) => handleContentChange(index, updatedContent)}
+              />
+            </div>
+          ))}
 
           {showEditorContent && pageCount > 1 && (
             <ReactPaginate

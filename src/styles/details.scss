@@ -21,13 +21,107 @@
   margin-left: 0px;
 }
 
-.create-block-form{
-  background-color: #7D67FF;
-  padding: 20px;
-  border-radius: 10px;
-  margin: 10px;
-  color: white;
+.create-block-form {
+  max-width: 320px;
+  margin: 10px auto;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  font-size: 14px;
+
+  .h-title {
+    margin-bottom: 8px;
+    font-size: 16px;
+    text-align: center;
+    background-color: #333;
+    color: white;
+    padding: 5px;
+    font-size: 15px;
+  }
+
+  .diff-title {
+    text-align: center;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    font-size: 16px;
+    background-color: #333;
+    color: white;
+    padding: 5px;
+    font-size: 15px;
+  }
+
+  .option-group {
+    display: flex;
+    justify-content: space-between;
+  }
+
+
+  .option {
+    display: flex;
+    align-items: center;
+
+    input[type='radio'] {
+      margin-right: 4px;
+    }
+  }
+
+  .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+
+    .btnDets2 {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:first-child {
+        border: none;
+        background-color: #7D67FF;
+        color: white;
+      }
+
+      &:last-child {
+        border: 1px solid #ddd;
+        background-color: #f8f8f8;
+        color: #333;
+      }
+    }
+  }
 }
+
+.input{
+  margin-right: 5px;
+}
+
+.minus-circle{
+  color:red;
+  margin-left: 10px;
+  margin-bottom: -2px ;
+}
+
+.block-type-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  margin-bottom: 5px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 5px;
+  color: #ffffff;
+  background-color: #6c63ff; 
+  border-radius: 12px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+  &::before {
+    content: '🧩'; 
+    margin-right: 6px;
+  }
+}
+
 
 .btnDets2{
   color: black;
@@ -54,6 +148,10 @@
     margin: 5px;
 }
 
+.content-blocks{
+  margin-bottom: 10px;
+}
+
 .diff-title{
   margin-top: 10px;
 }
@@ -75,14 +173,14 @@
 }
 
 .create-btn.published {
-  background-color: #b650f4; /* Green background for published state */
+  background-color: #b650f4; 
   color: white;
   cursor: not-allowed;
   border: 1px solid #893cb9;
 }
 
 .create-btn.published:hover {
-  background-color: #893cb9; /* Slightly darker green on hover */
+  background-color: #893cb9; 
 }
 
 
@@ -92,7 +190,7 @@
   height: 100%;
   position: relative;
   background-color: #0d0b1c;
-  overflow: auto; /* Enable scrolling for the entire page */
+  overflow: auto; 
 
   .lesson-content-container {
     background-color: #fefcff;  
