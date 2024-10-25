@@ -3,7 +3,6 @@ import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { useEffect, useState } from "react";
-import { FaMinusCircle } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
@@ -13,7 +12,6 @@ import LessonsModal from "../components/LessonsModal";
 import PublishModal from "../components/PublishModal";
 import Syllabus from "../components/Syllabus";
 import "../styles/details.scss";
-import { c } from "vite/dist/node/types.d-aGj9QkWt";
 
 interface BlockFormData {
   page: number;
@@ -94,6 +92,7 @@ function CourseDetails() {
   const [subtopics, setSubtopics] = useState([]);
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null);
+  const [subtopicId, SetSubtopicId] = useState(0);
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageId, setPageId] = useState(0);
@@ -391,7 +390,7 @@ function CourseDetails() {
     }
 
     try {
-      const response = await axiosInstance.get(`/pages/${subtopicId}/`);
+      const response = await axiosInstance.get(`/pages/by_subtopic/${subtopicId}/`);
       console.log("Fetched pages:", response.data);
 
       setPages(response.data);
@@ -504,13 +503,25 @@ function CourseDetails() {
   const saveEditorContent = async () => {
     const pageId = isNewPage ? pages.length + 1 : currentPage + 1;
     const method = isNewPage ? "post" : "put";
-    const apiUrl = `/pages/`;
+    const apiUrl = isNewPage ? `/pages/` : `/pages/${pageId}/`; 
+
+    console.log("Original ContentBlocks", contentBlocks);
+
+    const cleanedBlocks = contentBlocks.map((block) => ({
+      block_id: block.block_id,
+      block_type: block.block_type,
+      difficulty: difficulty,
+      content: editor.document,
+      file:  null,
+    }));
+
+    console.log("Cleaned ContentBlocks", cleanedBlocks);
 
     try {
       const payload = {
-        page_number: pageId,
+        page_number: currentPage,
         content_blocks: contentBlocks,
-        subtopic: currentSubtopic,
+        subtopic: subtopicId,
       };
 
       console.log("Payload:", payload);
