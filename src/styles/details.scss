@@ -97,10 +97,16 @@
   margin-right: 5px;
 }
 
-.minus-circle{
-  color:red;
-  margin-left: 10px;
-  margin-bottom: -2px ;
+.delete-block-btn{
+  height: 20px;
+  width: 20px;
+  margin-left: 11px;
+  margin-bottom: 10px;
+  background-color: red;
+  border-radius: 10px;
+  font-weight: bold;
+  color: white;
+  border-color: red;
 }
 
 .block-type-label {
@@ -177,6 +183,16 @@
   color: white;
   cursor: not-allowed;
   border: 1px solid #893cb9;
+}
+
+.blocknote-editor, 
+.blocknote-editor .ProseMirror, 
+.blocknote-editor .blocknote-content {
+  background-color: #ffffff !important;  /* Sets background to white */
+  color: #333333 !important;             /* Sets text color for contrast */
+  padding: 5px;                          /* Optional padding for spacing */
+  border-radius: 8px;                    /* Optional rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Optional: Light shadow for depth
 }
 
 .create-btn.published:hover {

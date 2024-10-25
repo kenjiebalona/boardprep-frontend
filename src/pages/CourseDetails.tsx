@@ -81,6 +81,11 @@ interface Subtopic {
   order: number;
 }
 
+type ExtendedBlock = Block & {
+  block_type: string;
+  block_id: number;
+};
+
 function CourseDetails() {
   const { courseId } = useParams<{ courseId: string }>();
   const [topics, setTopics] = useState([]);
@@ -116,10 +121,14 @@ function CourseDetails() {
 
   const fetchContentBlocks = async (pageId: number) => {
     try {
-      const response = await axiosInstance.get(
-        `/pages/${pageId}/content_blocks/`
-      );
-      const blocks = response.data;
+      const response = await axiosInstance.get(`/pages/${pageId}/content_blocks/`);
+  
+      const blocks: ExtendedBlock[] = response.data.map((block: any) => ({
+        ...block,
+        block_type: block.block_type || 'Unknown Type',
+        block_id: Number(block.block_id),        
+      }) as ExtendedBlock);
+  
       setContentBlocks(blocks);
       setHasBlock(blocks.length > 0);
       if (blocks.length > 0) {
@@ -129,6 +138,31 @@ function CourseDetails() {
       console.error("Error fetching content blocks:", error);
     }
   };
+
+  const handleContentChange = (index: number, updatedContent: Block[]) => {
+    const updatedBlocks = [...contentBlocks];
+  
+    const updatedBlock: ExtendedBlock = {
+      ...(updatedContent[0] as ExtendedBlock),
+      block_type: (updatedContent[0] as ExtendedBlock).block_type || 'Unknown Type',
+      block_id: Number((updatedContent[0] as ExtendedBlock).block_id) || -1, // Convert to number and handle missing IDs
+    };
+  
+    updatedBlocks[index] = updatedBlock;
+    setContentBlocks(updatedBlocks);
+  };
+
+  const handleDeleteBlock = async (blockId: number) => {
+    try {
+      await axiosInstance.delete(`/content-blocks/${blockId}/`);
+      console.log(`Block with ID ${blockId} deleted successfully from the database.`);
+
+      setContentBlocks((prevBlocks) => prevBlocks.filter((block) => Number(block.block_id) !== blockId));
+    } catch (error) {
+      console.error("Error deleting block:", error);
+      alert("Failed to delete the block. Please try again.");
+    }
+};
 
   const handleCreateBlockClick = () => {
     setShowBlockForm(true);
@@ -156,13 +190,8 @@ function CourseDetails() {
     console.log("Editor content before sending:", editorContent);
 
     try {
-      const blockContent =
-        editorContent && editorContent.length
-          ? typeof editorContent === "string"
-            ? editorContent
-            : JSON.stringify(editorContent)
-          : "No content";
-
+      const blockContent = JSON.stringify("");
+  
       const blockData: BlockFormData = {
         page: pageId,
         block_type: blockType.toLowerCase(),
@@ -622,9 +651,23 @@ function CourseDetails() {
             </div>
           )}
 
-          {hasBlock && ( // Condition to display the editor only if hasBlock is true
-            <div className="blocknote-editor">
-              <BlockNoteView editor={editor} onChange={handleEditorChange} />
+          {showEditorContent && hasBlock && contentBlocks.map((block, index) => (
+            <div className="content-blocks" key={block.block_id || index}>
+              <div className="block-type-label">
+                {block.block_type}
+              </div>
+              <button
+                  className="delete-block-btn"
+                  onClick={() => handleDeleteBlock(Number(block.block_id))}
+                  aria-label="Delete block"
+                >
+                  -
+              </button>
+              <ContentBlockEditor
+                key={block.block_id || index}
+                blockData={block}
+                onChange={(updatedContent) => handleContentChange(index, updatedContent)}
+              />
             </div>
           )}
 

@@ -1,6 +1,7 @@
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
 import { Block } from "@blocknote/core";
+import "../styles/details.scss";
 
 interface ContentBlockEditorProps {
   blockData: Block;
@@ -19,7 +20,7 @@ const ContentBlockEditor: React.FC<ContentBlockEditorProps> = ({ blockData, onCh
 
   return (
     <div className="blocknote-editor">
-      <BlockNoteView editor={editor} onChange={handleEditorChange} />
+      <BlockNoteView className="white-blocknote" editor={editor} onChange={handleEditorChange} />
     </div>
   );
 };
