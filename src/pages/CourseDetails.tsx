@@ -1,12 +1,13 @@
 import { Block } from "@blocknote/core";
 import "@blocknote/core/fonts/inter.css";
-import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { useEffect, useState } from "react";
+import { FaMinusCircle } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
+import ContentBlockEditor from "../components/ContentBlockEditor";
 import CourseModal from "../components/CourseModal";
 import LessonsModal from "../components/LessonsModal";
 import PublishModal from "../components/PublishModal";
@@ -96,7 +97,7 @@ function CourseDetails() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageId, setPageId] = useState(0);
   const [block, setCurrentBlock] = useState(0);
-  const [contentBlocks, setContentBlocks] = useState<Block[]>([]);
+  const [contentBlocks, setContentBlocks] = useState<ExtendedBlock[]>([]);
   const [hasBlock, setHasBlock] = useState(false);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentLesson, setCurrentLesson] = useState<string | null>(null);
@@ -104,7 +105,7 @@ function CourseDetails() {
   const pageCount = pages.length;
   const [showEditorContent, setshowEditorContent] = useState(false);
   const [classId, setClassId] = useState<string | null>(null);
-  const [editorContent, setEditorContent] = useState<Block[]>([]);
+  const [editorContent, setEditorContent] = useState<ExtendedBlock[]>([]);
   const [isNewPage, setIsNewPage] = useState(false);
   const [syllabusId, setSyllabusId] = useState("");
   const [courseData, setCourseData] = useState<Course | null>(null);
@@ -121,19 +122,22 @@ function CourseDetails() {
 
   const fetchContentBlocks = async (pageId: number) => {
     try {
-      const response = await axiosInstance.get(`/pages/${pageId}/content_blocks/`);
-  
-      const blocks: ExtendedBlock[] = response.data.map((block: any) => ({
-        ...block,
-        block_type: block.block_type || 'Unknown Type',
-        block_id: Number(block.block_id),        
-      }) as ExtendedBlock);
-  
+      const response = await axiosInstance.get(
+        `/pages/${pageId}/content_blocks/`
+      );
+
+      const blocks: ExtendedBlock[] = response.data.map(
+        (block: any) =>
+          ({
+            ...block,
+            block_type: block.block_type || "Unknown Type",
+            block_id: Number(block.block_id),
+          } as ExtendedBlock)
+      );
+
       setContentBlocks(blocks);
       setHasBlock(blocks.length > 0);
-      if (blocks.length > 0) {
-        setEditorContent(blocks);
-      }
+      setEditorContent(blocks);
     } catch (error) {
       console.error("Error fetching content blocks:", error);
     }
@@ -141,13 +145,14 @@ function CourseDetails() {
 
   const handleContentChange = (index: number, updatedContent: Block[]) => {
     const updatedBlocks = [...contentBlocks];
-  
+
     const updatedBlock: ExtendedBlock = {
       ...(updatedContent[0] as ExtendedBlock),
-      block_type: (updatedContent[0] as ExtendedBlock).block_type || 'Unknown Type',
+      block_type:
+        (updatedContent[0] as ExtendedBlock).block_type || "Unknown Type",
       block_id: Number((updatedContent[0] as ExtendedBlock).block_id) || -1, // Convert to number and handle missing IDs
     };
-  
+
     updatedBlocks[index] = updatedBlock;
     setContentBlocks(updatedBlocks);
   };
@@ -155,14 +160,18 @@ function CourseDetails() {
   const handleDeleteBlock = async (blockId: number) => {
     try {
       await axiosInstance.delete(`/content-blocks/${blockId}/`);
-      console.log(`Block with ID ${blockId} deleted successfully from the database.`);
+      console.log(
+        `Block with ID ${blockId} deleted successfully from the database.`
+      );
 
-      setContentBlocks((prevBlocks) => prevBlocks.filter((block) => Number(block.block_id) !== blockId));
+      setContentBlocks((prevBlocks) =>
+        prevBlocks.filter((block) => Number(block.block_id) !== blockId)
+      );
     } catch (error) {
       console.error("Error deleting block:", error);
       alert("Failed to delete the block. Please try again.");
     }
-};
+  };
 
   const handleCreateBlockClick = () => {
     setShowBlockForm(true);
@@ -191,7 +200,7 @@ function CourseDetails() {
 
     try {
       const blockContent = JSON.stringify("");
-  
+
       const blockData: BlockFormData = {
         page: pageId,
         block_type: blockType.toLowerCase(),
@@ -200,13 +209,17 @@ function CourseDetails() {
         file: null,
       };
 
-      const payload = {
-        blocks: [blockData],
-      };
+      const payload = { blocks: [blockData] };
 
-      console.log(payload);
+      console.log("Payload:", payload);
       const response = await axiosInstance.post("/content-blocks/", payload);
-      console.log("Blocks created successfully:", response.data);
+
+      const createdBlock = response.data.blocks[0];
+      console.log("Block created successfully:", createdBlock);
+
+      setContentBlocks((prevBlocks) => [...prevBlocks, createdBlock]);
+      setEditorContent((prevContent) => [...prevContent, createdBlock]);
+
       setHasBlock(true);
       setShowBlockForm(false);
     } catch (error) {
@@ -390,7 +403,7 @@ function CourseDetails() {
         setCurrentPage(response.data[0].page_number);
         setPageId(response.data[0].page_id);
         setIsNewPage(false);
-        await fetchContentBlocks(response.data[0].page_number);
+        await fetchContentBlocks(response.data[0].page_id);
       } else {
         setEditorContent([]);
         setCurrentPage(0);
@@ -478,8 +491,17 @@ function CourseDetails() {
 
   const handleEditorChange = () => {
     const data = editor.document;
-    setEditorContent(data || []);
-    console.log("Editor content (should be HTML):", data);
+
+    const extendedBlocks = data.map((block: Block) => {
+      return {
+        ...(block as ExtendedBlock),
+        block_type: (block as ExtendedBlock).block_type || "Unknown Type",
+        block_id: (block as ExtendedBlock).block_id || -1,
+      } as ExtendedBlock;
+    });
+
+    setEditorContent(extendedBlocks);
+    console.log("Editor content (should be HTML):", extendedBlocks);
   };
 
   const saveEditorContent = async () => {
@@ -536,7 +558,7 @@ function CourseDetails() {
   };
 
   const handleCancelBlock = () => {
-    setShowBlockForm(false); // assuming you use setShowBlockForm to manage form visibility
+    setShowBlockForm(false);
   };
 
   return (
@@ -612,34 +634,36 @@ function CourseDetails() {
 
           {showEditorContent && showBlockForm && (
             <div className="create-block-form">
-              <h3>Select Block Type</h3>
-              {["Objective", "Lesson", "Example"].map((type) => (
-                <div key={type}>
-                  <label>
+              <h3 className="h-title">Select Block Type</h3>
+              <div className="option-group">
+                {["Objective", "Lesson", "Example"].map((type) => (
+                  <div key={type} className="option">
                     <input
                       type="radio"
                       name="blockType"
                       value={type}
                       onChange={handleBlockTypeChange}
                     />
-                    {type}
-                  </label>
-                </div>
-              ))}
+                    <label>{type}</label>
+                  </div>
+                ))}
+              </div>
+
               <h3 className="diff-title">Select Difficulty</h3>
-              {["Beginner", "Intermediate", "Advanced"].map((level) => (
-                <div key={level}>
-                  <label>
+              <div className="option-group">
+                {["Beginner", "Intermediate", "Advanced"].map((level) => (
+                  <div key={level} className="option">
                     <input
                       type="radio"
                       name="difficulty"
                       value={level}
                       onChange={handleDifficultyChange}
                     />
-                    {level}
-                  </label>
-                </div>
-              ))}
+                    <label className="input">{level}</label>
+                  </div>
+                ))}
+              </div>
+
               <div className="form-buttons">
                 <button className="btnDets2" onClick={handleConfirmBlock}>
                   Create Block
@@ -651,25 +675,27 @@ function CourseDetails() {
             </div>
           )}
 
-          {showEditorContent && hasBlock && contentBlocks.map((block, index) => (
-            <div className="content-blocks" key={block.block_id || index}>
-              <div className="block-type-label">
-                {block.block_type}
-              </div>
-              <button
+          {showEditorContent &&
+            hasBlock &&
+            contentBlocks.map((block, index) => (
+              <div className="content-blocks" key={block.block_id || index}>
+                <div className="block-type-label">{block.block_type}</div>
+                <button
                   className="delete-block-btn"
                   onClick={() => handleDeleteBlock(Number(block.block_id))}
                   aria-label="Delete block"
                 >
                   -
-              </button>
-              <ContentBlockEditor
-                key={block.block_id || index}
-                blockData={block}
-                onChange={(updatedContent) => handleContentChange(index, updatedContent)}
-              />
-            </div>
-          )}
+                </button>
+                <ContentBlockEditor
+                  key={block.block_id || index}
+                  blockData={block}
+                  onChange={(updatedContent) =>
+                    handleContentChange(index, updatedContent)
+                  }
+                />
+              </div>
+            ))}
 
           {showEditorContent && pageCount > 1 && (
             <ReactPaginate
