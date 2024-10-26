@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import ReactPaginate from "react-paginate";
 import axiosInstance from "../axiosInstance";
-import Syllabus from "./Syllabus";
+import { useAppSelector } from '../redux/hooks';
+import { selectUser } from '../redux/slices/authSlice';
+import "../styles/materials.scss";
+import ExamContent from "./ExamContent";
 import LessonContent from "./Lessons";
 import QuizContent from "./QuizContent";
 import QuizResult from "./QuizResult";
-import ExamContent from "./ExamContent"; 
-import "../styles/materials.scss";
-import ReactPaginate from "react-paginate";
-import { useAppSelector } from '../redux/hooks';
-import { selectUser } from '../redux/slices/authSlice';
 
 interface Page {
   page_number: number;
@@ -227,21 +226,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   return (
     <div className="materials-page">
-      <div className="lesson-content-container">
-        {!showLessonContent && !showQuizContent && !showQuizResult && !showExamContent && (
-          <div className="syllabus-section">
-            <Syllabus
-              lessons={lessons}
-              onLessonClick={handleLessonClick}
-              onSubtopicClick={handleSubtopicClick}
-              onTopicClick={handleTopicClick}
-              currentLesson={currentLesson}
-              currentSubtopic={currentSubtopic} // Pass currentSubtopic
-              classId={classId.toString()}
-              courseId={courseId} 
-            />
-          </div>
-        )}
+      
+   
 
         {showLessonContent && currentLesson && pages.length > 0 && (
           <LessonContent 
@@ -304,7 +290,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         )}
       </div>
 
-    </div>
+
   );
 }
 
