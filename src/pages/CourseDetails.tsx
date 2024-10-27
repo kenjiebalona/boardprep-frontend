@@ -94,7 +94,7 @@ function CourseDetails() {
   const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null);
   const [subtopicId, SetSubtopicId] = useState(0);
   const [pages, setPages] = useState<Page[]>([]);
-  const [pageMapping, setPageMapping] = useState([]);
+  const [pageMapping, setPageMapping] = useState<{ [key: number]: string }>({});
   const [currentPage, setCurrentPage] = useState(0);
   const [pageId, setPageId] = useState(0);
   const [block, setCurrentBlock] = useState(0);
@@ -482,8 +482,8 @@ function CourseDetails() {
         if (response.data) {
           setEditorContent(response.data.content);
           setIsNewPage(false);
-          setPageId(newPageId); 
-          await fetchContentBlocks(newPageId); 
+          setPageId(Number(newPageId)); 
+          await fetchContentBlocks(Number(newPageId)); 
         }
       } catch (error: any) {}
     }
@@ -519,11 +519,34 @@ function CourseDetails() {
     
   };
 
-  const handleNewPage = () => {
-    setIsNewPage(true);
-    setEditorContent([]);
-    setCurrentPage(pages.length);
+  const handleNewPage = async () => {
+    try {
+      const response = await axiosInstance.post(`/pages/by_subtopic/${subtopicId}/`, {
+        page_number: pages.length,  
+        content_blocks: [],         
+        subtopic: subtopicId,
+      });
+  
+      const newPage = response.data;
+      setPages((prevPages) => [...prevPages, newPage]);
+      setPageMapping((prevMapping) => ({
+        ...prevMapping,
+        [newPage.page_number]: newPage.page_id,
+      }));
+  
+      setCurrentPage(newPage.page_number);
+      setPageId(newPage.page_id);
+      setIsNewPage(false);  
+      if (newPage.page_id) {
+        await fetchContentBlocks(newPage.page_id);
+      }
+  
+      console.log("New page created and added to the state:", newPage);
+    } catch (error) {
+      console.error("Error creating a new page:", error);
+    }
   };
+  
 
   const handleEditorReady = (editor: any) => {
     const toolbarContainer = document.querySelector(".toolbar-container");
