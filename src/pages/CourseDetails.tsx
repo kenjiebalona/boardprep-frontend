@@ -1,7 +1,4 @@
-import { Block } from "@blocknote/core";
-import "@blocknote/core/fonts/inter.css";
-import "@blocknote/mantine/style.css";
-import { useCreateBlockNote } from "@blocknote/react";
+
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import { useParams } from "react-router-dom";
@@ -19,6 +16,14 @@ interface BlockFormData {
   content: string;
   file: File | null;
 }
+
+interface ContentBlock {
+  block_id: number;
+  block_type: string;
+  difficulty: string;
+  content: string;
+}
+
 interface Objective {
   text: string;
 }
@@ -51,7 +56,7 @@ interface Course {
 interface Page {
   page_id: string;
   page_number: number;
-  content: Block[];
+  content: ContentBlock[];
   syllabus: string;
 }
 
@@ -80,10 +85,6 @@ interface Subtopic {
   order: number;
 }
 
-type ExtendedBlock = Block & {
-  block_type: string;
-  block_id: number;
-};
 
 function CourseDetails() {
   const { courseId } = useParams<{ courseId: string }>();
@@ -93,10 +94,11 @@ function CourseDetails() {
   const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null);
   const [subtopicId, SetSubtopicId] = useState(0);
   const [pages, setPages] = useState<Page[]>([]);
+  const [pageMapping, setPageMapping] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageId, setPageId] = useState(0);
   const [block, setCurrentBlock] = useState(0);
-  const [contentBlocks, setContentBlocks] = useState<ExtendedBlock[]>([]);
+  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([]);
   const [hasBlock, setHasBlock] = useState(false);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentLesson, setCurrentLesson] = useState<string | null>(null);
@@ -104,7 +106,7 @@ function CourseDetails() {
   const pageCount = pages.length;
   const [showEditorContent, setshowEditorContent] = useState(false);
   const [classId, setClassId] = useState<string | null>(null);
-  const [editorContent, setEditorContent] = useState<ExtendedBlock[]>([]);
+  const [editorContent, setEditorContent] = useState<ContentBlock[]>([]);
   const [isNewPage, setIsNewPage] = useState(false);
   const [syllabusId, setSyllabusId] = useState("");
   const [courseData, setCourseData] = useState<Course | null>(null);
@@ -122,17 +124,18 @@ function CourseDetails() {
 
   const fetchContentBlocks = async (pageId: number) => {
     try {
+      console.log("Fetching content blocks for page ID:", pageId);
       const response = await axiosInstance.get(
         `/pages/${pageId}/content_blocks/`
       );
 
-      const blocks: ExtendedBlock[] = response.data.map(
+      const blocks: ContentBlock[] = response.data.map(
         (block: any) =>
           ({
             ...block,
             block_type: block.block_type || "Unknown Type",
             block_id: Number(block.block_id),
-          } as ExtendedBlock)
+          } as ContentBlock)
       );
 
       setContentBlocks(blocks);
@@ -143,14 +146,18 @@ function CourseDetails() {
     }
   };
 
-  const handleContentChange = (id:any, updatedContent:any) => {
+  const handleContentChange = (id: number, updatedContent: string) => {
     const blockToUpdate = contentBlocks.find((b) => b.block_id === id);
     if (blockToUpdate) {
-      blockToUpdate.content = updatedContent; 
-      setContentBlocks([...contentBlocks]);
+      blockToUpdate.content = updatedContent;
+      setContentBlocks([...contentBlocks]); 
       console.log(`Block ${id} updated with new content: ${updatedContent}`);
+      console.log("Updated contentBlocks:", contentBlocks); 
+    } else {
+      console.error(`Block with ID ${id} not found`);
     }
   };
+  
   
   const handleDeleteBlock = async (blockId: number) => {
     try {
@@ -194,7 +201,7 @@ function CourseDetails() {
     console.log("Editor content before sending:", editorContent);
 
     try {
-      
+       
 
       const blockData: BlockFormData = {
         page: pageId,
@@ -393,7 +400,15 @@ function CourseDetails() {
       const response = await axiosInstance.get(`/pages/by_subtopic/${subtopicId}/`);
       console.log("Fetched pages:", response.data);
 
+      const fetchedPages = response.data;
+
+      const pageMapping = fetchedPages.reduce((acc: { [key: number]: string }, page: Page) => {
+        acc[page.page_number] = page.page_id;
+        return acc;
+      }, {});
+
       setPages(response.data);
+      setPageMapping(pageMapping);
       if (response.data.length > 0) {
         setEditorContent(response.data[0].content);
         setCurrentPage(response.data[0].page_number);
@@ -453,18 +468,22 @@ function CourseDetails() {
   };
 
   const handlePageClick = async (event: { selected: number }) => {
-    const newPageIndex = event.selected;
-    console.log("Page clicked, selected index:", newPageIndex);
-    setCurrentPage(newPageIndex);
-    setIsNewPage(true);
+    const newPageNumber = event.selected;
+    const newPageId = pageMapping[newPageNumber];
+
+    console.log("Page Number", newPageNumber)
+    console.log("Page ID", newPageId)
+    
+    setCurrentPage(newPageNumber);
+    setIsNewPage(false);
     if (currentLesson) {
       try {
-        const response = await axiosInstance.get(
-          `/pages/${currentLesson}/${newPageIndex + 1}/`
-        );
+        const response = await axiosInstance.get(`/pages/${newPageId}`)
         if (response.data) {
           setEditorContent(response.data.content);
           setIsNewPage(false);
+          setPageId(newPageId); 
+          await fetchContentBlocks(newPageId); 
         }
       } catch (error: any) {}
     }
@@ -478,43 +497,16 @@ function CourseDetails() {
     setShowPublishModal(false);
   };
 
-  const editor = useCreateBlockNote({
-    initialContent:
-      editorContent && editorContent.length
-        ? editorContent
-        : [{ type: "paragraph", content: "New page content" }],
-    uploadFile,
-  });
-
-  const handleEditorChange = () => {
-    contentBlocks.forEach((block, index) => {
-      const newContent = JSON.stringify(editor.document[index].content);
-      const id = editor.document[index].id
-      handleBlockContentChange(id, newContent);
-    });
-  };
-
-  const handleBlockContentChange = (id:string, newContent:string) => {
-    const block = editor.document.find((b) => b.id === id);
-    if (block) {
-      editor.updateBlock(block, { content: newContent });
-      console.log(`Block ${id} updated with new content: ${newContent}`);
-    } else {
-      console.error(`Block with ID ${id} not found`);
-    }
-  };
   
-
   const saveEditorContent = async () => {
-    const pageId = isNewPage ? pages.length + 1 : currentPage + 1;
-    const method = isNewPage ? "post" : "put";
-    const apiUrl = isNewPage ? `/pages/` : `/pages/${pageId}/`;
+    const method = contentBlocks.some(block => block.block_id) ? 'put' : 'post';
+    const apiUrl = `/content-blocks/by_page/${pageId}/`;
+    console.log("Curr Page", currentPage)
+    console.log("Page Id", pageId)
 
     try {
       const payload = {
-        page_number: currentPage,
         content_blocks: contentBlocks,
-        subtopic: subtopicId,
       };
 
       console.log("Payload:", payload);
@@ -524,6 +516,7 @@ function CourseDetails() {
     } catch (error) {
       console.error("Error saving page content:", error);
     }
+    
   };
 
   const handleNewPage = () => {
@@ -689,7 +682,8 @@ function CourseDetails() {
                   -
                 </button>
                 <TipTapEditor
-                  content={stringifiedContent}
+                  key={pageId} 
+                  content={block.content}
                   onChange={(updatedContent) => handleContentChange(block.block_id, updatedContent)}
                 />
               </div>
