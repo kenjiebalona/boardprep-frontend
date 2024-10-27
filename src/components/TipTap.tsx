@@ -1,3 +1,5 @@
+import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faCode, faEllipsisH, faHeading, faHighlighter, faImage, faItalic, faListOl, faListUl, faParagraph, faQuoteRight, faRedo, faStrikethrough, faTable, faTerminal, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import Image from '@tiptap/extension-image';
@@ -9,13 +11,13 @@ import TableRow from '@tiptap/extension-table-row';
 import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import {
-    BubbleMenu,
-    EditorContent,
-    FloatingMenu,
-    useEditor
+  BubbleMenu,
+  EditorContent,
+  FloatingMenu,
+  useEditor
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "../styles/tiptapeditor.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBold, faItalic, faStrikethrough, faCode, faEllipsisH, faQuoteRight, faHeading, faParagraph, faHighlighter, faTerminal, faTable, faImage, faUndo, faRedo, faListUl, faListOl, faAlignLeft, faAlignCenter, faAlignRight } from '@fortawesome/free-solid-svg-icons';
@@ -313,6 +315,12 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
       onChange(updatedContent);
     },
   });
+
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content, false); 
+    }
+  }, [content, editor]);
 
   if (!editor) {
     return null;
