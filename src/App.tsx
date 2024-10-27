@@ -1,5 +1,10 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import "./App.css";
 import Courselist from "./pages/Courselist";
 import "./styles/testing.scss";
@@ -31,6 +36,7 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import QuestionBank from "./pages/QuestionBank";
 import DailyChallenge from "./pages/DailyChallenge";
+import Preassessment from "./pages/Preassessment";
 // import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -42,7 +48,12 @@ function App() {
 
   const AppContent = () => {
     const location = useLocation();
-    const noSidebarRoutes = ["/home", "/content-creator", "/student", "/teacher"];
+    const noSidebarRoutes = [
+      "/home",
+      "/content-creator",
+      "/student",
+      "/teacher",
+    ];
     const shouldDisplaySidebar = !noSidebarRoutes.includes(location.pathname);
 
     return (
@@ -90,6 +101,13 @@ function App() {
                     <DailyChallenge />
                   </PrivateRoute>
                 }
+              />
+              <Route
+                path="/preassessment"
+                element={
+                <PrivateRoute>
+                  <Preassessment />
+                </PrivateRoute>}
               />
               <Route
                 path="/classes/:id"
