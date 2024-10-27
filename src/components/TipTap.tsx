@@ -19,6 +19,7 @@ import React, { useState } from 'react';
 import "../styles/tiptapeditor.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBold, faItalic, faStrikethrough, faCode, faEllipsisH, faQuoteRight, faHeading, faParagraph, faHighlighter, faTerminal, faTable, faImage, faUndo, faRedo, faListUl, faListOl, faAlignLeft, faAlignCenter, faAlignRight } from '@fortawesome/free-solid-svg-icons';
+import ResizeImage from 'tiptap-extension-resize-image'; 
 
 interface TipTapEditorProps {
   content: string;
@@ -29,6 +30,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
   const [headerDropdownOpen, setHeaderDropdownOpen] = useState(false); 
   const [tableDropdownOpen, setTableDropdownOpen] = useState(false);
   const [tableMenuVisible, setTableMenuVisible] = useState(false); 
+  const [imageDropdownOpen, setImageDropdownOpen] = useState(false); 
 
   if (!editor) {
     return null;
@@ -37,11 +39,19 @@ const MenuBar = ({ editor }: { editor: any }) => {
   const toggleHeaderDropdown = () => {
     setHeaderDropdownOpen(!headerDropdownOpen);
     setTableDropdownOpen(false);
+    setImageDropdownOpen(false);
+  };
+
+  const toggleImageDropdown = () => {
+    setImageDropdownOpen(!imageDropdownOpen);
+    setHeaderDropdownOpen(false);
+    setTableDropdownOpen(false);
   };
 
   const toggleTableDropdown = () => {
     setTableDropdownOpen(!tableDropdownOpen);
     setHeaderDropdownOpen(false); 
+    setImageDropdownOpen(false);
   };
 
   const handleHeading = (level: number) => {
@@ -54,6 +64,18 @@ const MenuBar = ({ editor }: { editor: any }) => {
       setTableMenuVisible(true);
     } else {
       setTableMenuVisible(false);
+    }
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Data = reader.result?.toString() || '';
+        editor.chain().focus().setImage({ src: base64Data }).run();
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -168,17 +190,40 @@ const MenuBar = ({ editor }: { editor: any }) => {
       </div>
 
       <div className="insert-buttons">
-        <button
-          onClick={() => {
-            const url = window.prompt('Enter image URL:');
-            if (url) {
-              editor.chain().focus().setImage({ src: url }).run();
-            }
-          }}
-          className="px-2 py-1 rounded"
-        >
+      <div className="dropdown-container2">
+        <button onClick={toggleImageDropdown} className={imageDropdownOpen ? 'active' : ''}>
           <FontAwesomeIcon icon={faImage} />
         </button>
+        {imageDropdownOpen && (
+          <div className="dropdown-menu">
+            <div
+              onClick={() => {
+                const url = window.prompt('Enter image URL:');
+                if (url) {
+                  editor.chain().focus().setImage({ src: url }).run();
+                }
+                setImageDropdownOpen(false);
+              }}
+            >
+              From URL...
+            </div>
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  handleImageUpload(event);
+                  setImageDropdownOpen(false);
+                }}
+                style={{ display: 'none' }}
+                id="image-upload"
+              />
+              <label htmlFor="image-upload">From Device...</label>
+            </div>
+          </div>
+        )}
+      </div>
+
         <button
           onClick={() => editor.chain().focus().undo().run()}
           className="px-2 py-1 rounded"
@@ -258,6 +303,7 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
       TableHeader,
       TableCell,
       Image,
+      ResizeImage, 
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure({ types: [ListItem.name] } as any)
     ],
