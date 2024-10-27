@@ -1,5 +1,3 @@
-import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faCode, faEllipsisH, faHeading, faHighlighter, faImage, faItalic, faListOl, faListUl, faParagraph, faQuoteRight, faRedo, faStrikethrough, faTable, faTerminal, faUndo } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import Image from '@tiptap/extension-image';
