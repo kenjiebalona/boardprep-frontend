@@ -715,8 +715,8 @@ function CourseDetails() {
 
           {showEditorContent && pageCount > 1 && (
             <ReactPaginate
-              previousLabel={currentPage > 0 ? "previous" : ""}
-              nextLabel={currentPage < pageCount - 1 ? "next" : ""}
+              previousLabel={currentPage > 0 ? "<" : ""}
+              nextLabel={currentPage < pageCount - 1 ? ">" : ""}
               breakLabel={"..."}
               pageCount={pageCount}
               onPageChange={handlePageClick}

@@ -155,7 +155,7 @@
 }
 
 .content-blocks{
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 .diff-title{
@@ -252,46 +252,60 @@
     max-width: 100%;
     height: auto;
   }
-    .pagination {
-      position: absolute; // Position it relative to lesson-content-container
-      top: 33rem; // Adjust as needed to position at the bottom
-      left: 50%;
-      transform: translateX(-50%);
-      overflow: hidden;
-      color:white !important;
-      background-color: white;
-      padding: 10px;
-       // Center horizontally
-    }
-    .pagination {
-      display: flex;
-      list-style: none;
-      overflow: hidden;
-      padding: 6px;
-      border-radius: 4px;
-      justify-content: center;
-      li {
-        margin: 0 5px;
-        overflow: hidden;
-        
-        a {
-          cursor: pointer;
-          padding: 5px 10px;
-          border: 2px solid black;
-          border-radius: 5px;
-        }
-        &.active a {
-          background-color: #5D3FD3;
-          color: white;
+  .pagination-container {
+    position: fixed; 
+    bottom: 20px; 
+    left: 50%;
+    transform: translateX(-50%); 
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    padding: 10px;
+    z-index: 999; 
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  
+  .pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    
+    li {
+      margin: 0 5px;
+  
+      a {
+        cursor: pointer;
+        padding: 3px 12px;
+        border: 2px solid transparent;
+        border-radius: 6px;
+        background-color: #f0f0f0; 
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        font-size: 13px; 
+        color: #333;
+        text-decoration: none;
+        font-weight: bold;
+  
+        &:hover {
+          background-color: #d3d3d3; 
         }
       }
+  
+      &.active a {
+        background-color: #5D3FD3;
+        color: white;
+        border-color: #5D3FD3; 
+      }
     }
+  }
 
   }
 
   &.collapsed .lesson-content-container {
-    flex: 1; // Take up all available space when syllabus-main is collapsed
-    margin-left: 20px; // Remove the margin when sidebar is collapsed
+    flex: 1;
+    margin-left: 20px; 
   }
 }
 
