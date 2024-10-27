@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import ReactPaginate from "react-paginate";
 import axiosInstance from "../axiosInstance";
-import Syllabus from "./Syllabus";
+import { useAppSelector } from '../redux/hooks';
+import { selectUser } from '../redux/slices/authSlice';
+import "../styles/materials.scss";
+import ExamContent from "./ExamContent";
 import LessonContent from "./Lessons";
 import QuizContent from "./QuizContent";
 import QuizResult from "./QuizResult";
-import ExamContent from "./ExamContent"; 
-import "../styles/materials.scss";
-import ReactPaginate from "react-paginate";
-import { useAppSelector } from '../redux/hooks';
-import { selectUser } from '../redux/slices/authSlice';
 
 interface Page {
   page_number: number;
@@ -49,6 +48,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [courseTitle, setCourseTitle] = useState<string | null>(null);
   const [allLessonsCompleted, setAllLessonsCompleted] = useState(false);
   const [examId, setExamId] = useState<number | null>(null);
+  const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null); // New state for current subtopic
+  const [currentTopic, setCurrentTopic] = useState<string | null>(null);
 
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
@@ -107,14 +108,28 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     checkAllLessonsCompleted();
   }, [lessons]);
 
-  const fetchPages = async (lessonId: string) => {
+  const fetchPages = async (subtopicId: string) => {
     try {
-      const response = await axiosInstance.get(`/pages/${lessonId}/`);
+      const response = await axiosInstance.get(`/pages/${subtopicId}/`);
       setPages(response.data);
       setCurrentPage(0);
     } catch (error) {
       console.error("Error fetching pages:", error);
     }
+  };
+
+  const handleSubtopicClick = (subtopicId: string) => {
+    console.log('Subtopic clicked:', subtopicId); // Add this line for debugging
+    setCurrentSubtopic(subtopicId); // Set the current subtopic
+    fetchPages(subtopicId); // Fetch pages for the clicked subtopic
+    
+  };
+
+  const handleTopicClick = (subtopicId: string) => {
+    console.log('Topic clicked:', subtopicId); // Add this line for debugging
+    setCurrentSubtopic(subtopicId); // Set the current subtopic
+    fetchPages(subtopicId); // Fetch pages for the clicked subtopic
+    
   };
 
   const fetchQuizResult = async (quizId: string) => {
@@ -211,20 +226,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   return (
     <div className="materials-page">
-      <div className="lesson-content-container">
-        {!showLessonContent && !showQuizContent && !showQuizResult && !showExamContent && (
-          <div className="syllabus-section">
-            <Syllabus
-              lessons={lessons}
-              onLessonClick={handleLessonClick}
-              onExamClick={handleExamClick}
-              currentLessonIndex={currentLessonIndex}
-              classId={classId.toString()}
-              courseId={courseId} 
-            />
-
-          </div>
-        )}
+      
+   
 
         {showLessonContent && currentLesson && pages.length > 0 && (
           <LessonContent 
@@ -287,7 +290,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         )}
       </div>
 
-    </div>
+
   );
 }
 

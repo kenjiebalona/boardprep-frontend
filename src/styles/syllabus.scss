@@ -24,6 +24,46 @@
   .lesson-container {
     margin-bottom: 15px;
   }
+
+  .bullet-objectives{
+    margin-left: 30px;
+  }
+
+  .lesson-objectives{
+    margin-top: -25px;
+    margin-left: 50px;
+  }
+
+  .topic-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    margin-bottom: 15px;
+    margin-left: 35px;
+    margin-right: 35px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    margin-top: 15px;
+  
+    .chevron-icon {
+      margin-left: auto;
+      font-size: 1.2rem;
+    }
+  }
+
+  .subtopic-item{
+    margin-left: 35px;
+    margin-top: 15px;
+    margin-right: 35px;
+    background-color: grey;
+    border-radius: 5px;
+    color: white;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
   
   .lesson-item-wrapper {
     display: flex;
@@ -39,10 +79,16 @@
     color: black;
     margin-bottom: 10px;
     position: relative;
+    cursor: pointer; 
   
     &.disabled {
       cursor: not-allowed;
       color: #aaa;
+  
+      &[data-user-type="C"] {
+        cursor: pointer;
+        color: inherit;
+      }
     }
   
     h3 {
@@ -64,7 +110,7 @@
     border: none;
     padding: 5px 10px;
     border-radius: 4px;
-    margin-top: -20px;
+    margin-top: 20px;
     margin-left: 20px;
     margin-right: 20px;
     margin-bottom: 20px;
