@@ -9,6 +9,8 @@
     "@blocknote/react": "^0.17.1",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@iconscout/react-unicons": "^2.0.2",
     "@mui/material": "^5.16.6",
     "@mui/styled-engine": "^5.16.6",

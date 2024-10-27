@@ -15,7 +15,10 @@ import {
     useEditor
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React from 'react';
+import React, { useState } from 'react';
+import "../styles/tiptapeditor.scss";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBold, faItalic, faStrikethrough, faCode, faEllipsisH, faQuoteRight, faHeading, faParagraph, faHighlighter, faTerminal, faTable, faImage, faUndo, faRedo, faListUl, faListOl, faAlignLeft, faAlignCenter, faAlignRight } from '@fortawesome/free-solid-svg-icons';
 
 interface TipTapEditorProps {
   content: string;
@@ -23,102 +26,148 @@ interface TipTapEditorProps {
 }
 
 const MenuBar = ({ editor }: { editor: any }) => {
+  const [headerDropdownOpen, setHeaderDropdownOpen] = useState(false); 
+  const [tableDropdownOpen, setTableDropdownOpen] = useState(false);
+  const [tableMenuVisible, setTableMenuVisible] = useState(false); 
+
   if (!editor) {
     return null;
   }
 
+  const toggleHeaderDropdown = () => {
+    setHeaderDropdownOpen(!headerDropdownOpen);
+    setTableDropdownOpen(false);
+  };
+
+  const toggleTableDropdown = () => {
+    setTableDropdownOpen(!tableDropdownOpen);
+    setHeaderDropdownOpen(false); 
+  };
+
+  const handleHeading = (level: number) => {
+    editor.chain().focus().toggleHeading({ level }).run();
+    setHeaderDropdownOpen(false);
+  };
+
+  const showTableMenu = () => {
+    if (editor.isActive('table')) {
+      setTableMenuVisible(true);
+    } else {
+      setTableMenuVisible(false);
+    }
+  };
+
   return (
-    <div className="flex flex-wrap gap-2 p-2 border-b">
-      <div className="flex gap-1">
+    <div className="menu-bar">
+      <div className="heading-buttons">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('bold') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('bold') ? 'active' : ''}
         >
-          Bold
+          <FontAwesomeIcon icon={faBold} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('italic') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('italic') ? 'active' : ''}
         >
-          Italic
+          <FontAwesomeIcon icon={faItalic} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('strike') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('strike') ? 'active' : ''}
         >
-          Strike
+          <FontAwesomeIcon icon={faStrikethrough} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleCode().run()}
+          disabled={
+            !editor.can()
+              .chain()
+              .focus()
+              .toggleCode()
+              .run()
+          }
+          className={editor.isActive('code') ? 'active' : ''}
+        >
+          <FontAwesomeIcon icon={faCode} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          className={editor.isActive('codeBlock') ? 'active' : ''}
+        >
+          <FontAwesomeIcon icon={faTerminal} />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          className={editor.isActive('blockquote') ? 'active' : ''}
+        >
+          <FontAwesomeIcon icon={faQuoteRight} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHighlight().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('highlight') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('highlight') ? 'active' : ''}
         >
-          Highlight
+          <FontAwesomeIcon icon={faHighlighter} />
         </button>
       </div>
 
-      <div className="flex gap-1">
-        {[1, 2, 3].map((level) => (
-          <button
-            key={level}
-            onClick={() => editor.chain().focus().toggleHeading({ level }).run()}
-            className={`px-2 py-1 rounded ${
-              editor.isActive('heading', { level }) ? 'bg-gray-200' : ''
-            }`}
-          >
-            H{level}
+      <div className="dropdown-container">
+          <button onClick={toggleHeaderDropdown} className={headerDropdownOpen  ? 'active' : ''}>
+            <FontAwesomeIcon icon={faHeading} /> 
           </button>
-        ))}
-        <button
+          {headerDropdownOpen  && (
+            <div className="dropdown-menu">
+              {[1, 2, 3, 4, 5, 6].map((level) => (
+                <div key={level} onClick={() => handleHeading(level)}>
+                  H{level}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      <div className="list-buttons">
+      <button
           onClick={() => editor.chain().focus().setParagraph().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('paragraph') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('paragraph') ? 'active' : ''}
         >
-          P
+          <FontAwesomeIcon icon={faParagraph} />
         </button>
-      </div>
-
-      <div className="flex gap-1">
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('bulletList') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('bulletList') ? 'active' : ''}
         >
-          Bullet List
+          <FontAwesomeIcon icon={faListUl} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('orderedList') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('orderedList') ? 'active' : ''}
         >
-          Ordered List
+          <FontAwesomeIcon icon={faListOl} />
         </button>
       </div>
 
-      <div className="flex gap-1">
+      <div className="align-buttons">
         <button
           onClick={() => editor.chain().focus().setTextAlign('left').run()}
-          className={`px-2 py-1 rounded ${editor.isActive({ textAlign: 'left' }) ? 'bg-gray-200' : ''}`}
+          className={editor.isActive({ textAlign: 'left' }) ? 'active' : ''}
         >
-          Left
+          <FontAwesomeIcon icon={faAlignLeft} />
         </button>
         <button
           onClick={() => editor.chain().focus().setTextAlign('center').run()}
-          className={`px-2 py-1 rounded ${editor.isActive({ textAlign: 'center' }) ? 'bg-gray-200' : ''}`}
+          className={editor.isActive({ textAlign: 'center' }) ? 'active' : ''}
         >
-          Center
+          <FontAwesomeIcon icon={faAlignCenter} />
         </button>
         <button
           onClick={() => editor.chain().focus().setTextAlign('right').run()}
-          className={`px-2 py-1 rounded ${editor.isActive({ textAlign: 'right' }) ? 'bg-gray-200' : ''}`}
+          className={editor.isActive({ textAlign: 'right' }) ? 'active' : ''}
         >
-          Right
+          <FontAwesomeIcon icon={faAlignRight} />
         </button>
       </div>
 
-      <div className="flex gap-1">
-        <button
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
-          className="px-2 py-1 rounded"
-        >
-          Insert Table
-        </button>
+      <div className="insert-buttons">
         <button
           onClick={() => {
             const url = window.prompt('Enter image URL:');
@@ -128,24 +177,68 @@ const MenuBar = ({ editor }: { editor: any }) => {
           }}
           className="px-2 py-1 rounded"
         >
-          Add Image
+          <FontAwesomeIcon icon={faImage} />
         </button>
-      </div>
-
-      <div className="flex gap-1">
         <button
           onClick={() => editor.chain().focus().undo().run()}
           className="px-2 py-1 rounded"
         >
-          Undo
+          <FontAwesomeIcon icon={faUndo} />
         </button>
         <button
           onClick={() => editor.chain().focus().redo().run()}
           className="px-2 py-1 rounded"
         >
-          Redo
+          <FontAwesomeIcon icon={faRedo} />
+        </button>
+        <button
+          onClick={() => {
+            editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+            showTableMenu(); 
+          }}          
+          className="px-2 py-1 rounded"
+        >
+          <FontAwesomeIcon icon={faTable} />
         </button>
       </div>
+      {tableMenuVisible && (
+          <div className="table-dropdown-container">
+            <button onClick={toggleTableDropdown} className={tableDropdownOpen ? 'active' : ''}>
+              <FontAwesomeIcon icon={faEllipsisH} /> 
+            </button>
+           {tableDropdownOpen  && (
+             <div className="table-dropdown-menu">
+                <button onClick={() => editor.chain().focus().addColumnBefore().run()} disabled={!editor.can().addColumnBefore()}>
+                  Add column before
+                </button>
+                <button onClick={() => editor.chain().focus().addColumnAfter().run()} disabled={!editor.can().addColumnAfter()}>
+                  Add column after
+                </button>
+                <button onClick={() => editor.chain().focus().deleteColumn().run()} disabled={!editor.can().deleteColumn()}>
+                  Delete column
+                </button>
+                <button onClick={() => editor.chain().focus().addRowBefore().run()} disabled={!editor.can().addRowBefore()}>
+                  Add row before
+                </button>
+                <button onClick={() => editor.chain().focus().addRowAfter().run()} disabled={!editor.can().addRowAfter()}>
+                  Add row after
+                </button>
+                <button onClick={() => editor.chain().focus().deleteRow().run()} disabled={!editor.can().deleteRow()}>
+                  Delete row
+                </button>
+                <button onClick={() => editor.chain().focus().deleteTable().run()} disabled={!editor.can().deleteTable()}>
+                  Delete table
+                </button>
+                <button onClick={() => editor.chain().focus().mergeCells().run()} disabled={!editor.can().mergeCells()}>
+                  Merge cells
+                </button>
+                <button onClick={() => editor.chain().focus().splitCell().run()} disabled={!editor.can().splitCell()}>
+                  Split cell
+                </button>
+              </div>
+            )}
+            </div>
+      )}
     </div>
   );
 };
@@ -180,7 +273,7 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
   }
 
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="editor-container">
       <MenuBar editor={editor} />
       
       <BubbleMenu 
@@ -190,44 +283,44 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
       >
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('bold') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('bold') ? 'active' : ''}
         >
           Bold
         </button>
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('italic') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('italic') ? 'active' : ''}
         >
           Italic
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHighlight().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('highlight') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('highlight') ? 'active' : ''}
         >
           Highlight
         </button>
       </BubbleMenu>
 
       <FloatingMenu
-        className="flex gap-1 p-1 bg-white border rounded-lg shadow-lg"
+        className="floating-menu"
         tippyOptions={{ duration: 100 }}
         editor={editor}
       >
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={`px-2 py-1 rounded ${editor.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('heading', { level: 1 }) ? 'active' : ''}
         >
           H1
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`px-2 py-1 rounded ${editor.isActive('bulletList') ? 'bg-gray-200' : ''}`}
+          className={editor.isActive('bulletList') ? 'active' : ''}
         >
           List
         </button>
       </FloatingMenu>
 
-      <div className="p-4">
+      <div className="editor-content">
         <EditorContent editor={editor} />
       </div>
     </div>
