@@ -67,11 +67,11 @@ function Syllabus({
     setOpenTopicId((prevTopicId) => (prevTopicId === topicId ? null : topicId));
   };
 
-  const getButtonLabel = () => {
-    if (userType === "C") return "Edit";
-    if (userType === "T") return "View";
-    return "Learn";
-  };
+  // const getButtonLabel = () => {
+  //   if (userType === "C") return "Edit";
+  //   if (userType === "T") return "View";
+  //   return "Learn";
+  // };
 
   const handleLessonClick = (lessonId: string) => {
     onLessonClick(lessonId);
@@ -202,14 +202,14 @@ function Syllabus({
                     </div>
                   )}
 
-                {userType !== "C" && (
+                {/* {userType !== "C" && (
                   <button
                     className="learn-button"
                     onClick={() => handleLessonClick(lesson.lesson_id)}
                   >
                     {getButtonLabel()}
                   </button>
-                )}
+                )} */}
                 </div>
               </div>
               {userType !== "C" && (

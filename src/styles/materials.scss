@@ -1,4 +1,9 @@
-@import './toggle.scss';
+
+.tiptap-content{
+  margin-bottom: 10px;
+  background-color: white;
+  color: white;
+}
 
 .materials-page {
   margin-top: -50px;
@@ -15,19 +20,19 @@
     margin-left: 1%;
     margin-bottom: 1%;
     transition: margin-left 0.3s, width 0.3s ease;
-    flex: 0 0 10%; // Make sure to set flex-basis to the width for consistency
+    flex: 0 0 10%; 
     min-width: 200px;
-    z-index: 10; // Corrected z-index without %
+    z-index: 10; 
     cursor: pointer;
 
     .syllabus-container {
-      padding-top: 60px; // Padding to prevent content from hiding behind the toggle
+      padding-top: 60px;
       transition: margin 0.3s ease;
     }
 
     &.collapsed {
-      margin-left: -200px; // Collapse the sidebar
-      width: 0; // Collapse to width of the toggle button
+      margin-left: -200px; 
+      width: 0;
       flex-basis: 0;
     }
   }
@@ -38,56 +43,85 @@
     border-radius: 10px;
     margin-right: 5%;
     margin-bottom: 5%;
-    padding: 50px;
+    padding: 40px;
     transition: margin 0.3s ease, flex-basis 0.3s ease;
     box-shadow: 11px 5px 9px 0px rgba(230,104,230,1), -1px -1px 10px rgb(144, 129, 129);
-    overflow: auto; /* Add this to handle overflowing content */
+    overflow: auto; 
     background-color: white;
 
     .ck-content {
       padding-left: 30px;
       padding-right: 30px;
       margin-top: 30px;
-        max-width: 100%; /* Ensure CKEditor content does not exceed the container */
-        overflow: hidden; /* Hide the overflow or use 'auto' if you want scrollbars */
-        /* Other styles as needed */
-        @if color == hsl(0, 0%, 0%) { // Check if the color is black
-          color: #fff; // Change text color to white
+        max-width: 100%;
+        overflow: hidden; 
+        @if color == hsl(0, 0%, 0%) { 
+          color: #fff; 
         }
 
     }
 
     .pagination {
-      position: absolute; // Position it relative to lesson-content-container
-      bottom: 60px; // Adjust as needed to position at the bottom
+      position: absolute; 
+      bottom: 60px;
       left: 50%;
-      transform: translateX(-50%); // Center horizontally
+      transform: translateX(-50%); 
+      color: yellow;
     }
   }
 
   &.collapsed .lesson-content-container {
-    flex: 1; // Take up all available space when syllabus-main is collapsed
-    margin-left: 20px; // Remove the margin when sidebar is collapsed
+    flex: 1; 
+    margin-left: 20px; 
   }
 }
 
+.pagination-container {
+  position: fixed; 
+  bottom: 20px; 
+  left: 50%;
+  transform: translateX(-50%); 
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  padding: 10px;
+  z-index: 999; 
+  border-radius: 8px;
+  margin-top: 10px;
+}
 
 .pagination {
   display: flex;
   list-style: none;
   padding: 0;
   justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  color: yellow;
+  
   li {
     margin: 0 5px;
+
     a {
       cursor: pointer;
-      padding: 5px 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      padding: 3px 12px;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      background-color: #f0f0f0; 
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      font-size: 13px; 
+      color: #333;
+      text-decoration: none;
+      font-weight: bold;
+
+      &:hover {
+        background-color: #d3d3d3; 
+      }
     }
+
     &.active a {
-      background-color: #007bff;
+      background-color: #5D3FD3;
       color: white;
+      border-color: #5D3FD3; 
     }
   }
 }
@@ -109,16 +143,15 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  z-index: 11; // Above the syllabus-main
+  z-index: 11; 
   transition: right 0.2s ease;
 
   .materials-page:not(.collapsed) & {
-    margin-top: 5.5%; // Adjust this to fit the inside edge of syllabus-main
+    margin-top: 5.5%;
     margin-left: 2%;
   }
 }
 
-  // This will move the toggle button inside the syllabus container when expande
 
 .bars {
   width: 100%;
@@ -166,10 +199,9 @@
   border-radius: 5px;
   background: #7D67FF;
   margin-left: auto;
-  margin-top: 20px !important;
   cursor: pointer;
   border: none;
-  margin: 5px;
+  margin-bottom: 20px;
 
   &:hover {
     background-color: #5D3FD3;

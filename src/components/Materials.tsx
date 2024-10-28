@@ -194,7 +194,6 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   };
 
   const handleTopicClick = (subtopicId: string) => {
-    console.log("Topic clicked:", subtopicId); // Add this line for debugging
     setCurrentSubtopic(subtopicId); // Set the current subtopic
     fetchPages(subtopicId); // Fetch pages for the clicked subtopic
   };
@@ -322,16 +321,21 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           </button>
         </div>
       ) : (
-        <div>
+        <div className="lesson-content-container">
+          <button className="btn-mat" onClick={handleBackToSyllabus}>
+            Back to Syllabus
+          </button>
           {pages[currentPage] && (
             <div key={pages[currentPage].page_id}>
               {contentBlocks.map((block: ContentBlock, idx: number) => (
-                <TipTapEditor
-                  key={idx}
-                  content={block.content}
-                  editable={false}
-                  hideToolbar
-                />
+                <div className="tiptap-content">
+                  <TipTapEditor
+                    key={idx}
+                    content={block.content}
+                    editable={false}
+                    hideToolbar
+                  />
+                </div>
               ))}
             </div>
           )}
@@ -389,8 +393,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
       {pageCount > 1 && showLessonContent && currentLesson && (
         <ReactPaginate
-          previousLabel={currentPage > 0 ? "previous" : ""}
-          nextLabel={currentPage < pageCount - 1 ? "next" : ""}
+          previousLabel={currentPage > 0 ? "<" : ""}
+          nextLabel={currentPage < pageCount - 1 ? ">" : ""}
           breakLabel={"..."}
           pageCount={pageCount}
           onPageChange={handlePageClick}

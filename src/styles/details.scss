@@ -252,18 +252,6 @@
     max-width: 100%;
     height: auto;
   }
-  .pagination-container {
-    position: fixed; 
-    bottom: 20px; 
-    left: 50%;
-    transform: translateX(-50%); 
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-    padding: 10px;
-    z-index: 999; 
-    border-radius: 8px;
-    margin-top: 10px;
-  }
   
   .pagination-container {
     position: fixed; 
