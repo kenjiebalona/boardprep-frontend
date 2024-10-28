@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 interface Page {
   page_id: string;
   page_number: number;
-  content: ContentBlock[];
+  content_blocks: ContentBlock[];
   syllabus: string;
 }
 
@@ -85,7 +85,6 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null); // New state for current subtopic
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const [testStarted, setTestStarted] = useState(false);
-  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([]);
 
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
@@ -156,33 +155,11 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       if (response.data.length > 0) {
         setCurrentPage(response.data[0].page_number);
         setPageId(response.data[0].page_id);
-        await fetchContentBlocks(response.data[0].page_id);
       } else {
         setCurrentPage(0);
       }
     } catch (error) {
       console.error("Error fetching pages:", error);
-    }
-  };
-
-  const fetchContentBlocks = async (pageId: number) => {
-    try {
-      console.log("Fetching content blocks for page ID:", pageId);
-      const response = await axiosInstance.get(
-        `/pages/${pageId}/content_blocks/`
-      );
-
-      const blocks: ContentBlock[] = response.data.map(
-        (block: any) =>
-          ({
-            ...block,
-            block_type: block.block_type || "Unknown Type",
-            block_id: Number(block.block_id),
-          } as ContentBlock)
-      );
-      setContentBlocks(blocks);
-    } catch (error) {
-      console.error("Error fetching content blocks:", error);
     }
   };
 
@@ -327,16 +304,18 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           </button>
           {pages[currentPage] && (
             <div key={pages[currentPage].page_id}>
-              {contentBlocks.map((block: ContentBlock, idx: number) => (
-                <div className="tiptap-content">
-                  <TipTapEditor
-                    key={idx}
-                    content={block.content}
-                    editable={false}
-                    hideToolbar
-                  />
-                </div>
-              ))}
+              {pages[currentPage].content_blocks.map(
+                (block: ContentBlock, idx: number) => (
+                  <div className="tiptap-content">
+                    <TipTapEditor
+                      key={idx}
+                      content={block.content}
+                      editable={false}
+                      hideToolbar
+                    />
+                  </div>
+                )
+              )}
             </div>
           )}
         </div>
