@@ -34,22 +34,24 @@ const LessonContent: React.FC<LessonContentProps> = ({
   passed,
   examId,
 }) => {
-
-  console.log('Received examId in LessonContent:', examId);
+  console.log("Received examId in LessonContent:", examId);
 
   const [quizPassed, setQuizPassed] = useState(passed);
   const [failedLessons, setFailedLessons] = useState<FailedLesson[]>([]);
   const [isFailedLesson, setIsFailedLesson] = useState(false);
   const [showQuizAttempts, setShowQuizAttempts] = useState(false);
 
-  useEffect(() => { 
+  useEffect(() => {
     const fetchQuizStatus = async () => {
       try {
         const response = await axiosInstance.get(
           `/quizzes/class/?lesson_id=${lessonId}&class_id=${classInstanceId}`
         );
         const attempts = response.data;
-        if (attempts.length > 0 && attempts.some((attempt: any) => attempt.passed)) {
+        if (
+          attempts.length > 0 &&
+          attempts.some((attempt: any) => attempt.passed)
+        ) {
           setQuizPassed(true);
         }
       } catch (err) {
@@ -62,12 +64,14 @@ const LessonContent: React.FC<LessonContentProps> = ({
         const response = await axiosInstance.get(
           `/exams/${examId}/get-failed-lessons/`,
           {
-            params: { student_id: studentId }
+            params: { student_id: studentId },
           }
         );
         const failedLessons = response.data.failed_lessons as FailedLesson[];
         setFailedLessons(failedLessons);
-        setIsFailedLesson(failedLessons.some((lesson) => lesson.lesson_id === lessonId));
+        setIsFailedLesson(
+          failedLessons.some((lesson) => lesson.lesson_id === lessonId)
+        );
       } catch (err) {
         console.error("Error fetching failed lessons:", err);
       }
@@ -78,7 +82,7 @@ const LessonContent: React.FC<LessonContentProps> = ({
   }, [lessonId, classInstanceId, studentId, examId]);
 
   const markdownToHtml = (markdownContent: string): string => {
-    return marked(markdownContent) as string; 
+    return marked(markdownContent) as string;
   };
 
   const sanitizedHTML = DOMPurify.sanitize(markdownToHtml(content));
@@ -98,15 +102,21 @@ const LessonContent: React.FC<LessonContentProps> = ({
           <button className="btn-back" onClick={handleBackToLessonContent}>
             Back
           </button>
-          <QuizAttemptsTable lessonId={lessonId} classInstanceId={classInstanceId} />
+          <QuizAttemptsTable
+            lessonId={lessonId}
+            classInstanceId={classInstanceId}
+          />
         </div>
       ) : (
         <div>
           <button className="btn-back" onClick={onBack}>
             Back
           </button>
-          {userType === 'T' && (
-            <button className="btn-students-quiz-attempts" onClick={handleShowQuizAttempts}>
+          {userType === "T" && (
+            <button
+              className="btn-students-quiz-attempts"
+              onClick={handleShowQuizAttempts}
+            >
               Students Quiz Attempts
             </button>
           )}
@@ -114,7 +124,7 @@ const LessonContent: React.FC<LessonContentProps> = ({
             className="ck-content"
             dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
           />
-          {userType !== 'T' && (!quizPassed || isFailedLesson) && (
+          {userType !== "T" && (!quizPassed || isFailedLesson) && (
             <button className="btn-mat" onClick={markLessonAsCompleted}>
               Proceed to Quiz
             </button>

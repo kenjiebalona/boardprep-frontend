@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import axiosInstance from "../axiosInstance";
-import { useAppSelector } from '../redux/hooks';
-import { selectUser } from '../redux/slices/authSlice';
+import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/slices/authSlice";
 import "../styles/materials.scss";
 import ExamContent from "./ExamContent";
 import LessonContent from "./Lessons";
 import QuizContent from "./QuizContent";
 import QuizResult from "./QuizResult";
 import Syllabus from "./Syllabus";
-
 
 interface Page {
   page_number: number;
@@ -46,7 +45,6 @@ interface Lesson {
   quiz_id: string;
 }
 
-
 interface Course {
   course_id: string;
   course_title: string;
@@ -55,7 +53,7 @@ interface Course {
 interface MaterialsProps {
   courseId: string;
   studentId: string;
-  classId: number;  
+  classId: number;
 }
 
 function Materials({ courseId, studentId, classId }: MaterialsProps) {
@@ -85,14 +83,16 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         const courseResponse = await axiosInstance.get(`/courses/${courseId}/`);
         const courseData: Course = courseResponse.data;
         setCourseTitle(courseData.course_title);
-        
+
         const syllabusData = courseResponse.data.syllabus;
         if (syllabusData && syllabusData.lessons) {
-          const lessonsData = syllabusData.lessons.map((lesson: Lesson, index: number) => ({
-            ...lesson,
-            completed: false,
-            quiz_id: `Lesson ${index + 1} Quiz`,
-          }));
+          const lessonsData = syllabusData.lessons.map(
+            (lesson: Lesson, index: number) => ({
+              ...lesson,
+              completed: false,
+              quiz_id: `Lesson ${index + 1} Quiz`,
+            })
+          );
           setLessons(lessonsData);
         }
       } catch (error) {
@@ -105,7 +105,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   useEffect(() => {
     const checkAllLessonsCompleted = () => {
-      const completed = lessons.every(lesson => lesson.completed);
+      const completed = lessons.every((lesson) => lesson.completed);
       setAllLessonsCompleted(completed);
     };
 
@@ -114,7 +114,9 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   const fetchPages = async (subtopicId: string) => {
     try {
-      const response = await axiosInstance.get(`/pages/${subtopicId}/`);
+      const response = await axiosInstance.get(
+        `/pages/by_subtopic/${subtopicId}/?student_id=${studentId}`
+      );
       setPages(response.data);
       setCurrentPage(0);
     } catch (error) {
@@ -123,20 +125,22 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   };
 
   const handleSubtopicClick = (subtopicId: string) => {
-    console.log('Subtopic clicked:', subtopicId); // Add this line for debugging
+    console.log("Subtopic clicked:", subtopicId); // Add this line for debugging
     setCurrentSubtopic(subtopicId); // Set the current subtopic
     fetchPages(subtopicId); // Fetch pages for the clicked subtopic
   };
 
   const handleTopicClick = (subtopicId: string) => {
-    console.log('Topic clicked:', subtopicId); // Add this line for debugging
+    console.log("Topic clicked:", subtopicId); // Add this line for debugging
     setCurrentSubtopic(subtopicId); // Set the current subtopic
     fetchPages(subtopicId); // Fetch pages for the clicked subtopic
   };
 
   const fetchQuizResult = async (quizId: string) => {
     try {
-      const response = await axiosInstance.get(`/quizzes/${quizId}/results/${studentId}`);
+      const response = await axiosInstance.get(
+        `/quizzes/${quizId}/results/${studentId}`
+      );
       setQuizResult(response.data);
       setShowQuizResult(true);
       setShowQuizContent(false);
@@ -160,7 +164,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   //     setShowQuizResult(false);
   //     setShowExamContent(false);
   //   }
-  // };  
+  // };
 
   const handlePageClick = (event: { selected: number }) => {
     setCurrentPage(event.selected);
@@ -173,15 +177,15 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       )
     );
 
-    setShowLessonContent(false); 
-    setShowQuizContent(true); 
+    setShowLessonContent(false);
+    setShowQuizContent(true);
     setShowQuizResult(false);
     setShowExamContent(false);
   };
 
   const handleBackToSyllabus = () => {
-    setShowLessonContent(false); 
-    setShowQuizContent(false);   
+    setShowLessonContent(false);
+    setShowQuizContent(false);
     setShowQuizResult(false);
     setShowExamContent(false);
   };
@@ -192,7 +196,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       setShowQuizContent(false);
       setShowQuizResult(false);
       setShowExamContent(false);
-      
+
       setCurrentLessonIndex(currentLessonIndex + 1);
       const nextLesson = lessons[currentLessonIndex + 1].lesson_id;
       setCurrentLesson(nextLesson);
@@ -210,7 +214,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       setShowQuizContent(false);
       setShowQuizResult(false);
       setShowExamContent(false);
-      
+
       setCurrentLessonIndex(currentLessonIndex + 1);
       const nextLesson = lessons[currentLessonIndex + 1].lesson_id;
       setCurrentLesson(nextLesson);
@@ -225,37 +229,35 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const handleExamClick = () => {
     setShowExamContent(true);
     setShowLessonContent(false);
-    setShowQuizContent(false); 
-    setShowQuizResult(false); 
-    setCurrentLessonIndex(-1); 
+    setShowQuizContent(false);
+    setShowQuizResult(false);
+    setCurrentLessonIndex(-1);
   };
 
   return (
     <div className="materials-page">
-          <div className="lesson-content-container">
-   
-            <Syllabus
-              lessons={lessons}
-              onLessonClick={handleLessonClick}
-              onTopicClick={handleTopicClick}
-              onSubtopicClick={handleSubtopicClick}
-              currentLesson={currentLesson}
-              currentTopic={currentTopic}
-              currentSubtopic={currentSubtopic}
-            />
-          
+      <div className="lesson-content-container">
+        <Syllabus
+          lessons={lessons}
+          onLessonClick={handleLessonClick}
+          onTopicClick={handleTopicClick}
+          onSubtopicClick={handleSubtopicClick}
+          currentLesson={currentLesson}
+          currentTopic={currentTopic}
+          currentSubtopic={currentSubtopic}
+        />
 
         {showLessonContent && currentLesson && pages.length > 0 && (
-          <LessonContent 
-            content={pages[currentPage].content} 
-            onBack={handleBackToSyllabus} 
+          <LessonContent
+            content={pages[currentPage].content}
+            onBack={handleBackToSyllabus}
             markLessonAsCompleted={markLessonAsCompleted}
             userType={userType}
             studentId={studentId}
             lessonId={currentLesson}
             classInstanceId={classId}
-            passed={quizResult?.passed ?? false} 
-            examId={examId ?? -1} 
+            passed={quizResult?.passed ?? false}
+            examId={examId ?? -1}
           />
         )}
 
@@ -263,20 +265,20 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           <QuizContent
             lessonId={currentLesson}
             studentId={studentId}
-            classInstanceId={classId} 
+            classInstanceId={classId}
             onTryAgain={handleTryAgain}
             onNextLesson={handleNextLesson}
           />
         )}
 
         {showQuizResult && quizResult && (
-          <QuizResult 
-            questions={quizResult.questions} 
-            answers={quizResult.answers} 
-            results={quizResult.results} 
-            score={quizResult.score} 
-            totalQuestions={quizResult.totalQuestions} 
-            passed={quizResult.passed} 
+          <QuizResult
+            questions={quizResult.questions}
+            answers={quizResult.answers}
+            results={quizResult.results}
+            score={quizResult.score}
+            totalQuestions={quizResult.totalQuestions}
+            passed={quizResult.passed}
             onTryAgain={handleTryAgain}
             onNextLesson={handleNextLesson}
           />
@@ -305,8 +307,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           />
         )}
       </div>
-      </div>
-
+    </div>
   );
 }
 
