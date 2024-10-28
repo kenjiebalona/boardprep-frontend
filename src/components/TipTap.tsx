@@ -1,13 +1,13 @@
-import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faCode, faEllipsisH, faHeading, faHighlighter, faImage, faItalic, faListOl, faListUl, faParagraph, faQuoteRight, faRedo, faStrikethrough, faTable, faTerminal, faUndo } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
+import Image from '@tiptap/extension-image';
 import ListItem from '@tiptap/extension-list-item';
 import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import TextAlign from '@tiptap/extension-text-align';
+import Youtube from '@tiptap/extension-youtube'; 
 import TextStyle from '@tiptap/extension-text-style';
 import {
   BubbleMenu,
@@ -17,14 +17,14 @@ import {
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect, useState } from 'react';
-import ResizeImage from 'tiptap-extension-resize-image';
 import "../styles/tiptapeditor.scss";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBold, faItalic, faStrikethrough, faCode, faVideo, faEllipsisH, faQuoteRight, faHeading, faParagraph, faHighlighter, faTerminal, faTable, faImage, faUndo, faRedo, faListUl, faListOl, faAlignLeft, faAlignCenter, faAlignRight } from '@fortawesome/free-solid-svg-icons';
+import ResizeImage from 'tiptap-extension-resize-image'; 
 
 interface TipTapEditorProps {
   content: string;
-  onChange?: (updatedContent: string) => void;
-  editable?: boolean;
-  hideToolbar?: boolean;
+  onChange: (updatedContent: string) => void;
 }
 
 const MenuBar = ({ editor }: { editor: any }) => {
@@ -32,6 +32,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
   const [tableDropdownOpen, setTableDropdownOpen] = useState(false);
   const [tableMenuVisible, setTableMenuVisible] = useState(false); 
   const [imageDropdownOpen, setImageDropdownOpen] = useState(false); 
+
 
   if (!editor) {
     return null;
@@ -54,6 +55,18 @@ const MenuBar = ({ editor }: { editor: any }) => {
     setHeaderDropdownOpen(false); 
     setImageDropdownOpen(false);
   };
+
+  const addYoutubeVideo = () => {
+    const url = prompt('Enter YouTube URL')
+
+    if (url) {
+      editor.commands.setYoutubeVideo({
+        src: url,
+        width: 780, 
+        height: 400,
+      })
+    }
+  }
 
   const handleHeading = (level: number) => {
     editor.chain().focus().toggleHeading({ level }).run();
@@ -224,6 +237,13 @@ const MenuBar = ({ editor }: { editor: any }) => {
           </div>
         )}
       </div>
+      <div className="control-group">
+      <div className="button-group">
+        <button onClick={addYoutubeVideo} title="Add YouTube video">
+          <FontAwesomeIcon icon={faVideo} />
+        </button>      
+      </div>
+    </div>
 
         <button
           onClick={() => editor.chain().focus().undo().run()}
@@ -289,7 +309,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 };
 
-const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange, editable = true, hideToolbar = false }) => {
+const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -303,20 +323,18 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange, editable
       TableRow,
       TableHeader,
       TableCell,
+      Image,
       ResizeImage, 
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
-      TextStyle.configure({ types: [ListItem.name] } as any)
+      TextStyle.configure({ types: [ListItem.name] } as any),
+      Youtube.configure({ controls: false, nocookie: true }), 
     ],
     content,
-    editable,
     onUpdate: ({ editor }) => {
-      if (onChange) {
-        const updatedContent = editor.getHTML();
-        onChange(updatedContent);
-      }
+      const updatedContent = editor.getHTML();
+      onChange(updatedContent);
     },
   });
-
 
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
@@ -330,7 +348,7 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange, editable
 
   return (
     <div className="editor-container">
-       {!hideToolbar && <MenuBar editor={editor} />}
+      <MenuBar editor={editor} />
       
       <BubbleMenu 
         className="flex gap-1 p-1 bg-white border rounded-lg shadow-lg" 
