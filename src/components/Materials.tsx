@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { useAppSelector } from "../redux/hooks";
 import { selectUser } from "../redux/slices/authSlice";
@@ -9,7 +10,6 @@ import QuizContent from "./QuizContent";
 import QuizResult from "./QuizResult";
 import Syllabus from "./Syllabus";
 import TipTapEditor from "./TipTap";
-import { useNavigate } from "react-router-dom";
 
 interface Page {
   page_id: string;
@@ -71,6 +71,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageMapping, setPageMapping] = useState<{ [key: number]: string }>({});
   const [pageId, setPageId] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(-1);
   const [currentLesson, setCurrentLesson] = useState<string | null>(null);
@@ -82,14 +83,14 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [courseTitle, setCourseTitle] = useState<string | null>(null);
   const [allLessonsCompleted, setAllLessonsCompleted] = useState(false);
   const [examId, setExamId] = useState<number | null>(null);
-  const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null); // New state for current subtopic
+  const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null); 
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const [testStarted, setTestStarted] = useState(false);
 
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
-  const pageCount = pages.length;
+ 
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -139,6 +140,9 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       console.log("Fetched pages:", response.data);
 
       const fetchedPages = response.data;
+      setPageCount(fetchedPages.length);
+      console.log("Page Count", pageCount);
+
 
       const pageMapping = fetchedPages.reduce(
         (acc: { [key: number]: string }, page: Page) => {
@@ -165,7 +169,6 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   const handleSubtopicClick = (subtopicId: string) => {
     console.log("Clicked");
-    console.log("Page Count", pageCount);
     setCurrentSubtopic(subtopicId);
     fetchPages(subtopicId);
   };
@@ -205,9 +208,29 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   //   }
   // };
 
-  const handlePageClick = (event: { selected: number }) => {
-    setCurrentPage(event.selected);
-  };
+
+
+  const handlePageClick = async (event: { selected: number }) => {
+    const newPageNumber = event.selected;
+    const newPageId = pageMapping[newPageNumber];
+
+    console.log("Page Number", newPageNumber);
+    console.log("Page ID", newPageId);
+    
+    setCurrentPage(newPageNumber);
+    if (newPageId) {
+        try {
+            const response = await axiosInstance.get(`/pages/${newPageId}`);
+            if (response.data) {
+                setPageId(Number(newPageId));
+                await fetchContentBlocks(Number(newPageId));
+            }
+        } catch (error) {
+            console.error("Error fetching page data:", error);
+        }
+    }
+};
+
 
   const markLessonAsCompleted = () => {
     setLessons((prevLessons) =>
@@ -370,7 +393,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         />
       )}
 
-      {pageCount > 1 && showLessonContent && currentLesson && (
+      {pageCount > 1 && showLessonContent &&  (
         <ReactPaginate
           previousLabel={currentPage > 0 ? "<" : ""}
           nextLabel={currentPage < pageCount - 1 ? ">" : ""}
