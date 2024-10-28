@@ -1,6 +1,7 @@
+import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faCode, faEllipsisH, faHeading, faHighlighter, faImage, faItalic, faListOl, faListUl, faParagraph, faQuoteRight, faRedo, faStrikethrough, faTable, faTerminal, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
-import Image from '@tiptap/extension-image';
 import ListItem from '@tiptap/extension-list-item';
 import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
@@ -16,14 +17,14 @@ import {
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect, useState } from 'react';
+import ResizeImage from 'tiptap-extension-resize-image';
 import "../styles/tiptapeditor.scss";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBold, faItalic, faStrikethrough, faCode, faEllipsisH, faQuoteRight, faHeading, faParagraph, faHighlighter, faTerminal, faTable, faImage, faUndo, faRedo, faListUl, faListOl, faAlignLeft, faAlignCenter, faAlignRight } from '@fortawesome/free-solid-svg-icons';
-import ResizeImage from 'tiptap-extension-resize-image'; 
 
 interface TipTapEditorProps {
   content: string;
-  onChange: (updatedContent: string) => void;
+  onChange?: (updatedContent: string) => void;
+  editable?: boolean;
+  hideToolbar?: boolean;
 }
 
 const MenuBar = ({ editor }: { editor: any }) => {
@@ -288,7 +289,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 };
 
-const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
+const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange, editable = true, hideToolbar = false }) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -302,17 +303,20 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
       TableRow,
       TableHeader,
       TableCell,
-      Image,
       ResizeImage, 
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure({ types: [ListItem.name] } as any)
     ],
     content,
+    editable,
     onUpdate: ({ editor }) => {
-      const updatedContent = editor.getHTML();
-      onChange(updatedContent);
+      if (onChange) {
+        const updatedContent = editor.getHTML();
+        onChange(updatedContent);
+      }
     },
   });
+
 
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
@@ -326,7 +330,7 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
 
   return (
     <div className="editor-container">
-      <MenuBar editor={editor} />
+       {!hideToolbar && <MenuBar editor={editor} />}
       
       <BubbleMenu 
         className="flex gap-1 p-1 bg-white border rounded-lg shadow-lg" 

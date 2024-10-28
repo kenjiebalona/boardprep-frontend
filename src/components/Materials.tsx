@@ -5,14 +5,16 @@ import { useAppSelector } from "../redux/hooks";
 import { selectUser } from "../redux/slices/authSlice";
 import "../styles/materials.scss";
 import ExamContent from "./ExamContent";
-import LessonContent from "./Lessons";
 import QuizContent from "./QuizContent";
 import QuizResult from "./QuizResult";
 import Syllabus from "./Syllabus";
+import TipTapEditor from "./TipTap";
 
 interface Page {
+  page_id: string;
   page_number: number;
-  content: string;
+  content: ContentBlock[];
+  syllabus: string;
 }
 
 interface Objective {
@@ -56,9 +58,19 @@ interface MaterialsProps {
   classId: number;
 }
 
+interface ContentBlock {
+  block_id: number;
+  block_type: string;
+  difficulty: string;
+  content: string;
+}
+
+
 function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [pageMapping, setPageMapping] = useState<{ [key: number]: string }>({});
+  const [pageId, setPageId] = useState(0);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(-1);
   const [currentLesson, setCurrentLesson] = useState<string | null>(null);
@@ -72,6 +84,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [examId, setExamId] = useState<number | null>(null);
   const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null); // New state for current subtopic
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
+  const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([]);
 
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
@@ -113,21 +126,66 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   }, [lessons]);
 
   const fetchPages = async (subtopicId: string) => {
+    if (!subtopicId) {
+      console.error("Subtopic ID is undefined");
+      return;
+    }
+
     try {
-      const response = await axiosInstance.get(
-        `/pages/by_subtopic/${subtopicId}/?student_id=${studentId}`
-      );
+      const response = await axiosInstance.get(`/pages/by_subtopic/${subtopicId}/`);
+      console.log("Fetched pages:", response.data);
+
+      const fetchedPages = response.data;
+
+      const pageMapping = fetchedPages.reduce((acc: { [key: number]: string }, page: Page) => {
+        acc[page.page_number] = page.page_id;
+        return acc;
+      }, {});
+
       setPages(response.data);
-      setCurrentPage(0);
+      console.log("Fetched pages:", response.data); // Confirm the fetched data
+      setShowLessonContent(true); 
+      setPageMapping(pageMapping);
+      if (response.data.length > 0) {
+        setCurrentPage(response.data[0].page_number);
+        setPageId(response.data[0].page_id);
+        await fetchContentBlocks(response.data[0].page_id);
+      } else {
+        setCurrentPage(0);
+      }
     } catch (error) {
       console.error("Error fetching pages:", error);
     }
   };
 
+
+  const fetchContentBlocks = async (pageId: number) => {
+    try {
+      console.log("Fetching content blocks for page ID:", pageId);
+      const response = await axiosInstance.get(
+        `/pages/${pageId}/content_blocks/`
+      );
+
+      const blocks: ContentBlock[] = response.data.map(
+        (block: any) =>
+          ({
+            ...block,
+            block_type: block.block_type || "Unknown Type",
+            block_id: Number(block.block_id),
+          } as ContentBlock)
+      );
+      setContentBlocks(blocks);
+    } catch (error) {
+      console.error("Error fetching content blocks:", error);
+    }
+  };
+
   const handleSubtopicClick = (subtopicId: string) => {
-    console.log("Subtopic clicked:", subtopicId); // Add this line for debugging
-    setCurrentSubtopic(subtopicId); // Set the current subtopic
-    fetchPages(subtopicId); // Fetch pages for the clicked subtopic
+    console.log("Clicked")
+    console.log("Page Count", pageCount)
+    setCurrentSubtopic(subtopicId);
+    fetchPages(subtopicId);
+
   };
 
   const handleTopicClick = (subtopicId: string) => {
@@ -235,7 +293,9 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   };
 
   return (
+  
     <div className="materials-page">
+    {!showLessonContent ? (
       <div className="lesson-content-container">
         <Syllabus
           lessons={lessons}
@@ -246,7 +306,25 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           currentTopic={currentTopic}
           currentSubtopic={currentSubtopic}
         />
+      </div>
+    ) : (
+      <div>
+        {pages[currentPage] && (
+          <div key={pages[currentPage].page_id}>
+            {contentBlocks.map((block: ContentBlock, idx: number) => (
+            <TipTapEditor
+              key={idx}
+              content={block.content}
+              editable={false} 
+              hideToolbar 
+            />
+            ))}
+          </div>
+        )}
+      </div>
+    )}
 
+    {/* 
         {showLessonContent && currentLesson && pages.length > 0 && (
           <LessonContent
             content={pages[currentPage].content}
@@ -259,7 +337,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             passed={quizResult?.passed ?? false}
             examId={examId ?? -1}
           />
-        )}
+        )} */}
+
 
         {showQuizContent && currentLesson && (
           <QuizContent
@@ -295,19 +374,21 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           />
         )}
 
-        {pageCount > 1 && showLessonContent && currentLesson && (
-          <ReactPaginate
-            previousLabel={currentPage > 0 ? "previous" : ""}
-            nextLabel={currentPage < pageCount - 1 ? "next" : ""}
-            breakLabel={"..."}
-            pageCount={pageCount}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
-          />
-        )}
+      {pageCount > 1 && showLessonContent && currentLesson && (
+        
+            <ReactPaginate
+              previousLabel={currentPage > 0 ? "previous" : ""}
+              nextLabel={currentPage < pageCount - 1 ? "next" : ""}
+              breakLabel={"..."}
+              pageCount={pageCount}
+              onPageChange={handlePageClick}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+              forcePage={currentPage}
+            />
+          )}
       </div>
-    </div>
+  
   );
 }
 
