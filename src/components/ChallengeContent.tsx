@@ -217,7 +217,7 @@ const ChallengeContent: React.FC<ChallengeContentProps> = ({
             results={results}
             score={attempt.score}
             totalQuestions={challenge.questions.length}
-            onDone={onDone} 
+            onDone={onDone}
         />
       ) : (
         <>

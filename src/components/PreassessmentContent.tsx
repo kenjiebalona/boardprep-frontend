@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
-import ChallengeResult from "./ChallengeResult";
+import PreassessmentResult from "./PreassessmentResult";
 import "../styles/challenge-content.scss";
 import axios, { AxiosError } from "axios";
 
@@ -90,7 +90,7 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
             score: 0,
           };
 
-          console.log()
+          console.log(`preassessmentID: ${preassessmentID}`);
           const createAttemptResponse = await axiosInstance.post(
             "/studentPreassessmentAttempt/",
             payload
@@ -167,7 +167,7 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
           },
           {}
         );
-        
+
         const scoreResponse = await axiosInstance.post(
           "/studentPreassessmentAttempt/calculate_score/",
           {
@@ -215,12 +215,11 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
   return (
     <div className="challenge-content">
       {showResults ? (
-        <ChallengeResult
+        <PreassessmentResult
             questions={preassessment.questions}
             answers={answers}
             results={results}
-            // score={attempt.score}
-            score={0}
+            score={attempt.score}
             totalQuestions={preassessment.questions.length}
             onDone={onDone}
         />
