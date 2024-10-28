@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-import { useEffect, useState } from 'react';
-import ReactPaginate from 'react-paginate';
-import axiosInstance from '../axiosInstance';
-import { useAppSelector } from '../redux/hooks';
-import { selectUser } from '../redux/slices/authSlice';
-import '../styles/materials.scss';
-import ExamContent from './ExamContent';
-import LessonContent from './Lessons';
-import QuizContent from './QuizContent';
-import QuizResult from './QuizResult';
-import Syllabus from './Syllabus';
-import { useNavigate } from 'react-router-dom';
-=======
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import axiosInstance from "../axiosInstance";
@@ -23,7 +9,7 @@ import QuizContent from "./QuizContent";
 import QuizResult from "./QuizResult";
 import Syllabus from "./Syllabus";
 import TipTapEditor from "./TipTap";
->>>>>>> a3c06be83d33fc15053d3389e775b1a67193d60b
+import { useNavigate } from "react-router-dom";
 
 interface Page {
   page_id: string;
@@ -99,11 +85,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [examId, setExamId] = useState<number | null>(null);
   const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null); // New state for current subtopic
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
-<<<<<<< HEAD
   const [testStarted, setTestStarted] = useState(false);
-=======
   const [contentBlocks, setContentBlocks] = useState<ContentBlock[]>([]);
->>>>>>> a3c06be83d33fc15053d3389e775b1a67193d60b
 
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
@@ -164,7 +147,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
       setPages(response.data);
       console.log("Fetched pages:", response.data); // Confirm the fetched data
-      setShowLessonContent(true); 
+      setShowLessonContent(true);
       setPageMapping(pageMapping);
       if (response.data.length > 0) {
         setCurrentPage(response.data[0].page_number);
@@ -310,19 +293,15 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     setShowQuizContent(false);
     setShowQuizResult(false);
     setCurrentLessonIndex(-1);
-<<<<<<< HEAD
   };
 
   const handleStartPreassessment = () => {
     navigate('/preassessment')
-=======
->>>>>>> a3c06be83d33fc15053d3389e775b1a67193d60b
   };
 
   return (
-  
+
     <div className="materials-page">
-<<<<<<< HEAD
       {!testStarted && (
         <div className="lesson-content-container">
           <Syllabus
@@ -335,6 +314,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             currentSubtopic={currentSubtopic}
           />
 
+          {/*
           {showLessonContent && currentLesson && pages.length > 0 && (
             <LessonContent
               content={pages[currentPage].content}
@@ -347,7 +327,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
               passed={quizResult?.passed ?? false}
               examId={examId ?? -1}
             />
-          )}
+          )} */}
 
           {showQuizContent && currentLesson && (
             <QuizContent
@@ -392,6 +372,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
               onPageChange={handlePageClick}
               containerClassName={'pagination'}
               activeClassName={'active'}
+              forcePage={currentPage}
             />
           )}
 
@@ -399,102 +380,6 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         </div>
       )}
     </div>
-=======
-    {!showLessonContent ? (
-      <div className="lesson-content-container">
-        <Syllabus
-          lessons={lessons}
-          onLessonClick={handleLessonClick}
-          onTopicClick={handleTopicClick}
-          onSubtopicClick={handleSubtopicClick}
-          currentLesson={currentLesson}
-          currentTopic={currentTopic}
-          currentSubtopic={currentSubtopic}
-        />
-      </div>
-    ) : (
-      <div>
-        {pages[currentPage] && (
-          <div key={pages[currentPage].page_id}>
-            {contentBlocks.map((block: ContentBlock, idx: number) => (
-            <TipTapEditor
-              key={idx}
-              content={block.content}
-              editable={false} 
-              hideToolbar 
-            />
-            ))}
-          </div>
-        )}
-      </div>
-    )}
-
-    {/* 
-        {showLessonContent && currentLesson && pages.length > 0 && (
-          <LessonContent
-            content={pages[currentPage].content}
-            onBack={handleBackToSyllabus}
-            markLessonAsCompleted={markLessonAsCompleted}
-            userType={userType}
-            studentId={studentId}
-            lessonId={currentLesson}
-            classInstanceId={classId}
-            passed={quizResult?.passed ?? false}
-            examId={examId ?? -1}
-          />
-        )} */}
-
-
-        {showQuizContent && currentLesson && (
-          <QuizContent
-            lessonId={currentLesson}
-            studentId={studentId}
-            classInstanceId={classId}
-            onTryAgain={handleTryAgain}
-            onNextLesson={handleNextLesson}
-          />
-        )}
-
-        {showQuizResult && quizResult && (
-          <QuizResult
-            questions={quizResult.questions}
-            answers={quizResult.answers}
-            results={quizResult.results}
-            score={quizResult.score}
-            totalQuestions={quizResult.totalQuestions}
-            passed={quizResult.passed}
-            onTryAgain={handleTryAgain}
-            onNextLesson={handleNextLesson}
-          />
-        )}
-
-        {showExamContent && (
-          <ExamContent
-            studentId={studentId}
-            classInstanceId={classId}
-            courseId={courseId}
-            title={courseTitle ?? "Final Exam"}
-            onTryAgain={handleTryAgain}
-            onNextLesson={handleNextLesson}
-          />
-        )}
-
-      {pageCount > 1 && showLessonContent && currentLesson && (
-        
-            <ReactPaginate
-              previousLabel={currentPage > 0 ? "previous" : ""}
-              nextLabel={currentPage < pageCount - 1 ? "next" : ""}
-              breakLabel={"..."}
-              pageCount={pageCount}
-              onPageChange={handlePageClick}
-              containerClassName={"pagination"}
-              activeClassName={"active"}
-              forcePage={currentPage}
-            />
-          )}
-      </div>
-  
->>>>>>> a3c06be83d33fc15053d3389e775b1a67193d60b
   );
 }
 
