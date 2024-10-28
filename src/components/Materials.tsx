@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
-import ReactPaginate from 'react-paginate';
-import axiosInstance from '../axiosInstance';
-import { useAppSelector } from '../redux/hooks';
-import { selectUser } from '../redux/slices/authSlice';
-import '../styles/materials.scss';
-import ExamContent from './ExamContent';
-import QuizContent from './QuizContent';
-import QuizResult from './QuizResult';
-import Syllabus from './Syllabus';
-import TipTapEditor from './TipTap';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import ReactPaginate from "react-paginate";
+import axiosInstance from "../axiosInstance";
+import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/slices/authSlice";
+import "../styles/materials.scss";
+import ExamContent from "./ExamContent";
+import QuizContent from "./QuizContent";
+import QuizResult from "./QuizResult";
+import Syllabus from "./Syllabus";
+import TipTapEditor from "./TipTap";
+import { useNavigate } from "react-router-dom";
 
 interface Page {
   page_id: string;
@@ -111,7 +111,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           setLessons(lessonsData);
         }
       } catch (error) {
-        console.error('Error fetching course data:', error);
+        console.error("Error fetching course data:", error);
       }
     };
 
@@ -129,7 +129,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   const fetchPages = async (subtopicId: string) => {
     if (!subtopicId) {
-      console.error('Subtopic ID is undefined');
+      console.error("Subtopic ID is undefined");
       return;
     }
 
@@ -137,7 +137,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       const response = await axiosInstance.get(
         `/pages/by_subtopic/${subtopicId}/`
       );
-      console.log('Fetched pages:', response.data);
+      console.log("Fetched pages:", response.data);
 
       const fetchedPages = response.data;
 
@@ -150,7 +150,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       );
 
       setPages(response.data);
-      console.log('Fetched pages:', response.data); // Confirm the fetched data
+      console.log("Fetched pages:", response.data); // Confirm the fetched data
       setShowLessonContent(true);
       setPageMapping(pageMapping);
       if (response.data.length > 0) {
@@ -161,13 +161,13 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         setCurrentPage(0);
       }
     } catch (error) {
-      console.error('Error fetching pages:', error);
+      console.error("Error fetching pages:", error);
     }
   };
 
   const fetchContentBlocks = async (pageId: number) => {
     try {
-      console.log('Fetching content blocks for page ID:', pageId);
+      console.log("Fetching content blocks for page ID:", pageId);
       const response = await axiosInstance.get(
         `/pages/${pageId}/content_blocks/`
       );
@@ -176,25 +176,25 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         (block: any) =>
           ({
             ...block,
-            block_type: block.block_type || 'Unknown Type',
+            block_type: block.block_type || "Unknown Type",
             block_id: Number(block.block_id),
           } as ContentBlock)
       );
       setContentBlocks(blocks);
     } catch (error) {
-      console.error('Error fetching content blocks:', error);
+      console.error("Error fetching content blocks:", error);
     }
   };
 
   const handleSubtopicClick = (subtopicId: string) => {
-    console.log('Clicked');
-    console.log('Page Count', pageCount);
+    console.log("Clicked");
+    console.log("Page Count", pageCount);
     setCurrentSubtopic(subtopicId);
     fetchPages(subtopicId);
   };
 
   const handleTopicClick = (subtopicId: string) => {
-    console.log('Topic clicked:', subtopicId); // Add this line for debugging
+    console.log("Topic clicked:", subtopicId); // Add this line for debugging
     setCurrentSubtopic(subtopicId); // Set the current subtopic
     fetchPages(subtopicId); // Fetch pages for the clicked subtopic
   };
@@ -208,7 +208,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       setShowQuizResult(true);
       setShowQuizContent(false);
     } catch (error) {
-      console.error('Error fetching quiz results:', error);
+      console.error("Error fetching quiz results:", error);
     }
   };
 
@@ -298,7 +298,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   };
 
   const handleStartPreassessment = () => {
-    navigate('/preassessment');
+    navigate("/preassessment");
   };
 
   return (
@@ -314,7 +314,12 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             currentTopic={currentTopic}
             currentSubtopic={currentSubtopic}
           />
-          <button className="preassessment-button" onClick={handleStartPreassessment}>Take preassessment</button>
+          <button
+            className="preassessment-button"
+            onClick={handleStartPreassessment}
+          >
+            Take preassessment
+          </button>
         </div>
       ) : (
         <div>
@@ -376,7 +381,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           studentId={studentId}
           classInstanceId={classId}
           courseId={courseId}
-          title={courseTitle ?? 'Final Exam'}
+          title={courseTitle ?? "Final Exam"}
           onTryAgain={handleTryAgain}
           onNextLesson={handleNextLesson}
         />
@@ -384,13 +389,13 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
       {pageCount > 1 && showLessonContent && currentLesson && (
         <ReactPaginate
-          previousLabel={currentPage > 0 ? 'previous' : ''}
-          nextLabel={currentPage < pageCount - 1 ? 'next' : ''}
-          breakLabel={'...'}
+          previousLabel={currentPage > 0 ? "previous" : ""}
+          nextLabel={currentPage < pageCount - 1 ? "next" : ""}
+          breakLabel={"..."}
           pageCount={pageCount}
           onPageChange={handlePageClick}
-          containerClassName={'pagination'}
-          activeClassName={'active'}
+          containerClassName={"pagination"}
+          activeClassName={"active"}
           forcePage={currentPage}
         />
       )}
