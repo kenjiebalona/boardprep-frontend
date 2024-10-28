@@ -135,7 +135,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
     try {
       const response = await axiosInstance.get(
-        `/pages/by_subtopic/${subtopicId}/`
+        `/pages/by_subtopic/${subtopicId}/?student_id=${studentId}`
       );
       console.log("Fetched pages:", response.data);
 
