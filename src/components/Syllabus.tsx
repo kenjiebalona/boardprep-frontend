@@ -212,6 +212,7 @@ function Syllabus({
                 )}
                 </div>
               </div>
+              <button className="quiz-button">Take quiz</button>
             </div>
           );
         })}

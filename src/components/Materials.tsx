@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import ReactPaginate from "react-paginate";
-import axiosInstance from "../axiosInstance";
+import { useEffect, useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import axiosInstance from '../axiosInstance';
 import { useAppSelector } from '../redux/hooks';
 import { selectUser } from '../redux/slices/authSlice';
-import "../styles/materials.scss";
-import ExamContent from "./ExamContent";
-import LessonContent from "./Lessons";
-import QuizContent from "./QuizContent";
-import QuizResult from "./QuizResult";
-import Syllabus from "./Syllabus";
-
+import '../styles/materials.scss';
+import ExamContent from './ExamContent';
+import LessonContent from './Lessons';
+import QuizContent from './QuizContent';
+import QuizResult from './QuizResult';
+import Syllabus from './Syllabus';
+import { useNavigate } from 'react-router-dom';
 
 interface Page {
   page_number: number;
@@ -46,7 +46,6 @@ interface Lesson {
   quiz_id: string;
 }
 
-
 interface Course {
   course_id: string;
   course_title: string;
@@ -55,7 +54,7 @@ interface Course {
 interface MaterialsProps {
   courseId: string;
   studentId: string;
-  classId: number;  
+  classId: number;
 }
 
 function Materials({ courseId, studentId, classId }: MaterialsProps) {
@@ -74,7 +73,9 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [examId, setExamId] = useState<number | null>(null);
   const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null); // New state for current subtopic
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
+  const [testStarted, setTestStarted] = useState(false);
 
+  const navigate = useNavigate();
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
   const pageCount = pages.length;
@@ -85,18 +86,20 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         const courseResponse = await axiosInstance.get(`/courses/${courseId}/`);
         const courseData: Course = courseResponse.data;
         setCourseTitle(courseData.course_title);
-        
+
         const syllabusData = courseResponse.data.syllabus;
         if (syllabusData && syllabusData.lessons) {
-          const lessonsData = syllabusData.lessons.map((lesson: Lesson, index: number) => ({
-            ...lesson,
-            completed: false,
-            quiz_id: `Lesson ${index + 1} Quiz`,
-          }));
+          const lessonsData = syllabusData.lessons.map(
+            (lesson: Lesson, index: number) => ({
+              ...lesson,
+              completed: false,
+              quiz_id: `Lesson ${index + 1} Quiz`,
+            })
+          );
           setLessons(lessonsData);
         }
       } catch (error) {
-        console.error("Error fetching course data:", error);
+        console.error('Error fetching course data:', error);
       }
     };
 
@@ -105,7 +108,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   useEffect(() => {
     const checkAllLessonsCompleted = () => {
-      const completed = lessons.every(lesson => lesson.completed);
+      const completed = lessons.every((lesson) => lesson.completed);
       setAllLessonsCompleted(completed);
     };
 
@@ -118,7 +121,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       setPages(response.data);
       setCurrentPage(0);
     } catch (error) {
-      console.error("Error fetching pages:", error);
+      console.error('Error fetching pages:', error);
     }
   };
 
@@ -136,12 +139,14 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   const fetchQuizResult = async (quizId: string) => {
     try {
-      const response = await axiosInstance.get(`/quizzes/${quizId}/results/${studentId}`);
+      const response = await axiosInstance.get(
+        `/quizzes/${quizId}/results/${studentId}`
+      );
       setQuizResult(response.data);
       setShowQuizResult(true);
       setShowQuizContent(false);
     } catch (error) {
-      console.error("Error fetching quiz results:", error);
+      console.error('Error fetching quiz results:', error);
     }
   };
 
@@ -160,7 +165,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   //     setShowQuizResult(false);
   //     setShowExamContent(false);
   //   }
-  // };  
+  // };
 
   const handlePageClick = (event: { selected: number }) => {
     setCurrentPage(event.selected);
@@ -173,15 +178,15 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       )
     );
 
-    setShowLessonContent(false); 
-    setShowQuizContent(true); 
+    setShowLessonContent(false);
+    setShowQuizContent(true);
     setShowQuizResult(false);
     setShowExamContent(false);
   };
 
   const handleBackToSyllabus = () => {
-    setShowLessonContent(false); 
-    setShowQuizContent(false);   
+    setShowLessonContent(false);
+    setShowQuizContent(false);
     setShowQuizResult(false);
     setShowExamContent(false);
   };
@@ -192,7 +197,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       setShowQuizContent(false);
       setShowQuizResult(false);
       setShowExamContent(false);
-      
+
       setCurrentLessonIndex(currentLessonIndex + 1);
       const nextLesson = lessons[currentLessonIndex + 1].lesson_id;
       setCurrentLesson(nextLesson);
@@ -210,7 +215,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       setShowQuizContent(false);
       setShowQuizResult(false);
       setShowExamContent(false);
-      
+
       setCurrentLessonIndex(currentLessonIndex + 1);
       const nextLesson = lessons[currentLessonIndex + 1].lesson_id;
       setCurrentLesson(nextLesson);
@@ -225,88 +230,93 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const handleExamClick = () => {
     setShowExamContent(true);
     setShowLessonContent(false);
-    setShowQuizContent(false); 
-    setShowQuizResult(false); 
-    setCurrentLessonIndex(-1); 
+    setShowQuizContent(false);
+    setShowQuizResult(false);
+    setCurrentLessonIndex(-1);
+  };
+
+  const handleStartPreassessment = () => {
+    navigate('/preassessment')
   };
 
   return (
     <div className="materials-page">
-          <div className="lesson-content-container">
-   
-            <Syllabus
-              lessons={lessons}
-              onLessonClick={handleLessonClick}
-              onTopicClick={handleTopicClick}
-              onSubtopicClick={handleSubtopicClick}
-              currentLesson={currentLesson}
-              currentTopic={currentTopic}
-              currentSubtopic={currentSubtopic}
+      {!testStarted && (
+        <div className="lesson-content-container">
+          <Syllabus
+            lessons={lessons}
+            onLessonClick={handleLessonClick}
+            onTopicClick={handleTopicClick}
+            onSubtopicClick={handleSubtopicClick}
+            currentLesson={currentLesson}
+            currentTopic={currentTopic}
+            currentSubtopic={currentSubtopic}
+          />
+
+          {showLessonContent && currentLesson && pages.length > 0 && (
+            <LessonContent
+              content={pages[currentPage].content}
+              onBack={handleBackToSyllabus}
+              markLessonAsCompleted={markLessonAsCompleted}
+              userType={userType}
+              studentId={studentId}
+              lessonId={currentLesson}
+              classInstanceId={classId}
+              passed={quizResult?.passed ?? false}
+              examId={examId ?? -1}
             />
-          
+          )}
 
-        {showLessonContent && currentLesson && pages.length > 0 && (
-          <LessonContent 
-            content={pages[currentPage].content} 
-            onBack={handleBackToSyllabus} 
-            markLessonAsCompleted={markLessonAsCompleted}
-            userType={userType}
-            studentId={studentId}
-            lessonId={currentLesson}
-            classInstanceId={classId}
-            passed={quizResult?.passed ?? false} 
-            examId={examId ?? -1} 
-          />
-        )}
+          {showQuizContent && currentLesson && (
+            <QuizContent
+              lessonId={currentLesson}
+              studentId={studentId}
+              classInstanceId={classId}
+              onTryAgain={handleTryAgain}
+              onNextLesson={handleNextLesson}
+            />
+          )}
 
-        {showQuizContent && currentLesson && (
-          <QuizContent
-            lessonId={currentLesson}
-            studentId={studentId}
-            classInstanceId={classId} 
-            onTryAgain={handleTryAgain}
-            onNextLesson={handleNextLesson}
-          />
-        )}
+          {showQuizResult && quizResult && (
+            <QuizResult
+              questions={quizResult.questions}
+              answers={quizResult.answers}
+              results={quizResult.results}
+              score={quizResult.score}
+              totalQuestions={quizResult.totalQuestions}
+              passed={quizResult.passed}
+              onTryAgain={handleTryAgain}
+              onNextLesson={handleNextLesson}
+            />
+          )}
 
-        {showQuizResult && quizResult && (
-          <QuizResult 
-            questions={quizResult.questions} 
-            answers={quizResult.answers} 
-            results={quizResult.results} 
-            score={quizResult.score} 
-            totalQuestions={quizResult.totalQuestions} 
-            passed={quizResult.passed} 
-            onTryAgain={handleTryAgain}
-            onNextLesson={handleNextLesson}
-          />
-        )}
+          {showExamContent && (
+            <ExamContent
+              studentId={studentId}
+              classInstanceId={classId}
+              courseId={courseId}
+              title={courseTitle ?? 'Final Exam'}
+              onTryAgain={handleTryAgain}
+              onNextLesson={handleNextLesson}
+            />
+          )}
 
-        {showExamContent && (
-          <ExamContent
-            studentId={studentId}
-            classInstanceId={classId}
-            courseId={courseId}
-            title={courseTitle ?? "Final Exam"}
-            onTryAgain={handleTryAgain}
-            onNextLesson={handleNextLesson}
-          />
-        )}
+          {pageCount > 1 && showLessonContent && currentLesson && (
+            <ReactPaginate
+              previousLabel={currentPage > 0 ? 'previous' : ''}
+              nextLabel={currentPage < pageCount - 1 ? 'next' : ''}
+              breakLabel={'...'}
+              pageCount={pageCount}
+              onPageChange={handlePageClick}
+              containerClassName={'pagination'}
+              activeClassName={'active'}
+            />
+          )}
 
-        {pageCount > 1 && showLessonContent && currentLesson && (
-          <ReactPaginate
-            previousLabel={currentPage > 0 ? "previous" : ""}
-            nextLabel={currentPage < pageCount - 1 ? "next" : ""}
-            breakLabel={"..."}
-            pageCount={pageCount}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
-          />
-        )}
-      </div>
-      </div>
-
+          <button className="preassessment-button" onClick={handleStartPreassessment}>Take preassessment</button>
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -54,7 +54,7 @@
         @if color == hsl(0, 0%, 0%) { // Check if the color is black
           color: #fff; // Change text color to white
         }
-         
+
     }
 
     .pagination {
@@ -62,7 +62,7 @@
       bottom: 60px; // Adjust as needed to position at the bottom
       left: 50%;
       transform: translateX(-50%); // Center horizontally
-    }   
+    }
   }
 
   &.collapsed .lesson-content-container {
@@ -177,8 +177,21 @@
   }
 }
 
-  
+
   // ... Rest of your existing styles
-  
+  .preassessment-button {
+    background-color: #7D67FF;
+    height: 60px;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    width: 100%;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #5D3FD3;
+    }
+  }
 
 
