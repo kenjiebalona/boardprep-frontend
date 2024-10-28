@@ -1,15 +1,16 @@
-import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faCode, faEllipsisH, faHeading, faHighlighter, faImage, faItalic, faListOl, faListUl, faParagraph, faQuoteRight, faRedo, faStrikethrough, faTable, faTerminal, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faVideo, faCode, faEllipsisH, faHeading, faHighlighter, faImage, faItalic, faListOl, faListUl, faParagraph, faQuoteRight, faRedo, faStrikethrough, faTable, faTerminal, faUndo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
+import Image from '@tiptap/extension-image';
 import ListItem from '@tiptap/extension-list-item';
 import Table from '@tiptap/extension-table';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import TextAlign from '@tiptap/extension-text-align';
-import TextStyle from '@tiptap/extension-text-style';
 import Youtube from '@tiptap/extension-youtube';
+import TextStyle from '@tiptap/extension-text-style';
 import {
   BubbleMenu,
   EditorContent,
@@ -18,8 +19,8 @@ import {
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect, useState } from 'react';
-import ResizeImage from 'tiptap-extension-resize-image';
 import "../styles/tiptapeditor.scss";
+import ResizeImage from 'tiptap-extension-resize-image';
 
 interface TipTapEditorProps {
   content: string;
@@ -238,7 +239,11 @@ const MenuBar = ({ editor }: { editor: any }) => {
           </div>
         )}
       </div>
-
+      <div className="dropdown-container2">
+          <button onClick={addYoutubeVideo} title="Add YouTube video">
+            <FontAwesomeIcon icon={faVideo} /> {/* Video icon */}
+          </button>
+        </div>
         <button
           onClick={() => editor.chain().focus().undo().run()}
           className="px-2 py-1 rounded"
@@ -308,7 +313,7 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange, editable
     extensions: [
       StarterKit,
       TextAlign.configure({
-        types: ['heading', 'paragraph', 'image', 'table'],
+        types: ['heading', 'paragraph'],
       }),
       Highlight,
       Table.configure({
