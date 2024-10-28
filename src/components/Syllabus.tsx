@@ -212,7 +212,9 @@ function Syllabus({
                 )}
                 </div>
               </div>
-              <button className="quiz-button">Take quiz</button>
+              {userType !== "C" && (
+                <button className="quiz-button">Take quiz</button>
+              )}
             </div>
           );
         })}
