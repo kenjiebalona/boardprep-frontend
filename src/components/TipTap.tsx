@@ -1,4 +1,5 @@
-import { Color } from '@tiptap/extension-color';
+import { faAlignCenter, faAlignLeft, faAlignRight, faBold, faCode, faEllipsisH, faHeading, faHighlighter, faImage, faItalic, faListOl, faListUl, faParagraph, faQuoteRight, faRedo, faStrikethrough, faTable, faTerminal, faUndo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import Image from '@tiptap/extension-image';
 import ListItem from '@tiptap/extension-list-item';
@@ -7,7 +8,7 @@ import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 import TableRow from '@tiptap/extension-table-row';
 import TextAlign from '@tiptap/extension-text-align';
-import Youtube from '@tiptap/extension-youtube'; 
+import Youtube from '@tiptap/extension-youtube';
 import TextStyle from '@tiptap/extension-text-style';
 import {
   BubbleMenu,
@@ -18,20 +19,20 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect, useState } from 'react';
 import "../styles/tiptapeditor.scss";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBold, faItalic, faStrikethrough, faCode, faVideo, faEllipsisH, faQuoteRight, faHeading, faParagraph, faHighlighter, faTerminal, faTable, faImage, faUndo, faRedo, faListUl, faListOl, faAlignLeft, faAlignCenter, faAlignRight } from '@fortawesome/free-solid-svg-icons';
-import ResizeImage from 'tiptap-extension-resize-image'; 
+import ResizeImage from 'tiptap-extension-resize-image';
 
 interface TipTapEditorProps {
   content: string;
-  onChange: (updatedContent: string) => void;
+  onChange?: (updatedContent: string) => void;
+  editable?: boolean;
+  hideToolbar?: boolean;
 }
 
 const MenuBar = ({ editor }: { editor: any }) => {
-  const [headerDropdownOpen, setHeaderDropdownOpen] = useState(false); 
+  const [headerDropdownOpen, setHeaderDropdownOpen] = useState(false);
   const [tableDropdownOpen, setTableDropdownOpen] = useState(false);
-  const [tableMenuVisible, setTableMenuVisible] = useState(false); 
-  const [imageDropdownOpen, setImageDropdownOpen] = useState(false); 
+  const [tableMenuVisible, setTableMenuVisible] = useState(false);
+  const [imageDropdownOpen, setImageDropdownOpen] = useState(false);
 
 
   if (!editor) {
@@ -52,7 +53,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
 
   const toggleTableDropdown = () => {
     setTableDropdownOpen(!tableDropdownOpen);
-    setHeaderDropdownOpen(false); 
+    setHeaderDropdownOpen(false);
     setImageDropdownOpen(false);
   };
 
@@ -62,7 +63,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
     if (url) {
       editor.commands.setYoutubeVideo({
         src: url,
-        width: 780, 
+        width: 780,
         height: 400,
       })
     }
@@ -149,7 +150,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
 
       <div className="dropdown-container">
           <button onClick={toggleHeaderDropdown} className={headerDropdownOpen  ? 'active' : ''}>
-            <FontAwesomeIcon icon={faHeading} /> 
+            <FontAwesomeIcon icon={faHeading} />
           </button>
           {headerDropdownOpen  && (
             <div className="dropdown-menu">
@@ -237,13 +238,6 @@ const MenuBar = ({ editor }: { editor: any }) => {
           </div>
         )}
       </div>
-      <div className="control-group">
-      <div className="button-group">
-        <button onClick={addYoutubeVideo} title="Add YouTube video">
-          <FontAwesomeIcon icon={faVideo} />
-        </button>      
-      </div>
-    </div>
 
         <button
           onClick={() => editor.chain().focus().undo().run()}
@@ -260,8 +254,8 @@ const MenuBar = ({ editor }: { editor: any }) => {
         <button
           onClick={() => {
             editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
-            showTableMenu(); 
-          }}          
+            showTableMenu();
+          }}
           className="px-2 py-1 rounded"
         >
           <FontAwesomeIcon icon={faTable} />
@@ -270,7 +264,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
       {tableMenuVisible && (
           <div className="table-dropdown-container">
             <button onClick={toggleTableDropdown} className={tableDropdownOpen ? 'active' : ''}>
-              <FontAwesomeIcon icon={faEllipsisH} /> 
+              <FontAwesomeIcon icon={faEllipsisH} />
             </button>
            {tableDropdownOpen  && (
              <div className="table-dropdown-menu">
@@ -309,7 +303,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 };
 
-const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
+const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange, editable = true, hideToolbar = false }) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -323,22 +317,24 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
       TableRow,
       TableHeader,
       TableCell,
-      Image,
-      ResizeImage, 
+      ResizeImage,
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
       TextStyle.configure({ types: [ListItem.name] } as any),
-      Youtube.configure({ controls: false, nocookie: true }), 
+      Youtube.configure({ controls: false, nocookie: true }),
     ],
     content,
+    editable,
     onUpdate: ({ editor }) => {
-      const updatedContent = editor.getHTML();
-      onChange(updatedContent);
+      if (onChange) {
+        const updatedContent = editor.getHTML();
+        onChange(updatedContent);
+      }
     },
   });
 
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content, false); 
+      editor.commands.setContent(content, false);
     }
   }, [content, editor]);
 
@@ -348,11 +344,12 @@ const TipTapEditor: React.FC<TipTapEditorProps> = ({ content, onChange }) => {
 
   return (
     <div className="editor-container">
-      <MenuBar editor={editor} />
-      
-      <BubbleMenu 
-        className="flex gap-1 p-1 bg-white border rounded-lg shadow-lg" 
-        tippyOptions={{ duration: 100 }} 
+       {!hideToolbar && <MenuBar editor={editor} />}
+
+
+      <BubbleMenu
+        className="flex gap-1 p-1 bg-white border rounded-lg shadow-lg"
+        tippyOptions={{ duration: 100 }}
         editor={editor}
       >
         <button

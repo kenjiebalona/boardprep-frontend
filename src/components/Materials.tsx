@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import ReactPaginate from "react-paginate";
-import axiosInstance from "../axiosInstance";
-import { useAppSelector } from "../redux/hooks";
-import { selectUser } from "../redux/slices/authSlice";
-import "../styles/materials.scss";
-import ExamContent from "./ExamContent";
-import QuizContent from "./QuizContent";
-import QuizResult from "./QuizResult";
-import Syllabus from "./Syllabus";
-import TipTapEditor from "./TipTap";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import axiosInstance from '../axiosInstance';
+import { useAppSelector } from '../redux/hooks';
+import { selectUser } from '../redux/slices/authSlice';
+import '../styles/materials.scss';
+import ExamContent from './ExamContent';
+import QuizContent from './QuizContent';
+import QuizResult from './QuizResult';
+import Syllabus from './Syllabus';
+import TipTapEditor from './TipTap';
+import { useNavigate } from 'react-router-dom';
 
 interface Page {
   page_id: string;
@@ -65,7 +65,6 @@ interface ContentBlock {
   difficulty: string;
   content: string;
 }
-
 
 function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [pages, setPages] = useState<Page[]>([]);
@@ -130,23 +129,28 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   const fetchPages = async (subtopicId: string) => {
     if (!subtopicId) {
-      console.error("Subtopic ID is undefined");
+      console.error('Subtopic ID is undefined');
       return;
     }
 
     try {
-      const response = await axiosInstance.get(`/pages/by_subtopic/${subtopicId}/`);
-      console.log("Fetched pages:", response.data);
+      const response = await axiosInstance.get(
+        `/pages/by_subtopic/${subtopicId}/`
+      );
+      console.log('Fetched pages:', response.data);
 
       const fetchedPages = response.data;
 
-      const pageMapping = fetchedPages.reduce((acc: { [key: number]: string }, page: Page) => {
-        acc[page.page_number] = page.page_id;
-        return acc;
-      }, {});
+      const pageMapping = fetchedPages.reduce(
+        (acc: { [key: number]: string }, page: Page) => {
+          acc[page.page_number] = page.page_id;
+          return acc;
+        },
+        {}
+      );
 
       setPages(response.data);
-      console.log("Fetched pages:", response.data); // Confirm the fetched data
+      console.log('Fetched pages:', response.data); // Confirm the fetched data
       setShowLessonContent(true);
       setPageMapping(pageMapping);
       if (response.data.length > 0) {
@@ -161,10 +165,9 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     }
   };
 
-
   const fetchContentBlocks = async (pageId: number) => {
     try {
-      console.log("Fetching content blocks for page ID:", pageId);
+      console.log('Fetching content blocks for page ID:', pageId);
       const response = await axiosInstance.get(
         `/pages/${pageId}/content_blocks/`
       );
@@ -173,26 +176,25 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         (block: any) =>
           ({
             ...block,
-            block_type: block.block_type || "Unknown Type",
+            block_type: block.block_type || 'Unknown Type',
             block_id: Number(block.block_id),
           } as ContentBlock)
       );
       setContentBlocks(blocks);
     } catch (error) {
-      console.error("Error fetching content blocks:", error);
+      console.error('Error fetching content blocks:', error);
     }
   };
 
   const handleSubtopicClick = (subtopicId: string) => {
-    console.log("Clicked")
-    console.log("Page Count", pageCount)
+    console.log('Clicked');
+    console.log('Page Count', pageCount);
     setCurrentSubtopic(subtopicId);
     fetchPages(subtopicId);
-
   };
 
   const handleTopicClick = (subtopicId: string) => {
-    console.log("Topic clicked:", subtopicId); // Add this line for debugging
+    console.log('Topic clicked:', subtopicId); // Add this line for debugging
     setCurrentSubtopic(subtopicId); // Set the current subtopic
     fetchPages(subtopicId); // Fetch pages for the clicked subtopic
   };
@@ -296,13 +298,12 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   };
 
   const handleStartPreassessment = () => {
-    navigate('/preassessment')
+    navigate('/preassessment');
   };
 
   return (
-
     <div className="materials-page">
-      {!testStarted && (
+      {!showLessonContent ? (
         <div className="lesson-content-container">
           <Syllabus
             lessons={lessons}
@@ -313,8 +314,26 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             currentTopic={currentTopic}
             currentSubtopic={currentSubtopic}
           />
+          <button className="preassessment-button" onClick={handleStartPreassessment}>Take preassessment</button>
+        </div>
+      ) : (
+        <div>
+          {pages[currentPage] && (
+            <div key={pages[currentPage].page_id}>
+              {contentBlocks.map((block: ContentBlock, idx: number) => (
+                <TipTapEditor
+                  key={idx}
+                  content={block.content}
+                  editable={false}
+                  hideToolbar
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
-          {/*
+      {/*
           {showLessonContent && currentLesson && pages.length > 0 && (
             <LessonContent
               content={pages[currentPage].content}
@@ -329,55 +348,51 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             />
           )} */}
 
-          {showQuizContent && currentLesson && (
-            <QuizContent
-              lessonId={currentLesson}
-              studentId={studentId}
-              classInstanceId={classId}
-              onTryAgain={handleTryAgain}
-              onNextLesson={handleNextLesson}
-            />
-          )}
+      {showQuizContent && currentLesson && (
+        <QuizContent
+          lessonId={currentLesson}
+          studentId={studentId}
+          classInstanceId={classId}
+          onTryAgain={handleTryAgain}
+          onNextLesson={handleNextLesson}
+        />
+      )}
 
-          {showQuizResult && quizResult && (
-            <QuizResult
-              questions={quizResult.questions}
-              answers={quizResult.answers}
-              results={quizResult.results}
-              score={quizResult.score}
-              totalQuestions={quizResult.totalQuestions}
-              passed={quizResult.passed}
-              onTryAgain={handleTryAgain}
-              onNextLesson={handleNextLesson}
-            />
-          )}
+      {showQuizResult && quizResult && (
+        <QuizResult
+          questions={quizResult.questions}
+          answers={quizResult.answers}
+          results={quizResult.results}
+          score={quizResult.score}
+          totalQuestions={quizResult.totalQuestions}
+          passed={quizResult.passed}
+          onTryAgain={handleTryAgain}
+          onNextLesson={handleNextLesson}
+        />
+      )}
 
-          {showExamContent && (
-            <ExamContent
-              studentId={studentId}
-              classInstanceId={classId}
-              courseId={courseId}
-              title={courseTitle ?? 'Final Exam'}
-              onTryAgain={handleTryAgain}
-              onNextLesson={handleNextLesson}
-            />
-          )}
+      {showExamContent && (
+        <ExamContent
+          studentId={studentId}
+          classInstanceId={classId}
+          courseId={courseId}
+          title={courseTitle ?? 'Final Exam'}
+          onTryAgain={handleTryAgain}
+          onNextLesson={handleNextLesson}
+        />
+      )}
 
-          {pageCount > 1 && showLessonContent && currentLesson && (
-            <ReactPaginate
-              previousLabel={currentPage > 0 ? 'previous' : ''}
-              nextLabel={currentPage < pageCount - 1 ? 'next' : ''}
-              breakLabel={'...'}
-              pageCount={pageCount}
-              onPageChange={handlePageClick}
-              containerClassName={'pagination'}
-              activeClassName={'active'}
-              forcePage={currentPage}
-            />
-          )}
-
-          <button className="preassessment-button" onClick={handleStartPreassessment}>Take preassessment</button>
-        </div>
+      {pageCount > 1 && showLessonContent && currentLesson && (
+        <ReactPaginate
+          previousLabel={currentPage > 0 ? 'previous' : ''}
+          nextLabel={currentPage < pageCount - 1 ? 'next' : ''}
+          breakLabel={'...'}
+          pageCount={pageCount}
+          onPageChange={handlePageClick}
+          containerClassName={'pagination'}
+          activeClassName={'active'}
+          forcePage={currentPage}
+        />
       )}
     </div>
   );
