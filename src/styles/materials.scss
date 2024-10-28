@@ -42,12 +42,12 @@
     height: fit-content;
     border-radius: 10px;
     margin-right: 5%;
-    margin-bottom: 5%;
     padding: 40px;
     transition: margin 0.3s ease, flex-basis 0.3s ease;
     box-shadow: 11px 5px 9px 0px rgba(230,104,230,1), -1px -1px 10px rgb(144, 129, 129);
     overflow: auto; 
     background-color: white;
+
 
     .ck-content {
       padding-left: 30px;
@@ -97,6 +97,7 @@
   align-items: center;
   margin-top: 10px;
   color: yellow;
+  margin-bottom: 5px;
   
   li {
     margin: 0 5px;
