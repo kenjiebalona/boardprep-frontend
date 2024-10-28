@@ -8,20 +8,44 @@ import ExamContent from "./ExamContent";
 import LessonContent from "./Lessons";
 import QuizContent from "./QuizContent";
 import QuizResult from "./QuizResult";
+import Syllabus from "./Syllabus";
+
 
 interface Page {
   page_number: number;
   content: string;
 }
 
+interface Objective {
+  text: string;
+}
+
+interface Topic {
+  topic_id: string;
+  topic_title: string;
+  order: number;
+  subtopics: Subtopic[];
+  learning_objectives: Objective[];
+}
+
+interface Subtopic {
+  subtopic_id: string;
+  subtopic_title: string;
+  order: number;
+}
+
 interface Lesson {
   lesson_id: string;
   lesson_title: string;
   order: number;
+  syllabus: string;
   content: string;
   completed: boolean;
+  topics: Topic[];
+  learning_objectives: Objective[];
   quiz_id: string;
 }
+
 
 interface Course {
   course_id: string;
@@ -61,43 +85,23 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         const courseResponse = await axiosInstance.get(`/courses/${courseId}/`);
         const courseData: Course = courseResponse.data;
         setCourseTitle(courseData.course_title);
-
-        const syllabusResponse = await axiosInstance.get(`/syllabi/${courseId}/`);
-        const syllabusData = syllabusResponse.data[0];
         
-        const lessonsData = syllabusData.lessons.map((lesson: Lesson, index: number) => ({
-          ...lesson,
-          completed: false,
-          quiz_id: `Lesson ${index + 1} Quiz`,
-        }));
-
-        setLessons(lessonsData);
-        if (lessonsData.length > 0) {
-          setCurrentLessonIndex(0);
+        const syllabusData = courseResponse.data.syllabus;
+        if (syllabusData && syllabusData.lessons) {
+          const lessonsData = syllabusData.lessons.map((lesson: Lesson, index: number) => ({
+            ...lesson,
+            completed: false,
+            quiz_id: `Lesson ${index + 1} Quiz`,
+          }));
+          setLessons(lessonsData);
         }
-        
-        const examResponse = await axiosInstance.get(`/api/exams/student-info/`, {
-          params: {
-            student_id: studentId,
-            class_instance_id: classId,
-            course_id: courseId
-          }
-        });
-
-        console.log('Exam Response:', examResponse.data);  
-        
-        if (examResponse.data && examResponse.data.exams.length > 0) {
-          const examData = examResponse.data.exams[0];
-          setExamId(examData.exam_id);
-        }
-
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching course data:", error);
       }
     };
 
     fetchCourseData();
-  }, [courseId, studentId, classId]);
+  }, [courseId]);
 
   useEffect(() => {
     const checkAllLessonsCompleted = () => {
@@ -122,14 +126,12 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     console.log('Subtopic clicked:', subtopicId); // Add this line for debugging
     setCurrentSubtopic(subtopicId); // Set the current subtopic
     fetchPages(subtopicId); // Fetch pages for the clicked subtopic
-    
   };
 
   const handleTopicClick = (subtopicId: string) => {
     console.log('Topic clicked:', subtopicId); // Add this line for debugging
     setCurrentSubtopic(subtopicId); // Set the current subtopic
     fetchPages(subtopicId); // Fetch pages for the clicked subtopic
-    
   };
 
   const fetchQuizResult = async (quizId: string) => {
@@ -143,18 +145,22 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     }
   };
 
-  const handleLessonClick = (lessonId: string, isQuiz: boolean) => {
-    if (isQuiz && lessons[currentLessonIndex]?.completed) {
-      fetchQuizResult(lessons[currentLessonIndex].quiz_id);
-    } else if (!isQuiz) {
-      fetchPages(lessonId);
-      setCurrentLesson(lessonId);
-      setShowLessonContent(true);
-      setShowQuizContent(false);
-      setShowQuizResult(false);
-      setShowExamContent(false);
-    }
-  };  
+  const handleLessonClick = async (lessonId: string) => {
+    setCurrentLesson(lessonId);
+  };
+
+  // const handleLessonClick = (lessonId: string, isQuiz: boolean) => {
+  //   if (isQuiz && lessons[currentLessonIndex]?.completed) {
+  //     fetchQuizResult(lessons[currentLessonIndex].quiz_id);
+  //   } else if (!isQuiz) {
+  //     fetchPages(lessonId);
+  //     setCurrentLesson(lessonId);
+  //     setShowLessonContent(true);
+  //     setShowQuizContent(false);
+  //     setShowQuizResult(false);
+  //     setShowExamContent(false);
+  //   }
+  // };  
 
   const handlePageClick = (event: { selected: number }) => {
     setCurrentPage(event.selected);
@@ -226,8 +232,18 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   return (
     <div className="materials-page">
-      
+          <div className="lesson-content-container">
    
+            <Syllabus
+              lessons={lessons}
+              onLessonClick={handleLessonClick}
+              onTopicClick={handleTopicClick}
+              onSubtopicClick={handleSubtopicClick}
+              currentLesson={currentLesson}
+              currentTopic={currentTopic}
+              currentSubtopic={currentSubtopic}
+            />
+          
 
         {showLessonContent && currentLesson && pages.length > 0 && (
           <LessonContent 
@@ -289,7 +305,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           />
         )}
       </div>
-
+      </div>
 
   );
 }
