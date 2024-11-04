@@ -80,7 +80,7 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
 
         console.log("Fetching all attempts for student:", studentId);
         const allAttemptsResponse = await axiosInstance.get(
-          `/studentPreassessmentAttempt/?student_id=${studentId}`
+          `/studentPreassessmentAttempt/?student_id=${studentId}&course_id=${courseId}`
         );
         const allAttempts = allAttemptsResponse.data;
 

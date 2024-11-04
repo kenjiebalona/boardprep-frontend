@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BsCheckCircleFill } from "react-icons/bs";
-import { FaBookOpen, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaBookOpen, FaChevronDown, FaChevronUp, FaLock } from "react-icons/fa";
 import { useAppSelector } from "../redux/hooks";
 import { selectUser } from "../redux/slices/authSlice";
 import "../styles/syllabus.scss";
@@ -42,6 +42,7 @@ interface SyllabusProps {
   currentLesson: string | null;
   currentTopic: string | null;
   currentSubtopic: string | null;
+  hasPreassessment: boolean;
 }
 
 function Syllabus({
@@ -52,6 +53,7 @@ function Syllabus({
   currentLesson,
   currentTopic,
   currentSubtopic,
+  hasPreassessment,
 }: SyllabusProps) {
   const [openLessonId, setOpenLessonId] = useState<string | null>(null);
   const [openTopicId, setOpenTopicId] = useState<string | null>(null);
@@ -192,18 +194,23 @@ function Syllabus({
                                 {topic.subtopics.map((subtopic) => (
                                   <div
                                     key={subtopic.subtopic_id}
+                                    style={{ cursor: "pointer" }}
                                     className={`subtopic-item ${
                                       currentSubtopic === subtopic.subtopic_id
                                         ? "active"
                                         : ""
                                     }`}
                                     onClick={() =>
+                                      hasPreassessment &&
                                       onSubtopicClick(subtopic.subtopic_id)
                                     }
                                     role="button"
                                     tabIndex={0}
                                   >
-                                    <span>{subtopic.subtopic_title}</span>
+                                    <span style={{ marginRight: 10 }}>
+                                      {subtopic.subtopic_title}
+                                    </span>
+                                    {!hasPreassessment && <FaLock />}
                                   </div>
                                 ))}
                               </div>
