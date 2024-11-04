@@ -86,6 +86,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null);
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const [testStarted, setTestStarted] = useState(false);
+  const [hasPreassessment, setHasPreassessment] = useState(false);
 
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
@@ -125,6 +126,23 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
     checkAllLessonsCompleted();
   }, [lessons]);
+
+  useEffect(() => {
+    fetchPreassessment();
+  }, []);
+
+  const fetchPreassessment = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/studentPreassessmentAttempt/?student_id=${studentId}&course_id=${courseId}`
+      );
+      if (response.data.length > 0) {
+        setHasPreassessment(true);
+      }
+    } catch (error) {
+      console.error("Error fetching preassessment data:", error);
+    }
+  };
 
   const fetchPages = async (subtopicId: string) => {
     if (!subtopicId) {
@@ -296,7 +314,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   }
 
   const handleStartPreassessment = () => {
-    navigate("/preassessment");
+    navigate(`/preassessment?course_id=${courseId}`);
   };
 
   return (
@@ -312,13 +330,16 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             currentTopic={currentTopic}
             currentSubtopic={currentSubtopic}
             handleQuizClick={(lessonID: string) => handleQuizClick(lessonID)}
+            hasPreassessment={hasPreassessment}
           />
-          <button
-            className="preassessment-button"
-            onClick={handleStartPreassessment}
-          >
-            Take preassessment
-          </button>
+          {!hasPreassessment && (
+            <button
+              className="preassessment-button"
+              onClick={handleStartPreassessment}
+            >
+              Take preassessment
+            </button>
+          )}
         </div>
       ) : (
         <div className="lesson-content-container">
@@ -404,7 +425,6 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           onNextLesson={handleNextLesson}
         />
       )}
-
     </div>
   );
 }
