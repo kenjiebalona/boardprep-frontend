@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import ExamResult from "./ExamResult";
-import "../styles/exam-content.scss"; 
+import "../styles/exam-content.scss";
 import axios, { AxiosError } from 'axios';
 
 
@@ -44,6 +44,13 @@ interface ExamContentProps {
   onNextLesson: () => void;
 }
 
+const shuffleArray = (array: any[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+};
+
 const ExamContent: React.FC<ExamContentProps> = ({
   studentId,
   classInstanceId,
@@ -72,13 +79,13 @@ const ExamContent: React.FC<ExamContentProps> = ({
           params: { student_id: studentId }
         }
       );
-      console.log("Full response data:", response.data); 
+      console.log("Full response data:", response.data);
       const attemptNumber = response.data.last_attempt?.attempt_number || response.data.next_attempt_number;
       console.log("Fetched attempt number:", attemptNumber);
       return attemptNumber;
     } catch (error) {
       console.error("Error fetching attempt number:", error);
-      return 1; 
+      return 1;
     }
   };
 
@@ -87,11 +94,11 @@ const ExamContent: React.FC<ExamContentProps> = ({
       const response = await axiosInstance.get(`/exams/${examId}/get_exam_questions/`, {
         params: { student_id: studentId, attempt_number: attemptNumber }
       });
-  
+
       console.log("Exam questions response data:", response.data);
-  
+
       const { exam_title, questions } = response.data;
-  
+
       const formattedQuestions: Question[] = questions.map((q: any) => ({
         id: q.id,
         text: q.text,
@@ -101,22 +108,26 @@ const ExamContent: React.FC<ExamContentProps> = ({
         })),
         correct_option: q.correct_option
       }));
-  
-      console.log("Formatted questions:", formattedQuestions); 
-  
+
+      console.log("Formatted questions:", formattedQuestions);
+
+      shuffleArray(formattedQuestions);
+
+      console.log("Shuffled Formatted questions:", formattedQuestions);
+
       setExam({
         id: examId,
         title: exam_title,
         questions: formattedQuestions,
         courseId: courseId
       });
-  
+
       console.log("Exam state set:", { id: examId, title: exam_title, questions: formattedQuestions, courseId });
     } catch (error: any) {
       console.error("Error fetching exam questions:", error);
       alert("An error occurred while fetching the exam questions. Please try again later.");
     }
-  };  
+  };
 
   const checkExistingExam = async () => {
     try {
@@ -131,16 +142,16 @@ const ExamContent: React.FC<ExamContentProps> = ({
         }
       );
 
-      console.log("Response data from exams endpoint:", response.data); 
+      console.log("Response data from exams endpoint:", response.data);
 
-      
+
       const existingExam = response.data.find((exam: any) => exam.student === studentId);
 
-      console.log("Existing exam found:", existingExam); 
+      console.log("Existing exam found:", existingExam);
 
       if (existingExam) {
       const attemptNumber = await fetchAttemptNumber(existingExam.id);
-      console.log("Fetched attempt number:", attemptNumber); 
+      console.log("Fetched attempt number:", attemptNumber);
 
         setAttempt({
           id: existingExam.id,
@@ -168,7 +179,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
       setLoading(false);
       return;
     }
-  
+
     try {
       const createExamResponse = await axiosInstance.post(
         "/exams/generate_adaptive_exam/",
@@ -180,9 +191,9 @@ const ExamContent: React.FC<ExamContentProps> = ({
         }
       );
       const examData = createExamResponse.data;
-  
+
       const attemptNumber = await fetchAttemptNumber(examData.id);
-  
+
       const createAttemptResponse = await axiosInstance.post(
         "/studentExamAttempt/",
         {
@@ -192,7 +203,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
         }
       );
       const attemptData = createAttemptResponse.data;
-  
+
       setAttempt(attemptData);
       await fetchExamQuestions(examData.id, attemptNumber);
     } catch (error: any) {
@@ -200,7 +211,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   const handleRetakeExam = async () => {
     try {
@@ -219,9 +230,9 @@ const ExamContent: React.FC<ExamContentProps> = ({
             ? { ...prevAttempt, attempt_number }
             : null
         );
-        await fetchExamQuestions(exam!.id, attempt_number); 
+        await fetchExamQuestions(exam!.id, attempt_number);
         setShowResults(false);
-        onTryAgain(); 
+        onTryAgain();
       } else {
         console.log("Failed to retake the exam. Please try again later.");
       }
@@ -258,18 +269,18 @@ const ExamContent: React.FC<ExamContentProps> = ({
       console.error("Exam or attempt data is missing.");
       return;
     }
-  
+
     const answersPayload = Object.entries(answers).map(([questionId, choiceId]) => ({
-      question_id: parseInt(questionId, 10), 
+      question_id: parseInt(questionId, 10),
       selected_choice_id: choiceId,
     }));
-  
+
     const payload = {
       student_id: studentId,
       answers: answersPayload,
       attempt_number: attempt.attempt_number,
     };
-  
+
     try {
       const submitExamResponse = await axiosInstance.post(
         `/exams/${exam.id}/submit/`,
@@ -277,12 +288,12 @@ const ExamContent: React.FC<ExamContentProps> = ({
       );
 
       console.log("SUBMIT:", submitExamResponse.data);
-  
+
       if (submitExamResponse.status === 200 || submitExamResponse.status === 201) {
         const { score, feedback, total_questions, start_time, end_time, passed } = submitExamResponse.data;
-  
+
         await fetchDetailedResults(exam.id, attempt.attempt_number);
-  
+
         setAttempt((prevAttempt) =>
           prevAttempt
             ? { ...prevAttempt, score, total_questions, start_time, end_time, passed }
@@ -304,7 +315,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
       }
     }
   };
-  
+
 
   const fetchDetailedResults = async (examId: string, attemptNumber: number) => {
     if (!attemptNumber) {
@@ -312,7 +323,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
       alert("Exam Finished!");
       return;
     }
-  
+
     try {
       const response = await axiosInstance.get(
         `/exams/${examId}/detailed_results/`,
@@ -320,22 +331,22 @@ const ExamContent: React.FC<ExamContentProps> = ({
           params: { student_id: studentId, attempt_number: attemptNumber }
         }
       );
-  
-      console.log("Detailed results response data:", response.data); 
-  
+
+      console.log("Detailed results response data:", response.data);
+
       const resultsData = response.data.results || [];
       const resultsMap = resultsData.reduce(
         (acc: { [key: string]: boolean }, item: any) => {
           if (item.id && typeof item.is_correct === 'boolean') {
-            acc[item.id] = item.is_correct; 
+            acc[item.id] = item.is_correct;
           }
           return acc;
         },
         {}
       );
-  
+
       setResults(resultsMap);
-  
+
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         console.error("Error fetching detailed results:", error.message);
@@ -347,7 +358,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
       alert("An error occurred while fetching detailed results. Please try again later.");
     }
   };
-  
+
 
   if (loading) {
     return <div className="loading">Loading...</div>;
@@ -367,7 +378,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
     <div className="exam-content">
       {showResults ? (
         <ExamResult
-          examId={exam.id} 
+          examId={exam.id}
           questions={exam.questions}
           answers={answers}
           results={results}
@@ -413,7 +424,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
                         <label>
                           <input
                             type="radio"
-                            name={`question-${question.id}`} 
+                            name={`question-${question.id}`}
                             value={choice.id}
                             checked={answers[question.id] === choice.id}
                             onChange={() =>

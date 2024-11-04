@@ -317,6 +317,14 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     navigate(`/preassessment?course_id=${courseId}`);
   };
 
+  const handleExam = () => {
+    setShowLessonContent(true);
+    setShowQuizContent(false);
+    setShowQuizResult(false);
+    setShowExamContent(true);
+    console.log('HANDLE EXAM CLICKED')
+  };
+
   return (
     <div className="materials-page">
       {!showLessonContent ? (
@@ -332,12 +340,19 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             handleQuizClick={(lessonID: string) => handleQuizClick(lessonID)}
             hasPreassessment={hasPreassessment}
           />
-          {!hasPreassessment && (
+          {!hasPreassessment ? (
             <button
               className="preassessment-button"
               onClick={handleStartPreassessment}
             >
               Take preassessment
+            </button>
+          ) : (
+            <button
+              className="preassessment-button"
+              onClick={handleExam}
+            >
+              Take exam
             </button>
           )}
         </div>
@@ -384,6 +399,17 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           onNextLesson={handleNextLesson}
         />
       )}
+
+    {showExamContent && (
+        <ExamContent
+          studentId={studentId}
+          classInstanceId={classId}
+          courseId={courseId}
+          title={courseTitle ?? "Final Exam"}
+          onTryAgain={handleTryAgain}
+          onNextLesson={handleNextLesson}
+        />
+      )}
         </div>
       )}
 
@@ -415,16 +441,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         />
       )}
 
-      {showExamContent && (
-        <ExamContent
-          studentId={studentId}
-          classInstanceId={classId}
-          courseId={courseId}
-          title={courseTitle ?? "Final Exam"}
-          onTryAgain={handleTryAgain}
-          onNextLesson={handleNextLesson}
-        />
-      )}
+
     </div>
   );
 }
