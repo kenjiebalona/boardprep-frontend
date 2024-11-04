@@ -34,15 +34,20 @@ interface StudentPreassessmentAttempt {
 interface PreassessmentContentProps {
   studentId: string;
   onDone: () => void;
+  courseId: string;
 }
-
 
 const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
   studentId,
   onDone,
+  courseId,
 }) => {
-  const [preassessment, setPreassessment] = useState<Preassessment | null>(null);
-  const [attempt, setAttempt] = useState<StudentPreassessmentAttempt | null>(null);
+  const [preassessment, setPreassessment] = useState<Preassessment | null>(
+    null
+  );
+  const [attempt, setAttempt] = useState<StudentPreassessmentAttempt | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [answers, setAnswers] = useState<{ [questionId: string]: string }>({});
   const [flags, setFlags] = useState<{ [questionId: string]: boolean }>({});
@@ -56,14 +61,18 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
     const fetchPreassessmentAndAttempt = async () => {
       try {
         console.log("Fetching preassessment...");
-        const preassessmentResponse = await axiosInstance.get(`/preassessment/today/`);
+        const preassessmentResponse = await axiosInstance.get(
+          `/preassessment/today/?course_id=${courseId}`
+        );
         const preassessmentData = preassessmentResponse.data;
 
         console.log("Preassessment data fetched:", preassessmentData);
 
         const preassessmentID = preassessmentData.preassessmentID;
         if (!preassessmentID) {
-          throw new Error("Preassessment ID is missing from the preassessment data.");
+          throw new Error(
+            "Preassessment ID is missing from the preassessment data."
+          );
         }
 
         setPreassessment(preassessmentData);
@@ -190,7 +199,10 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
         );
       }
     } catch (error) {
-      console.error("Error submitting preassessment or calculating score:", error);
+      console.error(
+        "Error submitting preassessment or calculating score:",
+        error
+      );
     }
   };
 
@@ -206,7 +218,9 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
     return <div>Error loading preassessment or attempt</div>;
   }
 
-  const totalPages = Math.ceil(preassessment.questions.length / questionsPerPage);
+  const totalPages = Math.ceil(
+    preassessment.questions.length / questionsPerPage
+  );
   const displayedQuestions = preassessment.questions.slice(
     (currentPage - 1) * questionsPerPage,
     currentPage * questionsPerPage
@@ -216,12 +230,12 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
     <div className="challenge-content">
       {showResults ? (
         <PreassessmentResult
-            questions={preassessment.questions}
-            answers={answers}
-            results={results}
-            score={attempt.score}
-            totalQuestions={preassessment.questions.length}
-            onDone={onDone}
+          questions={preassessment.questions}
+          answers={answers}
+          results={results}
+          score={attempt.score}
+          totalQuestions={preassessment.questions.length}
+          onDone={onDone}
         />
       ) : (
         <>
@@ -272,14 +286,16 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
                   <div
                     key={index}
                     className={`question-number ${
-                      answers[preassessment.questions[index].id] ? "answered" : ""
+                      answers[preassessment.questions[index].id]
+                        ? "answered"
+                        : ""
                     } ${
-                      flags[preassessment.questions[index].id] ? "flagged-box" : ""
+                      flags[preassessment.questions[index].id]
+                        ? "flagged-box"
+                        : ""
                     }`}
                     onClick={() =>
-                      handlePageChange(
-                        Math.floor(index / questionsPerPage) + 1
-                      )
+                      handlePageChange(Math.floor(index / questionsPerPage) + 1)
                     }
                   >
                     {index + 1}

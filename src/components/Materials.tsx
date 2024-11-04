@@ -294,7 +294,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   };
 
   const handleStartPreassessment = () => {
-    navigate("/preassessment");
+    navigate(`/preassessment?course_id=${courseId}`);
   };
 
   return (
@@ -339,18 +339,18 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             </div>
           )}
 
-        {pageCount > 1 && showLessonContent && (
-          <ReactPaginate
-            previousLabel={currentPage > 0 ? "<" : ""}
-            nextLabel={currentPage < pageCount - 1 ? ">" : ""}
-            breakLabel={"..."}
-            pageCount={pageCount}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
-            forcePage={currentPage}
-          />
-        )}
+          {pageCount > 1 && showLessonContent && (
+            <ReactPaginate
+              previousLabel={currentPage > 0 ? "<" : ""}
+              nextLabel={currentPage < pageCount - 1 ? ">" : ""}
+              breakLabel={"..."}
+              pageCount={pageCount}
+              onPageChange={handlePageClick}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+              forcePage={currentPage}
+            />
+          )}
         </div>
       )}
 
@@ -402,7 +402,6 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           onNextLesson={handleNextLesson}
         />
       )}
-
     </div>
   );
 }

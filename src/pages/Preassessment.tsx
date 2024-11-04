@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import ChallengeContent from "../components/ChallengeContent";
 import { selectUser } from "../redux/slices/authSlice";
+import { useSearchParams } from "react-router-dom";
 import "../styles/daily-challenge.scss";
 import DailyChallengeCard from "../components/DailyChallengeCard";
 import dailychallenge from "../assets/daily-challenge.png";
@@ -9,6 +10,8 @@ import CardLeaderboard from "../components/CardLeaderboard";
 import PreassessmentContent from "../components/PreassessmentContent";
 
 const Preassessment: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const courseId = searchParams.get("course_id") || "";
   const { token } = useSelector(selectUser);
   const studentId = token?.id || "";
 
@@ -50,6 +53,7 @@ const Preassessment: React.FC = () => {
           key={resetKey}
           studentId={studentId}
           onDone={handleDone}
+          courseId={courseId}
         />
       )}
     </div>
