@@ -33,7 +33,7 @@ interface StudentQuizAttempt {
 
 interface QuizContentProps {
   studentId: string;
-  lessonId: string;
+  lessonId: string | null;
   classInstanceId: number;
   onTryAgain: () => void;
   onNextLesson: () => void;
@@ -58,9 +58,10 @@ const QuizContent: React.FC<QuizContentProps> = ({
   const questionsPerPage = 2;
 
   useEffect(() => {
+    console.log('QUIZ CONTENT HERE');
     const fetchQuizAndAttempt = async () => {
       try {
-       
+
         const allAttemptsResponse = await axiosInstance.get(
           `/studentQuizAttempt/?student_id=${studentId}`
         );
@@ -76,7 +77,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
           const createQuizResponse = await axiosInstance.post("/quizzes/", {
             student: studentId,
-            lesson: lessonId,
+            subtopic: lessonId,
             class_instance: classInstanceId,
             title: `Lesson ${lessonId} Quiz`,
           });
@@ -91,7 +92,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
           const createQuizResponse = await axiosInstance.post("/quizzes/", {
             student: studentId,
-            lesson: lessonId,
+            subtopic: lessonId,
             class_instance: classInstanceId,
             title: `Lesson ${lessonId} Quiz - New`,
           });
@@ -216,7 +217,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
           passed={attempt.passed ?? false}
           onTryAgain={() => {
             setShowResults(false);
-            onTryAgain(); 
+            onTryAgain();
           }}
           onNextLesson={() => {
             setShowResults(false);

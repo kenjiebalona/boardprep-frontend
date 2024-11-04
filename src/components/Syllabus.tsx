@@ -42,6 +42,7 @@ interface SyllabusProps {
   currentLesson: string | null;
   currentTopic: string | null;
   currentSubtopic: string | null;
+  handleQuizClick: (lessonID: string) => void;
 }
 
 function Syllabus({
@@ -52,6 +53,7 @@ function Syllabus({
   currentLesson,
   currentTopic,
   currentSubtopic,
+  handleQuizClick
 }: SyllabusProps) {
   const [openLessonId, setOpenLessonId] = useState<string | null>(null);
   const [openTopicId, setOpenTopicId] = useState<string | null>(null);
@@ -213,7 +215,7 @@ function Syllabus({
                 </div>
               </div>
               {userType !== "C" && (
-                <button className="quiz-button">Take quiz</button>
+                <button className="quiz-button" onClick={() => handleQuizClick(lesson.lesson_id)}>Take quiz</button>
               )}
             </div>
           );

@@ -285,13 +285,15 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     }
   };
 
-  const handleExamClick = () => {
-    setShowExamContent(true);
-    setShowLessonContent(false);
-    setShowQuizContent(false);
+  const handleQuizClick = (lessonID: string) => {
+    setShowLessonContent(true);
+    setShowQuizContent(true);
     setShowQuizResult(false);
-    setCurrentLessonIndex(-1);
-  };
+    setShowExamContent(false);
+    setCurrentLesson(lessonID);
+    console.log('HANDLE QUIZ CLICKED')
+    console.log(showQuizContent, currentLesson, showLessonContent, lessonID, currentLesson)
+  }
 
   const handleStartPreassessment = () => {
     navigate("/preassessment");
@@ -309,6 +311,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             currentLesson={currentLesson}
             currentTopic={currentTopic}
             currentSubtopic={currentSubtopic}
+            handleQuizClick={(lessonID: string) => handleQuizClick(lessonID)}
           />
           <button
             className="preassessment-button"
@@ -351,6 +354,15 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             forcePage={currentPage}
           />
         )}
+        {showQuizContent && (
+        <QuizContent
+          lessonId={currentLesson}
+          studentId={studentId}
+          classInstanceId={classId}
+          onTryAgain={handleTryAgain}
+          onNextLesson={handleNextLesson}
+        />
+      )}
         </div>
       )}
 
@@ -368,16 +380,6 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
               examId={examId ?? -1}
             />
           )} */}
-
-      {showQuizContent && currentLesson && (
-        <QuizContent
-          lessonId={currentLesson}
-          studentId={studentId}
-          classInstanceId={classId}
-          onTryAgain={handleTryAgain}
-          onNextLesson={handleNextLesson}
-        />
-      )}
 
       {showQuizResult && quizResult && (
         <QuizResult
