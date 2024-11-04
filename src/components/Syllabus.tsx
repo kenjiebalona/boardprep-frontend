@@ -201,7 +201,7 @@ function Syllabus({
                                         : ""
                                     }`}
                                     onClick={() =>
-                                      hasPreassessment &&
+                                      (hasPreassessment || userType === "C") &&
                                       onSubtopicClick(subtopic.subtopic_id)
                                     }
                                     role="button"
@@ -210,7 +210,9 @@ function Syllabus({
                                     <span style={{ marginRight: 10 }}>
                                       {subtopic.subtopic_title}
                                     </span>
-                                    {!hasPreassessment && <FaLock />}
+                                    {!hasPreassessment && userType === "S" && (
+                                      <FaLock />
+                                    )}
                                   </div>
                                 ))}
                               </div>
