@@ -37,6 +37,42 @@
     margin-left: 50px;
   }
 
+  .topic-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    margin-left: 35px;
+    margin-right: 35px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+    margin-top: 15px;
+    height: 2.5rem;
+    width: 54rem;
+    border-color: transparent;
+  }
+
+  .subtopic-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    margin-left: 35px;
+    margin-right: 35px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: grey;
+    color: white;
+    cursor: pointer;
+    margin-top: 15px;
+    height: 2.5rem;
+    width: 54rem;
+    border-color: transparent;
+  }
+
   .topic-item {
     display: flex;
     align-items: center;

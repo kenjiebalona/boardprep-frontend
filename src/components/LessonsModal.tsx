@@ -171,16 +171,14 @@ function LessonModal({
   };
 
   const handleCloseModal = () => {
-    if (lessons.length > 0) {
-      closeModal();
-    }
-  };
+    closeModal();
+};
 
   return (
     <div className="main-modal">
       <div className="modal-content">
         <div className="modal-header">
-          <h1>{isUpdating ? "Update Lesson" : "Create Lesson"}</h1>
+          <h2>{isUpdating ? "Update Lesson" : "Create Lesson"}</h2>
           <span className="close" onClick={handleCloseModal}>
             &times;
           </span>

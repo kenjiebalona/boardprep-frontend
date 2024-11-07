@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { FaBookOpen, FaChevronDown, FaChevronUp, FaLock } from "react-icons/fa";
 import { useAppSelector } from "../redux/hooks";
 import { selectUser } from "../redux/slices/authSlice";
 import "../styles/syllabus.scss";
+import AddTopicModal from "./AddTopicModal"; 
+import AddSubtopicModal from "./AddSubtopicModal"; 
 
 interface Objective {
   text: string;
@@ -61,6 +63,37 @@ function Syllabus({
   const [openTopicId, setOpenTopicId] = useState<string | null>(null);
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
+  const [isSubtopicModalOpen, setIsSubtopicModalOpen] = useState(false);
+  const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
+  const [lessonList, setLessonList] = useState<Lesson[]>(lessons);
+
+  useEffect(() => {
+    setLessonList(lessons);
+  }, [lessons]);
+   const handleTopicAdded = (newTopic: Topic, lessonId: string) => {
+    setLessonList((prevLessons) =>
+      prevLessons.map((lesson) =>
+        lesson.lesson_id === lessonId
+          ? { ...lesson, topics: [...lesson.topics, newTopic] }
+          : lesson
+      )
+    );
+  };
+
+  const handleSubtopicAdded = (newSubtopic: Subtopic, topicId: string) => {
+    setLessonList((prevLessons) =>
+      prevLessons.map((lesson) => ({
+        ...lesson,
+        topics: lesson.topics.map((topic) =>
+          topic.topic_id === topicId
+            ? { ...topic, subtopics: [...topic.subtopics, newSubtopic] }
+            : topic
+        ),
+      }))
+    );
+  };
 
   const toggleDropdown = (lessonId: string) => {
     setOpenLessonId((prevLessonId) =>
@@ -78,6 +111,25 @@ function Syllabus({
   //   if (userType === "T") return "View";
   //   return "Learn";
   // };
+  const handleAddTopicClick = (lessonId: string) => {
+    setSelectedLessonId(lessonId);
+    setIsModalOpen(true); 
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedLessonId(null);
+  };
+
+  const handleAddSubtopicClick = (topicId: string) => {
+    setSelectedTopicId(topicId);
+    setIsSubtopicModalOpen(true); 
+  };
+
+  const closeSubtopicModal = () => {
+    setIsSubtopicModalOpen(false);
+    setSelectedTopicId(null);
+  };
 
   const handleLessonClick = (lessonId: string) => {
     onLessonClick(lessonId);
@@ -92,7 +144,6 @@ function Syllabus({
     onSubtopicClick(subtopicId);
   };
 
-  // Log the lessons array
   console.log("Lessons data:", lessons);
 
   return (
@@ -102,7 +153,8 @@ function Syllabus({
       </div>
 
       <div className="lesson-list">
-        {lessons.map((lesson) => {
+        {lessonList.map((lesson) => {
+          console.log("sadasdasdasdsa:", lessonList);
           console.log(
             `Learning objectives for lesson "${lesson.lesson_title}":`,
             lesson.learning_objectives
@@ -132,7 +184,6 @@ function Syllabus({
 
                   {openLessonId === lesson.lesson_id && (
                     <div className="topics-container">
-                      {/* Render lesson objectives */}
                       {lesson.learning_objectives &&
                       lesson.learning_objectives.length > 0 ? (
                         <div className="lesson-objectives">
@@ -150,7 +201,6 @@ function Syllabus({
                       )}
 
                       {lesson.topics.map((topic) => {
-                        // Log topic objectives
                         console.log(
                           `Learning objectives for topic "${topic.topic_title}":`,
                           topic.learning_objectives
@@ -217,11 +267,28 @@ function Syllabus({
                                     )}
                                   </div>
                                 ))}
+
+                                {userType === "C" && (
+                                    <button
+                                      className="subtopic-button"
+                                          onClick={() => handleAddSubtopicClick(topic.topic_id)}
+                                    >
+                                    + Add Subtopic
+                                    </button>
+                                )}
                               </div>
                             )}
                           </div>
                         );
                       })}
+                      {userType === "C" && (
+                        <button
+                          className="topic-button"
+                            onClick={() => handleAddTopicClick(lesson.lesson_id)}
+                        >
+                         + Add Topic
+                        </button>
+                      )}
                     </div>
                   )}
 
@@ -242,6 +309,23 @@ function Syllabus({
           );
         })}
       </div>
+      {isModalOpen && (
+        <AddTopicModal
+          lessons={lessonList}
+          selectedLessonId={selectedLessonId}
+          onClose={closeModal}
+          onTopicAdded={handleTopicAdded} 
+        />
+      )}
+
+      {isSubtopicModalOpen && (
+        <AddSubtopicModal
+          topics={lessonList.flatMap((lesson) => lesson.topics)} 
+          selectedTopicId={selectedTopicId}
+          onClose={closeSubtopicModal}
+          onSubtopicAdded={handleSubtopicAdded} 
+        />
+      )}
     </div>
   );
 }
