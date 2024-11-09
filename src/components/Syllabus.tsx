@@ -302,7 +302,7 @@ function Syllabus({
                 )} */}
                 </div>
               </div>
-              {userType !== "C" && (
+              {userType !== "C" && userType !== "T" && (
                 <button className="quiz-button" onClick={() => handleQuizClick(lesson.lesson_id)}>Take quiz</button>
               )}
             </div>

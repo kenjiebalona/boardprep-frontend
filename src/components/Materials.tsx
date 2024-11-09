@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import ReactPaginate from "react-paginate";
-import { useNavigate } from "react-router-dom";
-import axiosInstance from "../axiosInstance";
-import { useAppSelector } from "../redux/hooks";
-import { selectUser } from "../redux/slices/authSlice";
-import "../styles/materials.scss";
-import ExamContent from "./ExamContent";
-import QuizContent from "./QuizContent";
-import QuizResult from "./QuizResult";
-import Syllabus from "./Syllabus";
-import TipTapEditor from "./TipTap";
+import { useEffect, useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../axiosInstance';
+import { useAppSelector } from '../redux/hooks';
+import { selectUser } from '../redux/slices/authSlice';
+import '../styles/materials.scss';
+import ExamContent from './ExamContent';
+import QuizContent from './QuizContent';
+import QuizResult from './QuizResult';
+import Syllabus from './Syllabus';
+import TipTapEditor from './TipTap';
 
 interface Page {
   page_id: string;
@@ -132,7 +132,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           setLessons(lessonsData);
         }
       } catch (error) {
-        console.error("Error fetching course data:", error);
+        console.error('Error fetching course data:', error);
       }
     };
 
@@ -178,24 +178,24 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         setHasPreassessment(true);
       }
     } catch (error) {
-      console.error("Error fetching preassessment data:", error);
+      console.error('Error fetching preassessment data:', error);
     }
   };
 
   const fetchPages = async (subtopicId: string) => {
     if (!subtopicId) {
-      console.error("Subtopic ID is undefined");
+      console.error('Subtopic ID is undefined');
       return;
     }
 
     try {
       console.log(userType);
       const response = await axiosInstance.get(
-        userType === "S"
+        userType === 'S'
           ? `/pages/by_subtopic/${subtopicId}/?student_id=${studentId}`
           : `/pages/by_subtopic/${subtopicId}/`
       );
-      console.log("Fetched pages:", response.data);
+      console.log('Fetched pages:', response.data);
 
       const fetchedPages = response.data.pages;
       setPageCount(fetchedPages.length);
@@ -221,7 +221,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         setCurrentPage(0);
       }
     } catch (error) {
-      console.error("Error fetching pages:", error);
+      console.error('Error fetching pages:', error);
     }
   };
 
@@ -293,7 +293,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       setShowQuizResult(true);
       setShowQuizContent(false);
     } catch (error) {
-      console.error("Error fetching quiz results:", error);
+      console.error('Error fetching quiz results:', error);
     }
   };
 
@@ -318,8 +318,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     const newPageNumber = event.selected;
     const newPageId = pageMapping[newPageNumber];
 
-    console.log("Page Number", newPageNumber);
-    console.log("Page ID", newPageId);
+    console.log('Page Number', newPageNumber);
+    console.log('Page ID', newPageId);
 
     setCurrentPage(newPageNumber);
     if (newPageId) {
@@ -329,7 +329,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           setPageId(Number(newPageId));
         }
       } catch (error) {
-        console.error("Error fetching page data:", error);
+        console.error('Error fetching page data:', error);
       }
     }
   };
@@ -396,7 +396,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     setShowQuizResult(false);
     setShowExamContent(false);
     setCurrentLesson(lessonID);
-    console.log("HANDLE QUIZ CLICKED");
+    console.log('HANDLE QUIZ CLICKED');
     console.log(
       showQuizContent,
       currentLesson,
@@ -415,7 +415,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     setShowQuizContent(false);
     setShowQuizResult(false);
     setShowExamContent(true);
-    console.log("HANDLE EXAM CLICKED");
+    console.log('HANDLE EXAM CLICKED');
   };
 
   return (
@@ -438,18 +438,19 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             handleQuizClick={(lessonID: string) => handleQuizClick(lessonID)}
             hasPreassessment={hasPreassessment}
           />
-          {!hasPreassessment ? (
-            <button
-              className="preassessment-button"
-              onClick={handleStartPreassessment}
-            >
-              Take preassessment
-            </button>
-          ) : (
-            <button className="preassessment-button" onClick={handleExam}>
-              Take exam
-            </button>
-          )}
+          {userType !== 'T' &&
+            (!hasPreassessment ? (
+              <button
+                className="preassessment-button"
+                onClick={handleStartPreassessment}
+              >
+                Take preassessment
+              </button>
+            ) : (
+              <button className="preassessment-button" onClick={handleExam}>
+                Take exam
+              </button>
+            ))}
         </div>
       ) : (
         <div className="lesson-content-container">
