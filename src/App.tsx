@@ -37,6 +37,7 @@ import Dashboard from "./pages/Dashboard";
 import QuestionBank from "./pages/QuestionBank";
 import DailyChallenge from "./pages/DailyChallenge";
 import Preassessment from "./pages/Preassessment";
+import Postassessment from "./pages/Postassessment";
 // import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -107,6 +108,13 @@ function App() {
                 element={
                 <PrivateRoute>
                   <Preassessment />
+                </PrivateRoute>}
+              />
+              <Route
+                path="/postassessment"
+                element={
+                <PrivateRoute>
+                  <Postassessment />
                 </PrivateRoute>}
               />
               <Route

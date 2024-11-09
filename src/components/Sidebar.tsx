@@ -2,6 +2,7 @@ import React, { useState, ReactNode, useEffect } from 'react';
 import { FaTh, FaBars, FaUser, FaSignOutAlt, FaMoneyCheckAlt, FaForumbee } from "react-icons/fa";
 import { TbTargetArrow } from "react-icons/tb";
 import { SiGoogleclassroom } from "react-icons/si";
+import { PiExam } from "react-icons/pi";
 import { MdAssignment } from "react-icons/md";
 import { NavLink, useNavigate } from 'react-router-dom';
 import profileImage from "../assets/16.png";
@@ -46,6 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 { path: "/dashboard", name: "Overview", icon: <FaTh /> },
                 { path: "/classes", name: "Classes", icon: <SiGoogleclassroom /> },
                 { path: "/daily-challenge", name: "Challenges", icon: <TbTargetArrow /> },
+                { path: "/postassessment", name: "Mocktest", icon: <PiExam /> },
             ];
         }
     })();
@@ -94,9 +96,9 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
 
     return (
         <div className="container">
-            <div 
-                className={`sidebar ${isOpen ? "" : "collapsed"}`} 
-                onMouseEnter={() => setIsOpen(true)} 
+            <div
+                className={`sidebar ${isOpen ? "" : "collapsed"}`}
+                onMouseEnter={() => setIsOpen(true)}
                 onMouseLeave={() => setIsOpen(false)}
             >
                 <div className="top_section">
@@ -106,9 +108,9 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                     </div>
                 </div>
                 {menuItems.map((item, index) => (
-                    <NavLink 
-                        to={item.path} 
-                        key={index} 
+                    <NavLink
+                        to={item.path}
+                        key={index}
                         className={({ isActive }) => isActive ? "link active" : "link"}
                     >
                         <div className="icon">{item.icon}</div>
@@ -130,21 +132,21 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                             <div className={`dropDownProfile ${isOpen ? "" : "collapsed"}`}>
                                 <ul className="d-items">
                                     <li className="d-item" onClick={handleProfile}>
-                                        <FaUser className="icon-two" /> 
+                                        <FaUser className="icon-two" />
                                         <span style={{ display: isOpen ? "block" : "none" }} className="link_text-two">Profile</span>
                                     </li>
                                     <li className="d-item" onClick={handleForum}>
-                                        <FaForumbee className="icon-two" /> 
+                                        <FaForumbee className="icon-two" />
                                         <span style={{ display: isOpen ? "block" : "none" }} className="link_text-two">Forum</span>
                                     </li>
                                     {!details.is_premium && userType === 'S' && (
                                         <li className="d-item" onClick={handlePayment}>
-                                            <FaMoneyCheckAlt className="icon-two" /> 
+                                            <FaMoneyCheckAlt className="icon-two" />
                                             <span style={{ display: isOpen ? "block" : "none" }} className="link_text-two">Upgrade</span>
                                         </li>
                                     )}
                                     <li className="d-item" onClick={handleLogout}>
-                                        <FaSignOutAlt className="icon-two" /> 
+                                        <FaSignOutAlt className="icon-two" />
                                         <span style={{ display: isOpen ? "block" : "none" }} className="link_text-two">Logout</span>
                                     </li>
                                 </ul>
@@ -152,7 +154,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                         )}
                     </div>
                     <span style={{ display: isOpen ? "block" : "none" }} className="profile-name-unique">
-                        {details.user_name} 
+                        {details.user_name}
                     </span>
                 </div>
             </div>
