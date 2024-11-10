@@ -16,36 +16,36 @@ interface Question {
   correct_option: string;
 }
 
-interface Postassessment {
+interface Mocktest {
   id: string;
   title: string;
   questions: Question[];
 }
 
-interface StudentPostassessmentAttempt {
-  postassessmentID: string;
-  postassessment: string;
+interface StudentMocktestAttempt {
+  mocktestID: string;
+  mocktest: string;
   score: number;
   total_questions: number;
   start_time: string;
   end_time?: string;
 }
 
-interface PostassessmentContentProps {
+interface MocktestContentProps {
   studentId: string;
   onDone: () => void;
   courseId: string;
 }
 
-const PostassessmentContent: React.FC<PostassessmentContentProps> = ({
+const PostassessmentContent: React.FC<MocktestContentProps> = ({
   studentId,
   onDone,
   courseId,
 }) => {
-  const [postassessment, setPostassessment] = useState<Postassessment | null>(
+  const [mocktest, setMocktest] = useState<Mocktest | null>(
     null
   );
-  const [attempt, setAttempt] = useState<StudentPostassessmentAttempt | null>(
+  const [attempt, setAttempt] = useState<StudentMocktestAttempt | null>(
     null
   );
   const [loading, setLoading] = useState(true);
@@ -57,51 +57,57 @@ const PostassessmentContent: React.FC<PostassessmentContentProps> = ({
 
   const questionsPerPage = 3;
 
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    return array.sort(() => Math.random() - 0.5);
+  };
+
   useEffect(() => {
-    const fetchPostassessmentAndAttempt = async () => {
+    const fetchMocktestAndAttempt = async () => {
       try {
-        console.log("Fetching postassessment...");
-        const postassessmentResponse = await axiosInstance.get(
-          `/postassessment/today/?course_id=${courseId}`
+        console.log("Fetching mocktest...");
+        const mocktestResponse = await axiosInstance.get(
+          `/mocktest/today/`
         );
-        const postassessmentData = postassessmentResponse.data;
+        const mocktestData = mocktestResponse.data;
 
-        console.log("Postassessment data fetched:", postassessmentData);
+        console.log("Mocktest data fetched:", mocktestData);
 
-        const postassessmentID = postassessmentData.postassessmentID;
-        if (!postassessmentID) {
+        mocktestData.questions = shuffleArray(mocktestData.questions);
+
+        const mocktestID = mocktestData.mocktestID;
+        if (!mocktestID) {
           throw new Error(
-            "Postassessment ID is missing from the postassessment data."
+            "Mocktest ID is missing from the mocktest data."
           );
         }
 
-        setPostassessment(postassessmentData);
+        setMocktest(mocktestData);
         console.log(`Student ID: ${studentId}`);
 
         console.log("Fetching all attempts for student:", studentId);
         const allAttemptsResponse = await axiosInstance.get(
-          `/studentPostassessmentAttempt/?student_id=${studentId}&course_id=${courseId}`
+          `/studentMocktestAttempt/?student_id=${studentId}&course_id=${courseId}`
         );
         const allAttempts = allAttemptsResponse.data;
 
         console.log("All attempts data fetched:", allAttempts);
 
         let attemptData = allAttempts.find(
-          (attempt: any) => attempt.daily_challenge === postassessmentID
+          (attempt: any) => attempt.daily_challenge === mocktestID
         );
 
         if (!attemptData || attemptData.end_time) {
           console.log("No active attempt found. Creating a new attempt...");
           const payload = {
-            postassessment: postassessmentID,
-            total_questions: postassessmentData.questions.length,
+            mocktest: mocktestID,
+            total_questions: mocktestData.questions.length,
             student: studentId,
             score: 0,
           };
 
-          console.log(`postassessmentID: ${postassessmentID}`);
+          console.log(`mocktestID: ${mocktestID}`);
           const createAttemptResponse = await axiosInstance.post(
-            "/studentPostassessmentAttempt/",
+            "/studentMocktestAttempt/",
             payload
           );
           attemptData = createAttemptResponse.data;
@@ -124,7 +130,7 @@ const PostassessmentContent: React.FC<PostassessmentContentProps> = ({
       }
     };
 
-    fetchPostassessmentAndAttempt();
+    fetchMocktestAndAttempt();
   }, [studentId]);
 
   const handleAnswerChange = (questionId: string, choiceId: string) => {
@@ -147,7 +153,7 @@ const PostassessmentContent: React.FC<PostassessmentContentProps> = ({
 
   const handleSubmit = async () => {
     try {
-      if (!attempt?.postassessmentID) {
+      if (!attempt?.mocktestID) {
         console.error("Attempt ID is undefined. Aborting submission.");
         return;
       }
@@ -157,7 +163,7 @@ const PostassessmentContent: React.FC<PostassessmentContentProps> = ({
           student: studentId,
           question: questionId,
           selected_choice: choiceId,
-          postassessment_attempt: attempt.postassessmentID,
+          mocktest_attempt: attempt.mocktestID,
         })
       );
 
@@ -178,9 +184,9 @@ const PostassessmentContent: React.FC<PostassessmentContentProps> = ({
         );
 
         const scoreResponse = await axiosInstance.post(
-          "/studentPostassessmentAttempt/calculate_score/",
+          "/studentMocktestAttempt/calculate_score/",
           {
-            attempt_id: attempt.postassessmentID,
+            attempt_id: attempt.mocktestID,
           }
         );
 
@@ -200,28 +206,28 @@ const PostassessmentContent: React.FC<PostassessmentContentProps> = ({
       }
     } catch (error) {
       console.error(
-        "Error submitting postassessment or calculating score:",
+        "Error submitting mocktest or calculating score:",
         error
       );
     }
   };
 
   const handleDone = () => {
-    console.log("Postassessment completed!");
+    console.log("Mocktest completed!");
   };
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (!postassessment || !attempt) {
-    return <div>Error loading postassessment or attempt</div>;
+  if (!mocktest || !attempt) {
+    return <div>Error loading mocktest or attempt</div>;
   }
 
   const totalPages = Math.ceil(
-    postassessment.questions.length / questionsPerPage
+    mocktest.questions.length / questionsPerPage
   );
-  const displayedQuestions = postassessment.questions.slice(
+  const displayedQuestions = mocktest.questions.slice(
     (currentPage - 1) * questionsPerPage,
     currentPage * questionsPerPage
   );
@@ -230,16 +236,16 @@ const PostassessmentContent: React.FC<PostassessmentContentProps> = ({
     <div className="challenge-content">
       {showResults ? (
         <PostassessmentResult
-          questions={postassessment.questions}
+          questions={mocktest.questions}
           answers={answers}
           results={results}
           score={attempt.score}
-          totalQuestions={postassessment.questions.length}
+          totalQuestions={mocktest.questions.length}
           onDone={onDone}
         />
       ) : (
         <>
-          <h2>PRE-ASSESSMENT</h2>
+          <h2>MOCK TEST</h2>
           <div className="challenge-body">
             <div className="questions-section">
               {displayedQuestions.map((question, index) => (
@@ -282,15 +288,15 @@ const PostassessmentContent: React.FC<PostassessmentContentProps> = ({
             </div>
             <div className="right-panel">
               <div className="question-nav">
-                {postassessment.questions.map((_, index) => (
+                {mocktest.questions.map((_, index) => (
                   <div
                     key={index}
                     className={`question-number ${
-                      answers[postassessment.questions[index].id]
+                      answers[mocktest.questions[index].id]
                         ? "answered"
                         : ""
                     } ${
-                      flags[postassessment.questions[index].id]
+                      flags[mocktest.questions[index].id]
                         ? "flagged-box"
                         : ""
                     }`}

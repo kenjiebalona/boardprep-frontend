@@ -7,8 +7,10 @@ import "../styles/daily-challenge.scss";
 import DailyChallengeCard from "../components/DailyChallengeCard";
 import dailychallenge from "../assets/daily-challenge.png";
 import CardLeaderboard from "../components/CardLeaderboard";
-import PreassessmentContent from "../components/PreassessmentContent";
 import axiosInstance from "../axiosInstance";
+import PostassessmentContent from "../components/PostassessmentContent";
+import PostassessmentResult from "../components/PostassessmentResult";
+import Attempt from "../components/Attempt";
 
 interface Class {
   classId: number;
@@ -32,7 +34,7 @@ const Postassessment: React.FC = () => {
   const [resetKey, setResetKey] = useState(0);
 
   const handleStartChallenge = () => {
-    // setTestStarted(true);
+    setTestStarted(true);
     console.log("CLASSES: ", classes)
   };
 
@@ -74,11 +76,11 @@ const Postassessment: React.FC = () => {
             imageClassName="challengeImage"
             onButtonClick={handleStartChallenge}
           />
-          <CardLeaderboard studentId={studentId} showTimeTaken={true} />
+          <Attempt studentId={studentId} showTimeTaken={true} />
         </>
       )}
       {testStarted && (
-        <PreassessmentContent
+        <PostassessmentContent
           key={resetKey}
           studentId={studentId}
           onDone={handleDone}

@@ -496,6 +496,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
               classInstanceId={classId}
               onTryAgain={handleTryAgain}
               onNextLesson={handleNextLesson}
+              objectives={objectives}
             />
           )}
 

@@ -21,6 +21,12 @@ interface Quiz {
   questions: Question[];
 }
 
+interface LearningObjective {
+  id: number;
+  text: string;
+  subtopic: number;
+}
+
 interface StudentQuizAttempt {
   id: string;
   quiz: string;
@@ -37,6 +43,7 @@ interface QuizContentProps {
   classInstanceId: number;
   onTryAgain: () => void;
   onNextLesson: () => void;
+  objectives: LearningObjective[];
 }
 
 const QuizContent: React.FC<QuizContentProps> = ({
@@ -45,6 +52,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
   classInstanceId,
   onTryAgain,
   onNextLesson,
+  objectives,
 }) => {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [attempt, setAttempt] = useState<StudentQuizAttempt | null>(null);
@@ -77,9 +85,9 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
           const createQuizResponse = await axiosInstance.post("/quizzes/", {
             student: studentId,
-            learning_objective: lessonId,
+            learning_objective: 5,
             class_instance: classInstanceId,
-            title: `Lesson ${lessonId} Quiz`,
+            title: `Quiz - New`,
           });
           quizData = createQuizResponse.data;
         }
@@ -92,9 +100,9 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
           const createQuizResponse = await axiosInstance.post("/quizzes/", {
             student: studentId,
-            learning_objective: lessonId,
+            learning_objective: 5,
             class_instance: classInstanceId,
-            title: `Lesson ${lessonId} Quiz - New`,
+            title: `Quiz - New`,
           });
           quizData = createQuizResponse.data;
 

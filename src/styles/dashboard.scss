@@ -70,6 +70,10 @@ h3{
   padding: 20px;
 }
 
+.mastery-container h3 {
+  color: black
+}
+
 .mastery-list {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -156,7 +160,7 @@ h3{
   }
 }
 
-.modal-overlay {
+.modal-mastery-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -169,7 +173,7 @@ h3{
   z-index: 1000;
 }
 
-.modal {
+.modal-mastery {
   background-color: #161444;
   padding: 30px;
   border-radius: 12px;
@@ -196,6 +200,6 @@ h3{
   color: #f44336;
 }
 
-.modal p {
+.modal-mastery p {
   padding: 5px;
 }

@@ -143,8 +143,8 @@ const Mastery = () => {
       </div>
 
       {isModalOpen && selectedMastery && (
-        <div className="modal-overlay">
-          <div className="modal">
+        <div className="modal-mastery-overlay">
+          <div className="modal-mastery">
             <button className="close-btn" onClick={closeModal}>
               X
             </button>

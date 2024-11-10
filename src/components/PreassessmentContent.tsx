@@ -57,6 +57,10 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
 
   const questionsPerPage = 3;
 
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    return array.sort(() => Math.random() - 0.5);
+  };
+
   useEffect(() => {
     const fetchPreassessmentAndAttempt = async () => {
       try {
@@ -67,6 +71,8 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
         const preassessmentData = preassessmentResponse.data;
 
         console.log("Preassessment data fetched:", preassessmentData);
+
+        preassessmentData.questions = shuffleArray(preassessmentData.questions);
 
         const preassessmentID = preassessmentData.preassessmentID;
         if (!preassessmentID) {

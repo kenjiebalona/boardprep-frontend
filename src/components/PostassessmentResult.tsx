@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import '../styles/challenge-result.scss';
+import Mastery from '../pages/Mastery';
 
 interface Choice {
   id: string;
@@ -33,9 +34,14 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
   onDone,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [showAnalysis, setShowAnalysis] = useState(false);
 
   const handleToggleDetails = () => {
     setShowDetails(!showDetails);
+  };
+
+  const handleToggleAnalysis = () => {
+    setShowAnalysis(!showAnalysis);
   };
 
   const percentage = (score / totalQuestions) * 100;
@@ -44,7 +50,7 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
 
   if (percentage >= 90) {
     message =
-      'Thank you for completing the pre-assessment test. You have sufficient knowledge and skills, but adaptive learning can help you sharpen them even more!';
+      'Thank you for completing the mock test. You have sufficient knowledge and skills, but adaptive learning can help you sharpen them even more!';
     resultClass = 'great';
   } else if (percentage >= 75) {
     message =
@@ -52,7 +58,7 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
     resultClass = 'good';
   } else {
     message =
-      'Thank you for completing the pre-assessment test. Unfortunately, you still need to strengthen your fundamental knowledge and skills. Adaptive learning can help you through it.';
+      'Thank you for completing the mock test. Unfortunately, you still need to strengthen your fundamental knowledge and skills. Adaptive learning can help you through it.';
     resultClass = 'failed';
   }
 
@@ -88,6 +94,9 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
         </div>
         <button className="view-results-button" onClick={handleToggleDetails}>
           {showDetails ? 'Hide Details' : 'View Results'}
+        </button>
+        <button className="view-results-button" onClick={handleToggleAnalysis}>
+          {showAnalysis ? 'Hide Details' : 'View Analysis'}
         </button>
         {showDetails && (
           <div className="questions-review">
@@ -129,6 +138,10 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
             })}
           </div>
         )}
+        {showAnalysis && (
+          <Mastery />
+        )}
+
         <div className="challenge-result-buttons">
           <button className="view-results-button" onClick={onDone}>
             Done

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import '../styles/challenge-result.scss';
+import Mastery from '../pages/Mastery';
 
 interface Choice {
   id: string;
@@ -33,9 +34,14 @@ const PreassessmentResult: React.FC<PreassessmentResultProps> = ({
   onDone,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [showAnalysis, setShowAnalysis] = useState(false);
 
   const handleToggleDetails = () => {
     setShowDetails(!showDetails);
+  };
+
+  const handleToggleAnalysis = () => {
+    setShowAnalysis(!showAnalysis);
   };
 
   const percentage = (score / totalQuestions) * 100;
@@ -89,6 +95,9 @@ const PreassessmentResult: React.FC<PreassessmentResultProps> = ({
         <button className="view-results-button" onClick={handleToggleDetails}>
           {showDetails ? 'Hide Details' : 'View Results'}
         </button>
+        <button className="view-results-button" onClick={handleToggleAnalysis}>
+          {showAnalysis ? 'Hide Details' : 'View Analysis'}
+        </button>
         {showDetails && (
           <div className="questions-review">
             {questions.map((question, index) => {
@@ -129,6 +138,10 @@ const PreassessmentResult: React.FC<PreassessmentResultProps> = ({
             })}
           </div>
         )}
+        {showAnalysis && (
+          <Mastery />
+        )}
+        
         <div className="challenge-result-buttons">
           <button className="view-results-button" onClick={onDone}>
             Done
