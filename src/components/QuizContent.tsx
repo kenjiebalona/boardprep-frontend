@@ -77,7 +77,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
           const createQuizResponse = await axiosInstance.post("/quizzes/", {
             student: studentId,
-            subtopic: lessonId,
+            learning_objective: lessonId,
             class_instance: classInstanceId,
             title: `Lesson ${lessonId} Quiz`,
           });
@@ -92,7 +92,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
           const createQuizResponse = await axiosInstance.post("/quizzes/", {
             student: studentId,
-            subtopic: lessonId,
+            learning_objective: lessonId,
             class_instance: classInstanceId,
             title: `Lesson ${lessonId} Quiz - New`,
           });

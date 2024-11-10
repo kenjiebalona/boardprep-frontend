@@ -1,11 +1,11 @@
-import { useState, useEffect  } from "react";
-import { BsCheckCircleFill } from "react-icons/bs";
-import { FaBookOpen, FaChevronDown, FaChevronUp, FaLock } from "react-icons/fa";
-import { useAppSelector } from "../redux/hooks";
-import { selectUser } from "../redux/slices/authSlice";
-import "../styles/syllabus.scss";
-import AddTopicModal from "./AddTopicModal"; 
-import AddSubtopicModal from "./AddSubtopicModal"; 
+import { useState, useEffect } from 'react';
+import { BsCheckCircleFill } from 'react-icons/bs';
+import { FaBookOpen, FaChevronDown, FaChevronUp, FaLock } from 'react-icons/fa';
+import { useAppSelector } from '../redux/hooks';
+import { selectUser } from '../redux/slices/authSlice';
+import '../styles/syllabus.scss';
+import AddTopicModal from './AddTopicModal';
+import AddSubtopicModal from './AddSubtopicModal';
 
 interface Objective {
   text: string;
@@ -68,11 +68,12 @@ function Syllabus({
   const [isSubtopicModalOpen, setIsSubtopicModalOpen] = useState(false);
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [lessonList, setLessonList] = useState<Lesson[]>(lessons);
+  const [learningObjective, setLearningObjective] = useState<number>(0);
 
   useEffect(() => {
     setLessonList(lessons);
   }, [lessons]);
-   const handleTopicAdded = (newTopic: Topic, lessonId: string) => {
+  const handleTopicAdded = (newTopic: Topic, lessonId: string) => {
     setLessonList((prevLessons) =>
       prevLessons.map((lesson) =>
         lesson.lesson_id === lessonId
@@ -95,11 +96,12 @@ function Syllabus({
     );
   };
 
-  const toggleDropdown = (lessonId: string) => {
+  const toggleDropdown = (lessonId: string, topics: Topic[]) => {
     setOpenLessonId((prevLessonId) =>
       prevLessonId === lessonId ? null : lessonId
     );
-    console.log("Toggled openLessonId:", lessonId);
+    console.log('MAO NI ANG MGA TOPIC: ', topics)
+    console.log('Toggled openLessonId:', lessonId);
   };
 
   const toggleTopicDropdown = (topicId: string) => {
@@ -113,7 +115,7 @@ function Syllabus({
   // };
   const handleAddTopicClick = (lessonId: string) => {
     setSelectedLessonId(lessonId);
-    setIsModalOpen(true); 
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
@@ -123,7 +125,7 @@ function Syllabus({
 
   const handleAddSubtopicClick = (topicId: string) => {
     setSelectedTopicId(topicId);
-    setIsSubtopicModalOpen(true); 
+    setIsSubtopicModalOpen(true);
   };
 
   const closeSubtopicModal = () => {
@@ -140,11 +142,11 @@ function Syllabus({
   };
 
   const handleSubtopicClick = (subtopicId: string) => {
-    console.log("naa ko diri: ", subtopicId);
+    console.log('naa ko diri: ', subtopicId);
     onSubtopicClick(subtopicId);
   };
 
-  console.log("Lessons data:", lessons);
+  console.log('Lessons data:', lessons);
 
   return (
     <div className="syllabus-container">
@@ -154,7 +156,7 @@ function Syllabus({
 
       <div className="lesson-list">
         {lessonList.map((lesson) => {
-          console.log("sadasdasdasdsa:", lessonList);
+          console.log('sadasdasdasdsa:', lessonList);
           console.log(
             `Learning objectives for lesson "${lesson.lesson_title}":`,
             lesson.learning_objectives
@@ -168,7 +170,7 @@ function Syllabus({
                     className={`lesson-item`}
                     role="button"
                     tabIndex={0}
-                    onClick={() => toggleDropdown(lesson.lesson_id)}
+                    onClick={() => toggleDropdown(lesson.lesson_id, lesson.topics)}
                   >
                     <FaBookOpen className="lesson-icon" />
                     <h3 className="lesson-title">{lesson.lesson_title}</h3>
@@ -210,7 +212,7 @@ function Syllabus({
                           <div key={topic.topic_id}>
                             <div
                               className={`topic-item ${
-                                currentTopic === topic.topic_id ? "active" : ""
+                                currentTopic === topic.topic_id ? 'active' : ''
                               }`}
                               onClick={() =>
                                 toggleTopicDropdown(topic.topic_id)
@@ -246,14 +248,14 @@ function Syllabus({
                                 {topic.subtopics.map((subtopic) => (
                                   <div
                                     key={subtopic.subtopic_id}
-                                    style={{ cursor: "pointer" }}
+                                    style={{ cursor: 'pointer' }}
                                     className={`subtopic-item ${
                                       currentSubtopic === subtopic.subtopic_id
-                                        ? "active"
-                                        : ""
+                                        ? 'active'
+                                        : ''
                                     }`}
                                     onClick={() =>
-                                      (hasPreassessment || userType === "C") &&
+                                      (hasPreassessment || userType === 'C') &&
                                       onSubtopicClick(subtopic.subtopic_id)
                                     }
                                     role="button"
@@ -262,31 +264,41 @@ function Syllabus({
                                     <span style={{ marginRight: 10 }}>
                                       {subtopic.subtopic_title}
                                     </span>
-                                    {!hasPreassessment && userType === "S" && (
+                                    {!hasPreassessment && userType === 'S' && (
                                       <FaLock />
                                     )}
                                   </div>
                                 ))}
 
-                                {userType === "C" && (
-                                    <button
-                                      className="subtopic-button"
-                                          onClick={() => handleAddSubtopicClick(topic.topic_id)}
-                                    >
+                                {userType === 'C' && (
+                                  <button
+                                    className="subtopic-button"
+                                    onClick={() =>
+                                      handleAddSubtopicClick(topic.topic_id)
+                                    }
+                                  >
                                     + Add Subtopic
-                                    </button>
+                                  </button>
                                 )}
                               </div>
                             )}
                           </div>
                         );
                       })}
-                      {userType === "C" && (
+                      {userType !== 'C' && userType !== 'T' && (
+                        <button
+                          className="quiz-button"
+                          onClick={() => handleQuizClick(lesson.lesson_id)}
+                        >
+                          Take quiz
+                        </button>
+                      )}
+                      {userType === 'C' && (
                         <button
                           className="topic-button"
-                            onClick={() => handleAddTopicClick(lesson.lesson_id)}
+                          onClick={() => handleAddTopicClick(lesson.lesson_id)}
                         >
-                         + Add Topic
+                          + Add Topic
                         </button>
                       )}
                     </div>
@@ -302,9 +314,6 @@ function Syllabus({
                 )} */}
                 </div>
               </div>
-              {userType !== "C" && userType !== "T" && (
-                <button className="quiz-button" onClick={() => handleQuizClick(lesson.lesson_id)}>Take quiz</button>
-              )}
             </div>
           );
         })}
@@ -314,16 +323,16 @@ function Syllabus({
           lessons={lessonList}
           selectedLessonId={selectedLessonId}
           onClose={closeModal}
-          onTopicAdded={handleTopicAdded} 
+          onTopicAdded={handleTopicAdded}
         />
       )}
 
       {isSubtopicModalOpen && (
         <AddSubtopicModal
-          topics={lessonList.flatMap((lesson) => lesson.topics)} 
+          topics={lessonList.flatMap((lesson) => lesson.topics)}
           selectedTopicId={selectedTopicId}
           onClose={closeSubtopicModal}
-          onSubtopicAdded={handleSubtopicAdded} 
+          onSubtopicAdded={handleSubtopicAdded}
         />
       )}
     </div>

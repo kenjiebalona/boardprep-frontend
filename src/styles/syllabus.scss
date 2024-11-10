@@ -289,19 +289,19 @@
   }
 
   .quiz-button {
-    background-color: #FFF;
+    background-color: #5D3FD3;
     height: 40px;
     color: white;
     border: none;
     padding: 5px 10px;
     border-radius: 4px;
     width: 100%;
-    color: gray;
+    color: #fff;
     font-style: bold;
     cursor: pointer;
 
     &:hover {
-      background-color: #5D3FD3;
+      background-color: #B650F4;
       color: white
     }
   }
