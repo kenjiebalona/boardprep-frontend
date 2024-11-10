@@ -22,6 +22,11 @@ interface Objective {
   text: string;
 }
 
+interface LearningObjective {
+  text: string;
+  subtopic: number;
+}
+
 interface Topic {
   topic_id: string;
   topic_title: string;
@@ -87,6 +92,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const [testStarted, setTestStarted] = useState(false);
   const [hasPreassessment, setHasPreassessment] = useState(false);
+  const [objectives, setObjectives] = useState<LearningObjective[]>([]);
 
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
@@ -159,8 +165,9 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       );
       console.log("Fetched pages:", response.data);
 
-      const fetchedPages = response.data;
+      const fetchedPages = response.data.pages;
       setPageCount(fetchedPages.length);
+      setObjectives(response.data.objectives);
       console.log("Page Count", pageCount);
 
       const pageMapping = fetchedPages.reduce(
@@ -171,13 +178,13 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         {}
       );
 
-      setPages(response.data);
-      console.log("Fetched pages:", response.data); // Confirm the fetched data
+      setPages(response.data.pages);
+      console.log("Fetched pages:", response.data.pages); // Confirm the fetched data
       setShowLessonContent(true);
       setPageMapping(pageMapping);
       if (response.data.length > 0) {
-        setCurrentPage(response.data[0].page_number);
-        setPageId(response.data[0].page_id);
+        setCurrentPage(response.data.pages[0].page_number);
+        setPageId(response.data.pages[0].page_id);
       } else {
         setCurrentPage(0);
       }
@@ -309,9 +316,15 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     setShowQuizResult(false);
     setShowExamContent(false);
     setCurrentLesson(lessonID);
-    console.log('HANDLE QUIZ CLICKED')
-    console.log(showQuizContent, currentLesson, showLessonContent, lessonID, currentLesson)
-  }
+    console.log("HANDLE QUIZ CLICKED");
+    console.log(
+      showQuizContent,
+      currentLesson,
+      showLessonContent,
+      lessonID,
+      currentLesson
+    );
+  };
 
   const handleStartPreassessment = () => {
     navigate(`/preassessment?course_id=${courseId}`);
@@ -322,7 +335,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     setShowQuizContent(false);
     setShowQuizResult(false);
     setShowExamContent(true);
-    console.log('HANDLE EXAM CLICKED')
+    console.log("HANDLE EXAM CLICKED");
   };
 
   return (
@@ -348,10 +361,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
               Take preassessment
             </button>
           ) : (
-            <button
-              className="preassessment-button"
-              onClick={handleExam}
-            >
+            <button className="preassessment-button" onClick={handleExam}>
               Take exam
             </button>
           )}
@@ -378,38 +388,38 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             </div>
           )}
 
-        {pageCount > 1 && showLessonContent && (
-          <ReactPaginate
-            previousLabel={currentPage > 0 ? "<" : ""}
-            nextLabel={currentPage < pageCount - 1 ? ">" : ""}
-            breakLabel={"..."}
-            pageCount={pageCount}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
-            forcePage={currentPage}
-          />
-        )}
-        {showQuizContent && (
-        <QuizContent
-          lessonId={currentLesson}
-          studentId={studentId}
-          classInstanceId={classId}
-          onTryAgain={handleTryAgain}
-          onNextLesson={handleNextLesson}
-        />
-      )}
+          {pageCount > 1 && showLessonContent && (
+            <ReactPaginate
+              previousLabel={currentPage > 0 ? "<" : ""}
+              nextLabel={currentPage < pageCount - 1 ? ">" : ""}
+              breakLabel={"..."}
+              pageCount={pageCount}
+              onPageChange={handlePageClick}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+              forcePage={currentPage}
+            />
+          )}
+          {showQuizContent && (
+            <QuizContent
+              lessonId={currentLesson}
+              studentId={studentId}
+              classInstanceId={classId}
+              onTryAgain={handleTryAgain}
+              onNextLesson={handleNextLesson}
+            />
+          )}
 
-    {showExamContent && (
-        <ExamContent
-          studentId={studentId}
-          classInstanceId={classId}
-          courseId={courseId}
-          title={courseTitle ?? "Final Exam"}
-          onTryAgain={handleTryAgain}
-          onNextLesson={handleNextLesson}
-        />
-      )}
+          {showExamContent && (
+            <ExamContent
+              studentId={studentId}
+              classInstanceId={classId}
+              courseId={courseId}
+              title={courseTitle ?? "Final Exam"}
+              onTryAgain={handleTryAgain}
+              onNextLesson={handleNextLesson}
+            />
+          )}
         </div>
       )}
 
@@ -440,8 +450,6 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           onNextLesson={handleNextLesson}
         />
       )}
-
-
     </div>
   );
 }
