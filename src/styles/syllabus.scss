@@ -6,6 +6,26 @@
     overflow: auto;
   }
 
+  .progress-bar-container {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+
+    .progress-bar {
+      height: 20px;
+      background-color: #4caf50; // Green for progress
+      color: #fff;
+      text-align: center;
+      line-height: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 8px 0 0 8px;
+      transition: width 0.3s ease;
+    }
+  }
+
   .title-container {
     cursor: pointer;
     display: flex;

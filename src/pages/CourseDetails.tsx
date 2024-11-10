@@ -8,6 +8,8 @@ import PublishModal from "../components/PublishModal";
 import Syllabus from "../components/Syllabus";
 import TipTapEditor from "../components/TipTap";
 import "../styles/details.scss";
+import LearningObjectiveModal from "../components/LearningObjectiveModal";
+
 interface BlockFormData {
   page: number;
   block_type: string;
@@ -118,6 +120,18 @@ function CourseDetails() {
   const [blockType, setBlockType] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
   const [showBlockForm, setShowBlockForm] = useState(false);
+  const [showObjectiveModal, setShowObjectiveModal] = useState(false);
+
+  const handleOpenObjectiveModal = () => {
+    setShowObjectiveModal(true);
+  };
+
+  const handleCloseObjectiveModal = () => {
+    setShowObjectiveModal(false);
+  };
+
+  const handleSaveObjectives = () => {
+  };
 
   const fetchContentBlocks = async (pageId: number) => {
     try {
@@ -644,6 +658,19 @@ function CourseDetails() {
             <button className="btnDets3" onClick={handleCreateBlockClick}>
               Create New Block
             </button>
+          )}
+
+          {showEditorContent && (
+          <button className="btnDets4" onClick={handleOpenObjectiveModal}>
+            Add Learning Objectives
+          </button>
+          )}
+
+          {showEditorContent && showObjectiveModal && (
+            <LearningObjectiveModal
+              closeModal={handleCloseObjectiveModal}
+              onSave={handleSaveObjectives}
+            />
           )}
 
           {showEditorContent && showBlockForm && (

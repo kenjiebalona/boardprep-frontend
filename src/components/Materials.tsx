@@ -93,6 +93,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [testStarted, setTestStarted] = useState(false);
   const [hasPreassessment, setHasPreassessment] = useState(false);
   const [objectives, setObjectives] = useState<LearningObjective[]>([]);
+  const [progress, setProgress] = useState(0); 
+  const [clickedSubtopics, setClickedSubtopics] = useState<Set<string>>(new Set());
 
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
@@ -194,14 +196,47 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   };
 
   const handleSubtopicClick = (subtopicId: string) => {
-    console.log("Clicked");
     setCurrentSubtopic(subtopicId);
+
+    if (userType === "S" && !clickedSubtopics.has(subtopicId)) {
+      setClickedSubtopics((prev) => new Set(prev).add(subtopicId));
+    }
+
     fetchPages(subtopicId);
   };
 
+  useEffect(() => {
+    if (lessons.length > 0) {
+      const totalSubtopics = lessons.reduce(
+        (acc, lesson) => acc + lesson.topics.reduce((subAcc, topic) => subAcc + topic.subtopics.length, 0),
+        0
+      );
+      const progressPercentage = (clickedSubtopics.size / totalSubtopics) * 100;
+      setProgress(progressPercentage);
+    }
+  }, [clickedSubtopics, lessons]);
+
   const handleTopicClick = (subtopicId: string) => {
-    setCurrentSubtopic(subtopicId); // Set the current subtopic
-    fetchPages(subtopicId); // Fetch pages for the clicked subtopic
+    setCurrentSubtopic(subtopicId); 
+    fetchPages(subtopicId); 
+  };
+
+  const renderObjectives = () => {
+    console.log("test Subtopic:", currentSubtopic);
+    console.log("Obj render:", objectives);
+    
+    return (
+      <div className="objectives-container">
+        <h3 className="h3-obj">Learning Objectives</h3>
+        <ul className="objectives-list">
+          {objectives.map((objective, idx) => (
+            <li key={idx} className="objective-item">
+              {objective.text}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
   };
 
   const fetchQuizResult = async (quizId: string) => {
@@ -340,6 +375,11 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   return (
     <div className="materials-page">
+      <div className="progress-bar-container">
+        <div className="progress-bar" style={{ width: `${progress}%` }}>
+          {Math.round(progress)}%
+        </div>
+      </div>
       {!showLessonContent ? (
         <div className="lesson-content-container">
           <Syllabus
@@ -371,6 +411,9 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           <button className="btn-mat" onClick={handleBackToSyllabus}>
             Back to Syllabus
           </button>
+
+          {currentPage === 0 && renderObjectives()}
+
           {pages[currentPage] && (
             <div key={pages[currentPage].page_id}>
               {pages[currentPage].content_blocks.map(

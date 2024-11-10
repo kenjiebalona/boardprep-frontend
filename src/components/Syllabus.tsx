@@ -197,7 +197,7 @@ function Syllabus({
                           </ul>
                         </div>
                       ) : (
-                        <p>No learning objectives for this lesson.</p>
+                        <p>  </p>
                       )}
 
                       {lesson.topics.map((topic) => {

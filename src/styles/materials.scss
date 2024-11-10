@@ -8,10 +8,83 @@
 .materials-page {
   margin-top: -50px;
   display: flex;
+  flex-direction: column; // Ensures top-down flow of content
   overflow: auto;
   height: 100%;
   position: relative;
   padding: 50px;
+
+  .objectives-container {
+    background-color: #f9f9f9;
+    padding: 25px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    .h3-obj{
+      color: black;
+    }
+
+    .objectives-list {
+      list-style-type: disc; 
+      padding-left: 30px; 
+    }
+
+    .objective-item {
+      font-size: 1rem;
+      color: #333;
+      margin-bottom: 5px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+
+  .progress-bar-container {
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    height: 25px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    width: 66rem;
+    padding: 3px;
+
+    .progress-bar {
+      height: 100%;
+      background-color: #b342f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+      transition: width 0.4s ease;
+      padding:2px;
+
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15) 0px,
+        rgba(255, 255, 255, 0.15) 10px,
+        transparent 10px,
+        transparent 20px
+      );
+      background-size: 30px 30px;
+      animation: progress-animation 1s linear infinite;
+
+      box-shadow: 0 0 8px #b342f5, 0 0 15px #b342f5, 0 0 20px rgba(179, 66, 245, 0.7);
+    }
+
+    @keyframes progress-animation {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 30px 0;
+      }
+    }
+    
+  }
 
   .syllabus-main {
     position: relative;
