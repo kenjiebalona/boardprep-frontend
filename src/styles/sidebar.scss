@@ -9,7 +9,7 @@ body, html {
     padding: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden; 
+    overflow: hidden;
     background-color: #0D0B1C;
 }
 
@@ -29,7 +29,7 @@ body, html {
     left: 0;
     top: 0;
     transition: width 0.3s ease;
-    box-shadow: 5px 0 15px rgba(128, 0, 128, 0.7); 
+    box-shadow: 5px 0 15px rgba(128, 0, 128, 0.7);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -37,21 +37,21 @@ body, html {
 }
 
 .sidebar.collapsed {
-    width: 85px; 
+    width: 85px;
 }
 
 .main-content {
     flex-grow: 1;
-    margin-left: 180px; 
+    margin-left: 180px;
     transition: margin-left 0.3s ease;
-    height: 100vh; 
+    height: 100vh;
     overflow-y: hidden;
-    overflow-x: hidden; 
+    overflow-x: hidden;
     display: flex;
 }
 
 .sidebar.collapsed + .main-content {
-    margin-left: 75px; 
+    margin-left: 75px;
     margin-bottom: -30rem;
 }
 
@@ -60,6 +60,16 @@ body, html {
     align-items: center;
     padding: 20px 15px;
     justify-content: space-between;
+}
+
+.mastery_sidebar {
+    background-color: #7D67FF;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    gap: 15px;
 }
 
 .logo {
@@ -105,7 +115,7 @@ body, html {
     width: 50px;
     overflow: hidden;
     cursor: pointer;
-  
+
     img {
       height: 50px;
       width: 60px;
@@ -117,6 +127,11 @@ body, html {
 .icon {
     font-size: 20px;
     margin-top: 8px;
+    margin-left: 3px;
+}
+
+.icon-mastery {
+    font-size: 20px;
     margin-left: 3px;
 }
 
@@ -134,7 +149,7 @@ body, html {
         margin-bottom: -100px;
     }
         .profile-container {
-            display: none; 
+            display: none;
             margin-right: -100px;
     }
 }
@@ -142,7 +157,7 @@ body, html {
 .dropDownProfile {
     position: absolute;
     left: 0;
-    width: 215px; 
+    width: 215px;
     background: #0D0B1C;
     color: #fff;
     border: 1px solid #7D67FF;
@@ -156,8 +171,8 @@ body, html {
 }
 
 .profile-name-unique {
-    color: white; 
-    font-size: 14px; 
+    color: white;
+    font-size: 14px;
     margin-left: 15px;
     margin-top: 16px;
 }
