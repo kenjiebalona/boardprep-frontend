@@ -255,7 +255,7 @@ function Syllabus({
                                         : ''
                                     }`}
                                     onClick={() =>
-                                      (hasPreassessment || userType === 'C') &&
+                                      (hasPreassessment || userType === "C" || userType === "T") &&
                                       onSubtopicClick(subtopic.subtopic_id)
                                     }
                                     role="button"
