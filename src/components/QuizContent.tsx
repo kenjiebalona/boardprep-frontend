@@ -65,6 +65,10 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
   const questionsPerPage = 2;
 
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    return array.sort(() => Math.random() - 0.5);
+  };
+
   useEffect(() => {
     console.log('QUIZ CONTENT HERE');
     const fetchQuizAndAttempt = async () => {
@@ -89,6 +93,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
             class_instance: classInstanceId,
             title: `Quiz - New`,
           });
+          createQuizResponse.data.questions = shuffleArray(createQuizResponse.data.questions);
           quizData = createQuizResponse.data;
         }
 
@@ -104,6 +109,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
             class_instance: classInstanceId,
             title: `Quiz - New`,
           });
+          createQuizResponse.data.questions = shuffleArray(createQuizResponse.data.questions);
           quizData = createQuizResponse.data;
 
           const createAttemptResponse = await axiosInstance.post(

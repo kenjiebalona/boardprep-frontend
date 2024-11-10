@@ -462,7 +462,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             Back to Syllabus
           </button>
 
-          {currentPage === 0 && renderObjectives()}
+          {!showExamContent && !showQuizContent && currentPage === 0 && renderObjectives()}
 
           {pages[currentPage] && (
             <div key={pages[currentPage].page_id}>

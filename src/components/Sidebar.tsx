@@ -40,6 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     const userType = user.token.type;
     const navigate = useNavigate();
     const [level, setLevel] = useState<string>('Beginner');
+    const [hasPreassessment, setHasPreassessment] = useState(false);
 
     const menuItems: MenuItem[] = (() => {
         if (userType === 'T') {
@@ -67,6 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         if (!user.isAuth) {
             navigate('/home');
         }
+        fetchPreassessment();
         fetchMastery();
         getDetails();
     }, [user, navigate]);
@@ -106,6 +108,19 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
 
         setLevel(finalMasteryLevel);
         console.log(`Overall Mastery Level: ${finalMasteryLevel}`);
+      };
+
+      const fetchPreassessment = async () => {
+        try {
+          const response = await axiosInstance.get(
+            `/studentPreassessmentAttempt/?student_id=${user.token.id}`
+          );
+          if (response.data.length > 0) {
+            setHasPreassessment(true);
+          }
+        } catch (error) {
+          console.error('Error fetching preassessment data:', error);
+        }
       };
 
     const handleLogout = async (e: any) => {
@@ -156,10 +171,12 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                         <FaBars />
                     </div>
                 </div>
-                <div className="mastery_sidebar">
-                    <div className="icon-mastery"><CiMedal /></div>
-                    <div style={{ display: isOpen ? "block" : "none" }} className="link_text">Mastery Level: {level}</div>
-                </div>
+                { hasPreassessment && userType !== "T" && (
+                    <div className="mastery_sidebar">
+                        <div className="icon-mastery"><CiMedal /></div>
+                        <div style={{ display: isOpen ? "block" : "none" }} className="link_text">Mastery Level: {level}</div>
+                    </div>
+                )}
                 {menuItems.map((item, index) => (
                     <NavLink
                         to={item.path}
