@@ -23,6 +23,7 @@ interface Objective {
 }
 
 interface LearningObjective {
+  id: number;
   text: string;
   subtopic: number;
 }
@@ -71,6 +72,15 @@ interface ContentBlock {
   content: string;
 }
 
+interface Mastery {
+  id: number;
+  mastery_level: number;
+  questions_attempted: number;
+  last_updated: string;
+  student: string;
+  learning_objective: number;
+}
+
 function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -93,8 +103,11 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [testStarted, setTestStarted] = useState(false);
   const [hasPreassessment, setHasPreassessment] = useState(false);
   const [objectives, setObjectives] = useState<LearningObjective[]>([]);
-  const [progress, setProgress] = useState(0); 
-  const [clickedSubtopics, setClickedSubtopics] = useState<Set<string>>(new Set());
+  const [progress, setProgress] = useState(0);
+  const [clickedSubtopics, setClickedSubtopics] = useState<Set<string>>(
+    new Set()
+  );
+  const [masteries, setMasteries] = useState<Mastery[]>([]);
 
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
@@ -135,8 +148,25 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     checkAllLessonsCompleted();
   }, [lessons]);
 
+  const fetchMastery = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/mastery/?student_id=${studentId}`
+      );
+      setMasteries(response.data);
+      setProgress(
+        (response.data.filter((m: Mastery) => m.mastery_level >= 60).length /
+          response.data.length) *
+          100
+      );
+    } catch (error) {
+      console.error("Error fetching mastery data:", error);
+    }
+  };
+
   useEffect(() => {
     fetchPreassessment();
+    fetchMastery();
   }, []);
 
   const fetchPreassessment = async () => {
@@ -208,29 +238,44 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   useEffect(() => {
     if (lessons.length > 0) {
       const totalSubtopics = lessons.reduce(
-        (acc, lesson) => acc + lesson.topics.reduce((subAcc, topic) => subAcc + topic.subtopics.length, 0),
+        (acc, lesson) =>
+          acc +
+          lesson.topics.reduce(
+            (subAcc, topic) => subAcc + topic.subtopics.length,
+            0
+          ),
         0
       );
       const progressPercentage = (clickedSubtopics.size / totalSubtopics) * 100;
-      setProgress(progressPercentage);
+      //setProgress(progressPercentage);
     }
   }, [clickedSubtopics, lessons]);
 
   const handleTopicClick = (subtopicId: string) => {
-    setCurrentSubtopic(subtopicId); 
-    fetchPages(subtopicId); 
+    setCurrentSubtopic(subtopicId);
+    fetchPages(subtopicId);
   };
 
   const renderObjectives = () => {
     console.log("test Subtopic:", currentSubtopic);
     console.log("Obj render:", objectives);
-    
+
     return (
       <div className="objectives-container">
         <h3 className="h3-obj">Learning Objectives</h3>
         <ul className="objectives-list">
           {objectives.map((objective, idx) => (
-            <li key={idx} className="objective-item">
+            <li
+              key={idx}
+              className="objective-item"
+              style={{
+                color:
+                  (masteries.find((m) => m.learning_objective === objective.id)
+                    ?.mastery_level ?? 0) >= 60
+                    ? "green"
+                    : "black",
+              }}
+            >
               {objective.text}
             </li>
           ))}
