@@ -253,7 +253,7 @@ function Syllabus({
                                         : ""
                                     }`}
                                     onClick={() =>
-                                      (hasPreassessment || userType === "C") &&
+                                      (hasPreassessment || userType === "C" || userType === "T") &&
                                       onSubtopicClick(subtopic.subtopic_id)
                                     }
                                     role="button"
@@ -302,7 +302,7 @@ function Syllabus({
                 )} */}
                 </div>
               </div>
-              {userType !== "C" && (
+              {userType == "S" && (
                 <button className="quiz-button" onClick={() => handleQuizClick(lesson.lesson_id)}>Take quiz</button>
               )}
             </div>

@@ -262,23 +262,25 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
     return (
       <div className="objectives-container">
-        <h3 className="h3-obj">Learning Objectives</h3>
+        <h3 className="h3-obj">
+          <span role="img" aria-label="target">🎯</span> Learning Objectives
+        </h3>
         <ul className="objectives-list">
-          {objectives.map((objective, idx) => (
-            <li
-              key={idx}
-              className="objective-item"
-              style={{
-                color:
-                  (masteries.find((m) => m.learning_objective === objective.id)
-                    ?.mastery_level ?? 0) >= 60
-                    ? "green"
-                    : "black",
-              }}
-            >
-              {objective.text}
-            </li>
-          ))}
+          {objectives.map((objective, idx) => {
+            const masteryLevel = masteries.find((m) => m.learning_objective === objective.id)?.mastery_level ?? 0;
+            const masteryColor = masteryLevel >= 60 ? "#28a745" : "#333"; 
+            const masteryIcon = masteryLevel >= 60 ? "✓" : "✗";
+
+            return (
+              <li
+                key={idx}
+                className="objective-item"
+                style={{ color: masteryColor }}
+              >
+                <span className="objective-icon">{masteryIcon}</span> {objective.text}
+              </li>
+            );
+          })}
         </ul>
       </div>
     );
@@ -420,11 +422,14 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   return (
     <div className="materials-page">
-      <div className="progress-bar-container">
-        <div className="progress-bar" style={{ width: `${progress}%` }}>
-          {Math.round(progress)}%
+      {userType === "S" && ( 
+        <div className="progress-bar-container">
+          <div className="progress-bar" style={{ width: `${progress}%` }}>
+            <span className="progress-text">{Math.round(progress)}%</span>
+            <span className="progress-icon">🏆</span>
+          </div>
         </div>
-      </div>
+      )}
       {!showLessonContent ? (
         <div className="lesson-content-container">
           <Syllabus
@@ -438,14 +443,14 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             handleQuizClick={(lessonID: string) => handleQuizClick(lessonID)}
             hasPreassessment={hasPreassessment}
           />
-          {!hasPreassessment ? (
+          {userType == "S" && !hasPreassessment ? (
             <button
               className="preassessment-button"
               onClick={handleStartPreassessment}
             >
               Take preassessment
             </button>
-          ) : (
+          ) : userType == "S" && (
             <button className="preassessment-button" onClick={handleExam}>
               Take exam
             </button>
