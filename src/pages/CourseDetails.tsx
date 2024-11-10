@@ -9,6 +9,7 @@ import Syllabus from "../components/Syllabus";
 import TipTapEditor from "../components/TipTap";
 import "../styles/details.scss";
 import LearningObjectiveModal from "../components/LearningObjectiveModal";
+import AlertMessage from "../components/AlertMessage"; 
 
 interface BlockFormData {
   page: number;
@@ -122,6 +123,10 @@ function CourseDetails() {
   const [showBlockForm, setShowBlockForm] = useState(false);
   const [showObjectiveModal, setShowObjectiveModal] = useState(false);
 
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("success");
+
   const handleOpenObjectiveModal = () => {
     setShowObjectiveModal(true);
   };
@@ -130,7 +135,17 @@ function CourseDetails() {
     setShowObjectiveModal(false);
   };
 
-  const handleSaveObjectives = () => {
+  const handleSaveObjectives = async () => {
+    try {  
+      setAlertMessage("Learning objectives saved successfully!");
+      setAlertType("success");
+      setShowAlert(true); 
+    } catch (error) {
+      console.error("Error saving objectives:", error);
+      setAlertMessage("Failed to save learning objectives.");
+      setAlertType("error");
+      setShowAlert(true); 
+    }
   };
 
   const fetchContentBlocks = async (pageId: number) => {
@@ -591,6 +606,13 @@ function CourseDetails() {
 
   return (
     <div className="dashboard-background">
+      {showAlert && (
+        <AlertMessage
+          message={alertMessage}
+          type={alertType}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
       <header className="top-header">
         <h1>Course Management</h1>
         <button className="create-btn" onClick={handleOpenCourseModal}>

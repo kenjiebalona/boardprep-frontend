@@ -12,12 +12,13 @@ const AlertMessage: React.FC<AlertProps> = ({ message, type, onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowAlert(false);
-    }, 3000);
+      onClose(true);
+    }, 4500);
 
     return () => {
       clearTimeout(timer);
     };
-  }, []);
+  }, [onClose]);
 
   const handleDismiss = () => {
     setShowAlert(false);
@@ -27,32 +28,36 @@ const AlertMessage: React.FC<AlertProps> = ({ message, type, onClose }) => {
   return showAlert ? (
     <div
       style={{
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        marginBottom: "20px",
-        marginLeft: "20px",
-        borderRadius: "8px",
-        backgroundColor: type === "success" ? "#58f43c" : "red",
+        position: "fixed",
+        bottom: "20px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 9999, 
+        borderRadius: "10px",
+        backgroundColor: type === "success" ? "#4caf50" : "#f44336",
         color: "white",
-        padding: "10px",
+        padding: "12px 20px",
         display: "flex",
-        justifyContent: "space-between",
-        gap: "30px",
         alignItems: "center",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+        transition: "opacity 0.5s",
+        opacity: showAlert ? 1 : 0,
       }}
     >
-      <span>{message}</span>
+      <span style={{ fontWeight: "500", fontSize: "1rem" }}>{message}</span>
       <button
         style={{
           background: "none",
           border: "none",
-          cursor: "pointer",
           color: "white",
+          marginLeft: "20px",
+          fontSize: "1.2rem",
+          cursor: "pointer",
+          transition: "color 0.3s",
         }}
         onClick={handleDismiss}
       >
-        X
+        ✕
       </button>
     </div>
   ) : null;
