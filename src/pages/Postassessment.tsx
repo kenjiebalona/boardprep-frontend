@@ -63,7 +63,7 @@ const Postassessment: React.FC = () => {
       {!testStarted && (
         <>
           <DailyChallengeCard
-            title="MOCKT EST"
+            title="MOCKTEST"
             description="Try taking a mock test."
             descriptionPart2="Stay on track and keep improving!"
             buttonText="Start the Exam"

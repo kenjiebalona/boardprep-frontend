@@ -62,6 +62,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
+  const objective_ids = objectives.map((objective) => objective.id);
 
   const questionsPerPage = 2;
 
@@ -89,7 +90,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
           const createQuizResponse = await axiosInstance.post("/quizzes/", {
             student: studentId,
-            learning_objective: 5,
+            lesson: lessonId,
             class_instance: classInstanceId,
             title: `Quiz - New`,
           });
@@ -105,7 +106,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
           const createQuizResponse = await axiosInstance.post("/quizzes/", {
             student: studentId,
-            learning_objective: 5,
+            lesson: lessonId,
             class_instance: classInstanceId,
             title: `Quiz - New`,
           });
