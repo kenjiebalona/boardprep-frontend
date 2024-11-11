@@ -464,7 +464,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
           {!showExamContent && !showQuizContent && currentPage === 0 && renderObjectives()}
 
-          {pages[currentPage] && (
+          {!showQuizContent && !showExamContent && pages[currentPage] && (
             <div key={pages[currentPage].page_id}>
               {pages[currentPage].content_blocks.map(
                 (block: ContentBlock, idx: number) => (
@@ -481,7 +481,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             </div>
           )}
 
-          {pageCount > 1 && showLessonContent && (
+          {!showQuizContent && !showExamContent && pageCount > 1 && showLessonContent && (
             <ReactPaginate
               previousLabel={currentPage > 0 ? "<" : ""}
               nextLabel={currentPage < pageCount - 1 ? ">" : ""}
