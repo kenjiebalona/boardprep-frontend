@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
+import AlertMessage from "../components/AlertMessage";
 import CourseModal from "../components/CourseModal";
+import LearningObjectiveModal from "../components/LearningObjectiveModal";
 import LessonsModal from "../components/LessonsModal";
 import PublishModal from "../components/PublishModal";
 import Syllabus from "../components/Syllabus";
 import TipTapEditor from "../components/TipTap";
 import "../styles/details.scss";
-import LearningObjectiveModal from "../components/LearningObjectiveModal";
-import AlertMessage from "../components/AlertMessage"; 
 
 interface BlockFormData {
   page: number;
@@ -93,9 +93,11 @@ function CourseDetails() {
   const [subtopics, setSubtopics] = useState([]);
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const [currentSubtopic, setCurrentSubtopic] = useState<string | null>(null);
-  const [subtopicId, SetSubtopicId] = useState(0);
+  const [subtopicId, SetSubtopicId] = useState<string | null>(null);
   const [pages, setPages] = useState<Page[]>([]);
   const [pageMapping, setPageMapping] = useState<{ [key: number]: string }>({});
+  const [isFetchingPages, setIsFetchingPages] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(0);
   const [pageId, setPageId] = useState(0);
   const [block, setCurrentBlock] = useState(0);
@@ -104,7 +106,7 @@ function CourseDetails() {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [currentLesson, setCurrentLesson] = useState<string | null>(null);
   const [isSyllabusCollapsed, setIsSyllabusCollapsed] = useState(false);
-  const pageCount = pages.length;
+  const pageCount = useState(0);
   const [showEditorContent, setshowEditorContent] = useState(false);
   const [classId, setClassId] = useState<string | null>(null);
   const [editorContent, setEditorContent] = useState<ContentBlock[]>([]);
@@ -127,6 +129,7 @@ function CourseDetails() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("success");
 
+  
   const handleOpenObjectiveModal = () => {
     setShowObjectiveModal(true);
   };
@@ -173,17 +176,13 @@ function CourseDetails() {
   };
 
   const handleContentChange = (id: number, updatedContent: string) => {
-    const blockToUpdate = contentBlocks.find((b) => b.block_id === id);
-    if (blockToUpdate) {
-      blockToUpdate.content = updatedContent;
-      setContentBlocks([...contentBlocks]);
-      console.log(`Block ${id} updated with new content: ${updatedContent}`);
-      console.log("Updated contentBlocks:", contentBlocks);
-    } else {
-      console.error(`Block with ID ${id} not found`);
-    }
+    setContentBlocks((prevBlocks) =>
+      prevBlocks.map((block) =>
+        block.block_id === id ? { ...block, content: updatedContent } : block
+      )
+    );
   };
-
+  
   const handleDeleteBlock = async (blockId: number) => {
     try {
       await axiosInstance.delete(`/content-blocks/${blockId}/`);
@@ -221,10 +220,7 @@ function CourseDetails() {
       alert("Please select both block type and difficulty.");
       return;
     }
-
-    console.log("Current Page ID:", pageId);
-    console.log("Editor content before sending:", editorContent);
-
+  
     try {
       const blockData: BlockFormData = {
         page: pageId,
@@ -233,24 +229,22 @@ function CourseDetails() {
         content: "New Content",
         file: null,
       };
-
+  
       const payload = { blocks: [blockData] };
-
-      console.log("Payload:", payload);
       const response = await axiosInstance.post("/content-blocks/", payload);
-
+  
       const createdBlock = response.data.blocks[0];
-      console.log("Block created successfully:", createdBlock);
-
       setContentBlocks((prevBlocks) => [...prevBlocks, createdBlock]);
       setEditorContent((prevContent) => [...prevContent, createdBlock]);
-
+  
       setHasBlock(true);
       setShowBlockForm(false);
     } catch (error) {
       console.error("Error creating blocks:", error);
     }
   };
+  
+  
 
   async function uploadFile(file: File) {
     const formData = new FormData();
@@ -299,38 +293,52 @@ function CourseDetails() {
 
   const fetchSyllabusAndFirstLesson = async () => {
     try {
+     
       const syllabusResponse = await axiosInstance.get(`/syllabi/${courseId}/`);
       const syllabusData = syllabusResponse.data[0];
       const fetchedSyllabusId = syllabusData.syllabus_id;
+  
+      
       setSyllabusId(fetchedSyllabusId);
-
+  
+     
       const updatedLessons = syllabusData.lessons.map((lesson: any) => ({
         ...lesson,
         completed: false,
         quiz_id: lesson.quiz_id || "",
         topics: lesson.topics || [],
       }));
-      console.log(updatedLessons);
+  
+      console.log("Updated Lessons:", updatedLessons);
       setLessons(updatedLessons);
-
-      if (updatedLessons.length > 0) {
-        const firstLesson = updatedLessons[0];
-        setCurrentLesson(firstLesson.lesson_id);
-        if (firstLesson.topics.length > 0) {
-          const firstTopic = firstLesson.topics[0];
-          setCurrentTopic(firstTopic.topic_title);
-          if (firstTopic.subtopics.length > 0) {
-            const firstSubtopic = firstTopic.subtopics[0];
-            setCurrentSubtopic(firstSubtopic.subtopic_title);
-            SetSubtopicId(firstSubtopic.subtopic_id);
-          }
-        }
-        await fetchPages(firstLesson.lesson_id);
+  
+     
+      if (updatedLessons.length === 0) return;
+  
+    
+      const firstLesson = updatedLessons[0];
+      setCurrentLesson(firstLesson.lesson_id);
+  
+     
+      const firstTopic = firstLesson.topics?.[0];
+      const firstSubtopic = firstTopic?.subtopics?.[0];
+  
+      
+      if (firstTopic) setCurrentTopic(firstTopic.topic_title);
+      if (firstSubtopic) {
+        setCurrentSubtopic(firstSubtopic.subtopic_title);
+        SetSubtopicId(firstSubtopic.subtopic_id); 
+      }
+  
+      
+      if (firstSubtopic?.subtopic_id) {
+        await fetchPages(firstSubtopic.subtopic_id);
       }
     } catch (error) {
       console.error("Error fetching syllabus:", error);
     }
   };
+  
 
   const fetchSpecializations = async () => {
     try {
@@ -414,64 +422,78 @@ function CourseDetails() {
   };
 
   const fetchPages = async (subtopicId: string) => {
+    console.log("Subtopic Id in Fetched Pages function:", subtopicId)
     if (!subtopicId) {
       console.error("Subtopic ID is undefined");
       return;
     }
 
+    setIsFetchingPages(true);
+    setContentBlocks([]);
+    setEditorContent([]);
+    setHasBlock(false);
+  
+  
     try {
-      const response = await axiosInstance.get(
-        `/pages/by_subtopic/${subtopicId}/`
-      );
-      console.log("Fetched pages:", response.data.pages);
-
+      const response = await axiosInstance.get(`/pages/by_subtopic/${subtopicId}/`);
       const fetchedPages = response.data.pages;
-
-      const pageMapping = fetchedPages.reduce(
-        (acc: { [key: number]: string }, page: Page) => {
-          acc[page.page_number] = page.page_id;
-          return acc;
-        },
-        {}
-      );
-
-      setPages(response.data.pages);
-      setPageMapping(pageMapping);
-      if (response.data.pages.length > 0) {
-        setEditorContent(response.data.pages[0].content);
-        setCurrentPage(response.data.pages[0].page_number);
-        setPageId(response.data.pages[0].page_id);
+  
+      if (fetchedPages.length > 0) {
+        const firstPage = fetchedPages[0];
+        setEditorContent(firstPage.content);
+        setCurrentPage(firstPage.page_number);
+        setPageId(firstPage.page_id);
         setIsNewPage(false);
-        await fetchContentBlocks(response.data.pages[0].page_id);
+
+        console.log("PageId of firstPage:", pageId)
+        await fetchContentBlocks(firstPage.page_id);
+        const newPageMapping: { [key: number]: string } = {};
+        fetchedPages.forEach((page: Page, index: number) => {
+          newPageMapping[index] = page.page_id;
+        });
+        setPageMapping(newPageMapping);
       } else {
         setEditorContent([]);
         setCurrentPage(0);
+        setPageId(0);
         setIsNewPage(true);
       }
+  
+      setPages(fetchedPages);
+      console.log("Fetched pages:", fetchedPages);
+
     } catch (error) {
       console.error("Error fetching pages:", error);
     }
+    finally {
+      setIsFetchingPages(false); 
+    }
   };
+
+
+  
 
   const handleLessonClick = async (lessonId: string) => {
     setCurrentLesson(lessonId);
     const selectedLesson = lessons.find((l) => l.lesson_id === lessonId);
-    if (
-      selectedLesson &&
-      Array.isArray(selectedLesson.topics) &&
-      selectedLesson.topics.length > 0
-    ) {
+  
+    if (selectedLesson && selectedLesson.topics && selectedLesson.topics.length > 0) {
       const firstTopic = selectedLesson.topics[0];
       setCurrentTopic(firstTopic.topic_title);
-      if (firstTopic.subtopics.length > 0) {
+  
+      if (firstTopic.subtopics && firstTopic.subtopics.length > 0) {
         const firstSubtopic = firstTopic.subtopics[0];
         setCurrentSubtopic(firstSubtopic.subtopic_title);
+        SetSubtopicId(firstSubtopic.subtopic_id);
+        await fetchPages(firstSubtopic.subtopic_id);
       }
     }
-    await fetchPages(lessonId);
+    console.log("Setting showEditorContent to true");
+  
     setshowEditorContent(true);
   };
-
+  
+  
   const handleTopicClick = (topicId: string) => {
     setCurrentTopic(topicId);
     const selectedLesson = lessons.find((l) => l.lesson_id === currentLesson);
@@ -489,32 +511,68 @@ function CourseDetails() {
   };
 
   const handleSubtopicClick = (subtopicId: string) => {
-    setCurrentSubtopic(subtopicId);
-    fetchPages(subtopicId);
-    setshowEditorContent(true);
+    if (subtopicId === currentSubtopic) {
+      console.log(`Subtopic ${subtopicId} already selected, skipping fetch.`);
+      return; // Prevent fetching if the same subtopic is clicked again
+    }
+    setPages([])
+    console.log("Clicked subtopicId:", subtopicId);
+    console.log("handle first", subtopicId);
+    SetSubtopicId(subtopicId); 
+    console.log("Setting showEditorContent to true on sub");
+    setshowEditorContent(true); 
+  
   };
+  
+
+  useEffect(() => {
+    console.log("useeff first", subtopicId);
+    if (subtopicId) {
+      console.log("Fetching pages for subtopic:", subtopicId);
+      fetchPages(subtopicId); 
+    }
+  }, [subtopicId]);
+  
+  
 
   const handlePageClick = async (event: { selected: number }) => {
+    console.log("Page Clicked")
     const newPageNumber = event.selected;
     const newPageId = pageMapping[newPageNumber];
-
-    console.log("Page Number", newPageNumber);
-    console.log("Page ID", newPageId);
-
+  
     setCurrentPage(newPageNumber);
     setIsNewPage(false);
-    if (currentLesson) {
+  
+    if (newPageId) {
       try {
-        const response = await axiosInstance.get(`/pages/${newPageId}`);
+        console.log("Fetching data for new page ID:", newPageId);
+  
+      
+        setContentBlocks([]);
+        setEditorContent([]);
+        setHasBlock(false);
+  
+    
+        const response = await axiosInstance.get(`/pages/${newPageId}/`);
         if (response.data) {
-          setEditorContent(response.data.content);
-          setIsNewPage(false);
+          const newPageContent = response.data.content;
+          setEditorContent(newPageContent);
           setPageId(Number(newPageId));
+          
+         
           await fetchContentBlocks(Number(newPageId));
+        } else {
+          console.log("No content found for page ID:", newPageId);
         }
-      } catch (error: any) {}
+      } catch (error) {
+        console.error("Error fetching page data:", error);
+      }
+    } else {
+      console.warn(`No mapping found for page number ${newPageNumber}`);
     }
   };
+  
+  
 
   const handleOpenPublishModal = () => {
     setShowPublishModal(true);
@@ -556,26 +614,27 @@ function CourseDetails() {
           subtopic: subtopicId,
         }
       );
-
+  
       const newPage = response.data;
       setPages((prevPages) => [...prevPages, newPage]);
       setPageMapping((prevMapping) => ({
         ...prevMapping,
         [newPage.page_number]: newPage.page_id,
       }));
-
+  
       setCurrentPage(newPage.page_number);
       setPageId(newPage.page_id);
       setIsNewPage(false);
-      if (newPage.page_id) {
-        await fetchContentBlocks(newPage.page_id);
-      }
-
+  
+      
+      await fetchContentBlocks(newPage.page_id);
+  
       console.log("New page created and added to the state:", newPage);
     } catch (error) {
       console.error("Error creating a new page:", error);
     }
   };
+  
 
   const handleEditorReady = (editor: any) => {
     const toolbarContainer = document.querySelector(".toolbar-container");
@@ -590,7 +649,16 @@ function CourseDetails() {
     toolbar: ["mediaEmbed"],
   };
 
-  console.log("PageCount:", pageCount);
+  useEffect(() => {
+    console.log("PageCount updated:", pages.length);
+  }, [pages]);
+
+  useEffect(() => {
+    console.log("Current Page:", currentPage);
+  }, [currentPage]);
+
+
+  
 
   const handleBackToSyllabus = () => {
     setshowEditorContent(false);
@@ -738,44 +806,49 @@ function CourseDetails() {
             </div>
           )}
 
-          {showEditorContent &&
-            hasBlock &&
-            contentBlocks.map((block, index) => {
-              const stringifiedContent = JSON.stringify(block.content);
-
-              return (
-                <div className="content-blocks" key={index}>
-                  <div className="block-type-label">{block.block_type}</div>
-                  <button
-                    className="delete-block-btn"
-                    onClick={() => handleDeleteBlock(Number(block.block_id))}
-                    aria-label="Delete block"
-                  >
-                    -
-                  </button>
-                  <TipTapEditor
-                    key={pageId}
-                    content={block.content}
-                    onChange={(updatedContent) =>
-                      handleContentChange(block.block_id, updatedContent)
-                    }
-                  />
-                </div>
-              );
-            })}
-
-          {showEditorContent && pageCount > 1 && (
-            <ReactPaginate
-              previousLabel={currentPage > 0 ? "<" : ""}
-              nextLabel={currentPage < pageCount - 1 ? ">" : ""}
-              breakLabel={"..."}
-              pageCount={pageCount}
-              onPageChange={handlePageClick}
-              containerClassName={"pagination"}
-              activeClassName={"active"}
-              forcePage={currentPage}
-            />
+          {showEditorContent && !isFetchingPages && (
+            <div>
+              {contentBlocks.length > 0 ? (
+                contentBlocks.map((block, index) => (
+                  <div className="content-blocks" key={index}>
+                    <div className="block-type-label">{block.block_type}</div>
+                    <button
+                      className="delete-block-btn"
+                      onClick={() => handleDeleteBlock(Number(block.block_id))}
+                      aria-label="Delete block"
+                    >
+                      -
+                    </button>
+                    <TipTapEditor
+                      key={block.block_id}
+                      content={block.content}
+                      onChange={(updatedContent) =>
+                        handleContentChange(block.block_id, updatedContent)
+                      }
+                    />
+                  </div>
+                ))
+              ) : (
+                <div>No content blocks available. Please add new content.</div>
+              )}
+            </div>
           )}
+
+
+
+            {showEditorContent && pages.length > 0 && (
+              <ReactPaginate
+                pageCount={pages.length}
+                previousLabel={currentPage > 0 ? "<" : ""}
+                nextLabel={currentPage < pages.length - 1 ? ">" : ""}
+                breakLabel={"..."}
+                onPageChange={handlePageClick}
+                containerClassName={"pagination"}
+                activeClassName={"active"}
+                forcePage={currentPage}
+              />
+            )}
+
         </div>
       </div>
 
