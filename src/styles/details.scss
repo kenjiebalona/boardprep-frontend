@@ -3,13 +3,13 @@
 
 .dashboard-background {
   width: 100%;
-  min-height: 100vh; /* Allow the background to extend if content overflows */
+  min-height: 100vh; 
   background: #0d0b1c;
   padding-left: 50px;
   padding-right: 60px;
   display: flex;
   flex-direction: column;
-  overflow: auto; /* Enable scrolling for the entire page */
+  overflow: auto; 
 }
 
 .top-header {
@@ -116,7 +116,6 @@
   margin-bottom: 10px;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-top: 20px;
   color: #ffffff;
   background-color: #6c63ff; 
   border-radius: 12px;
@@ -135,7 +134,6 @@
   margin-bottom: 10px;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-top: 20px;
   color: #ffffff;
   background-color: #6c63ff; 
   border-radius: 12px;
@@ -150,6 +148,12 @@
 
 .filter-container-two {
   margin-bottom: 1.5rem;
+  background-color: #f4f8fc;
+    padding: 20px 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    margin-top: 10px;
 }
 
 .filter-groups-two {

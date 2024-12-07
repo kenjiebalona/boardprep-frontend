@@ -203,7 +203,7 @@
   margin-top: 10px;
 }
 
-.pagination {
+.materials-pagination {
   display: flex;
   list-style: none;
   padding: 0;
@@ -233,7 +233,7 @@
       }
     }
 
-    &.active a {
+    &.materials-active a {
       background-color: #5D3FD3;
       color: white;
       border-color: #5D3FD3; 
@@ -342,8 +342,42 @@
   }
 }
 
+.btn-more-materials {
+  margin-left: 15px;
+  border-radius: 10px;
+  padding: 10px 20px;
+  border: 2px solid transparent;
+  background: linear-gradient(white, white),
+    linear-gradient(to right, #6c63ff, #5D3FD3);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+
+  box-shadow: 0 0 20px rgba(108, 99, 255, 0.4),
+    0 0 20px rgba(108, 99, 255, 0.4), 0 0 30px rgba(93, 63, 211, 0.4);
+}
+
+.btn-more-materials:hover {
+  background: linear-gradient(to right, #5D3FD3, #6c63ff); 
+  color: white;
+  border: 2px solid transparent;
+
+  box-shadow: 0 0 15px rgba(108, 99, 255, 0.6),
+    0 0 25px rgba(108, 99, 255, 0.6), 0 0 40px rgba(93, 63, 211, 0.8);
+}
+
 .filter-container {
-  margin: 1rem 0;
+  margin: 0.5rem 0;
+  background-color: #f4f8fc;
+  padding: 20px 22px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 .filter-options {

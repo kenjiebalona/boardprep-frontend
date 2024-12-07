@@ -681,7 +681,6 @@ function CourseDetails() {
     }
   };
 
-  // Callback for closing the alert
   const handleAlertClose = (isSuccess: boolean) => {
     setShowAlert(false);
     if (isSuccess) {
