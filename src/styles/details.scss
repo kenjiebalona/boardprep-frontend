@@ -113,10 +113,10 @@
   display: inline-flex;
   align-items: center;
   padding: 4px 10px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-top: 5px;
+  margin-top: 20px;
   color: #ffffff;
   background-color: #6c63ff; 
   border-radius: 12px;
@@ -127,6 +127,77 @@
     margin-right: 6px;
   }
 }
+
+.diff-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 20px;
+  color: #ffffff;
+  background-color: #6c63ff; 
+  border-radius: 12px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 5px;
+
+  &::before {
+    content: '🧠'; 
+    margin-right: 6px;
+  }
+}
+
+.filter-container-two {
+  margin-bottom: 1.5rem;
+}
+
+.filter-groups-two {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; 
+}
+
+.filter-options-two {
+  flex: 1; 
+}
+
+.filter-options-two h4 {
+  margin-bottom: 0.5rem;
+}
+
+.filter-buttons-two {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-button-two {
+  padding: 5px 10px;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  font-size: 15px;
+}
+
+.filter-button-two:hover {
+  border-color: #ccc;
+}
+
+.filter-button-two.selected {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
+}
+
+.filter-button-two:not(.selected) {
+  border-color: #ccc;
+  background-color: transparent;
+}
+
+
 
 
 .btnDets2{

@@ -14,7 +14,7 @@ import "../styles/details.scss";
 interface BlockFormData {
   page: number;
   block_type: string;
-  difficulty: string;
+  difficulty?: string;
   content: string;
   file: File | null;
 }
@@ -124,10 +124,64 @@ function CourseDetails() {
   const [difficulty, setDifficulty] = useState<string | null>(null);
   const [showBlockForm, setShowBlockForm] = useState(false);
   const [showObjectiveModal, setShowObjectiveModal] = useState(false);
+  
+  const [blockTypeFilter, setBlockTypeFilter] = useState<Set<string>>(new Set());
+  const [difficultyFilter, setDifficultyFilter] = useState<Set<string>>(new Set());
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState("success");
+
+  const filteredContentBlocks = contentBlocks.filter((block) => {
+    const matchesType =
+      blockTypeFilter.size === 0 || blockTypeFilter.has(block.block_type);
+    const matchesDifficulty =
+      difficultyFilter.size === 0 || difficultyFilter.has(block.difficulty);
+    return matchesType && matchesDifficulty;
+  });
+  
+
+  const handleCreateLessonBlock = async () => {
+    try {
+      if (!pageId) {
+        alert("No page is selected to add a lesson block.");
+        return;
+      }
+  
+      const blockData: BlockFormData = {
+        page: pageId,
+        block_type: "lesson", 
+        content: "New Lesson Content",
+        file: null,
+      };
+  
+      const payload = { blocks: [blockData] };
+      const response = await axiosInstance.post("/content-blocks/", payload);
+  
+      const createdBlock = response.data.blocks[0];
+      setContentBlocks((prevBlocks) => [...prevBlocks, createdBlock]);
+      setEditorContent((prevContent) => [...prevContent, createdBlock]);
+  
+      setHasBlock(true);
+
+       // Show success alert
+       setAlertMessage("Lesson block added successfully!");
+       setAlertType("success");
+       setShowAlert(true);
+
+      console.log("Lesson content block created successfully:", createdBlock);
+    } catch (error) {
+      console.error("Error creating lesson content block:", error);
+
+      // Show error alert
+      setAlertMessage("Failed to add lesson block. Please try again.");
+      setAlertType("error");
+      setShowAlert(true);
+
+      alert("Failed to create lesson content block. Please try again.");
+    }
+  };
+  
 
   
   const handleOpenObjectiveModal = () => {
@@ -239,7 +293,19 @@ function CourseDetails() {
   
       setHasBlock(true);
       setShowBlockForm(false);
+
+      // Show success alert
+      setAlertMessage("New block created successfully!");
+      setAlertType("success");
+      setShowAlert(true);
+
     } catch (error) {
+
+      // Show error alert
+      setAlertMessage("Failed to create block. Please try again.");
+      setAlertType("error");
+      setShowAlert(true);
+
       console.error("Error creating blocks:", error);
     }
   };
@@ -598,9 +664,28 @@ function CourseDetails() {
       console.log("Payload:", payload);
 
       await axiosInstance[method](apiUrl, payload);
+
+      // Show success alert
+      setAlertMessage("Content saved successfully!");
+      setAlertType("success");
+      setShowAlert(true);
+
       console.log("Page saved successfully");
     } catch (error) {
       console.error("Error saving page content:", error);
+
+      // Show error alert
+      setAlertMessage("Failed to save content. Please try again.");
+      setAlertType("error");
+      setShowAlert(true);
+    }
+  };
+
+  // Callback for closing the alert
+  const handleAlertClose = (isSuccess: boolean) => {
+    setShowAlert(false);
+    if (isSuccess) {
+      console.log("Alert closed after success.");
     }
   };
 
@@ -628,10 +713,20 @@ function CourseDetails() {
   
       
       await fetchContentBlocks(newPage.page_id);
+
+      // Show success alert
+      setAlertMessage("New page added successfully!");
+      setAlertType("success");
+      setShowAlert(true);
   
       console.log("New page created and added to the state:", newPage);
     } catch (error) {
       console.error("Error creating a new page:", error);
+
+      // Show error alert
+      setAlertMessage("Failed to add new page. Please try again.");
+      setAlertType("error");
+      setShowAlert(true);
     }
   };
   
@@ -678,7 +773,7 @@ function CourseDetails() {
         <AlertMessage
           message={alertMessage}
           type={alertType}
-          onClose={() => setShowAlert(false)}
+          onClose={handleAlertClose}
         />
       )}
       <header className="top-header">
@@ -745,6 +840,12 @@ function CourseDetails() {
           )}
 
           {showEditorContent && (
+            <button className="btnDets4" onClick={() => handleCreateLessonBlock()}>
+              Add Lesson Block
+            </button>
+          )}
+
+          {showEditorContent && (
             <button className="btnDets3" onClick={handleCreateBlockClick}>
               Create New Block
             </button>
@@ -767,7 +868,7 @@ function CourseDetails() {
             <div className="create-block-form">
               <h3 className="h-title">Select Block Type</h3>
               <div className="option-group">
-                {["Objective", "Lesson", "Example"].map((type) => (
+                {["Example", "Case Study" ,"Practice"].map((type) => (
                   <div key={type} className="option">
                     <input
                       type="radio"
@@ -780,7 +881,7 @@ function CourseDetails() {
                 ))}
               </div>
 
-              <h3 className="diff-title">Select Difficulty</h3>
+              <h3 className="diff-title">Learner Type</h3>
               <div className="option-group">
                 {["Beginner", "Intermediate", "Advanced"].map((level) => (
                   <div key={level} className="option">
@@ -806,12 +907,85 @@ function CourseDetails() {
             </div>
           )}
 
+          {showEditorContent && (
+          <div className="filter-container-two">
+            <div className="filter-groups-two">
+              <div className="filter-options-two">
+                <h4 className="block-type-label">Block Type</h4>
+                <div className="filter-buttons-two">
+                  <div
+                    className={`filter-button-two ${
+                      blockTypeFilter.size === 0 ? "selected" : ""
+                    }`}
+                    onClick={() => setBlockTypeFilter(new Set())}
+                  >
+                    All
+                  </div>
+                  {["Lesson", "Example", "Case Study", "Practice"].map((type) => (
+                    <div
+                      key={type}
+                      className={`filter-button-two ${
+                        blockTypeFilter.has(type.toLowerCase()) ? "selected" : ""
+                      }`}
+                      onClick={() => {
+                        const newFilter = new Set(blockTypeFilter);
+                        if (newFilter.has(type.toLowerCase())) {
+                          newFilter.delete(type.toLowerCase());
+                        } else {
+                          newFilter.add(type.toLowerCase());
+                        }
+                        setBlockTypeFilter(newFilter);
+                      }}
+                    >
+                      {type}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="filter-options-two">
+                <h4 className="diff-label">Learner Type</h4>
+                <div className="filter-buttons-two">
+                  <div
+                    className={`filter-button-two ${
+                      difficultyFilter.size === 0 ? "selected" : ""
+                    }`}
+                    onClick={() => setDifficultyFilter(new Set())}
+                  >
+                    All
+                  </div>
+                  {["Beginner", "Intermediate", "Advanced", "None"].map((level) => (
+                    <div
+                      key={level}
+                      className={`filter-button-two ${
+                        difficultyFilter.has(level.toLowerCase()) ? "selected" : ""
+                      }`}
+                      onClick={() => {
+                        const newFilter = new Set(difficultyFilter);
+                        if (newFilter.has(level.toLowerCase())) {
+                          newFilter.delete(level.toLowerCase());
+                        } else {
+                          newFilter.add(level.toLowerCase());
+                        }
+                        setDifficultyFilter(newFilter);
+                      }}
+                    >
+                      {level}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          )}
+
           {showEditorContent && !isFetchingPages && (
             <div>
-              {contentBlocks.length > 0 ? (
-                contentBlocks.map((block, index) => (
+              {filteredContentBlocks.length > 0 ? (
+                filteredContentBlocks.map((block, index) => (
                   <div className="content-blocks" key={index}>
                     <div className="block-type-label">{block.block_type}</div>
+                    <div className="diff-label">{block.difficulty}</div>
                     <button
                       className="delete-block-btn"
                       onClick={() => handleDeleteBlock(Number(block.block_id))}
@@ -829,8 +1003,9 @@ function CourseDetails() {
                   </div>
                 ))
               ) : (
-                <div>No content blocks available. Please add new content.</div>
+                <div>No content blocks match the filters. Please adjust your filters.</div>
               )}
+
             </div>
           )}
 

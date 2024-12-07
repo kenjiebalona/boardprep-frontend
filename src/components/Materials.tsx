@@ -108,6 +108,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     new Set()
   );
   const [masteries, setMasteries] = useState<Mastery[]>([]);
+  const [filterType, setFilterType] = useState<Set<string>>(new Set());
 
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
@@ -462,24 +463,70 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             Back to Syllabus
           </button>
 
+          <div className="filter-container">
+            <h3 className='block-type-label-two'>Filter Content</h3>
+            <div className="filter-options">
+              <div
+                className={`filter-button ${filterType.size === 0 ? "selected" : ""}`}
+                onClick={() => setFilterType(new Set())} // Clear all filters
+              >
+                All
+              </div>
+              {[
+                { value: "lesson", label: "Lesson" },
+                { value: "example", label: "Example" },
+                { value: "case study", label: "Case Study" },
+                { value: "practice", label: "Practice" },
+              ].map((filter) => (
+                <div
+                  key={filter.value}
+                  className={`filter-button ${
+                    filterType.has(filter.value) ? "selected" : ""
+                  }`}
+                  onClick={() => {
+                    const newFilterType = new Set(filterType);
+                    if (filterType.has(filter.value)) {
+                      newFilterType.delete(filter.value);
+                    } else {
+                      newFilterType.add(filter.value);
+                    }
+                    setFilterType(newFilterType);
+                  }}
+                >
+                  {filter.label}
+                </div>
+              ))}
+            </div>
+          </div>
+
+
           {!showExamContent && !showQuizContent && currentPage === 0 && renderObjectives()}
 
-          {!showQuizContent && !showExamContent && pages[currentPage] && (
-            <div key={pages[currentPage].page_id}>
-              {pages[currentPage].content_blocks.map(
-                (block: ContentBlock, idx: number) => (
-                  <div className="tiptap-content">
-                    <TipTapEditor
-                      key={idx}
-                      content={block.content}
-                      editable={false}
-                      hideToolbar
-                    />
-                  </div>
-                )
-              )}
-            </div>
-          )}
+          {!showQuizContent &&
+            !showExamContent &&
+            pages[currentPage] &&
+            pages[currentPage]?.content_blocks
+            .filter(
+              (block: ContentBlock) =>
+                filterType.size === 0 || filterType.has(block.block_type)
+            )
+            .sort((a, b) => {
+              if (a.block_type === "lesson" && b.block_type !== "lesson") return -1; // `lesson` comes first
+              if (a.block_type !== "lesson" && b.block_type === "lesson") return 1; // others come after `lesson`
+              return 0; // Maintain order for blocks of the same type
+            })
+            .map((block: ContentBlock, idx: number) => (
+              <div className="tiptap-content" key={idx}>
+                <TipTapEditor
+                  key={idx}
+                  content={block.content}
+                  editable={false}
+                  hideToolbar
+                />
+              </div>
+            ))}
+
+
 
           {!showQuizContent && !showExamContent && pageCount > 1 && showLessonContent && (
             <ReactPaginate
