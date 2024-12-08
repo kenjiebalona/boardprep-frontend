@@ -305,3 +305,23 @@
       color: white
     }
   }
+
+  .quiz-button-2 {
+    background-color: #442e9d;
+    height: 40px;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    width: 90%;
+    color: #fff;
+    margin-bottom: 10px;
+    margin-left: 5%;
+    font-style: bold;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #B650F4;
+      color: white
+    }
+  }

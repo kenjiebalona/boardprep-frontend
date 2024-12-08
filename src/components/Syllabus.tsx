@@ -100,7 +100,7 @@ function Syllabus({
     setOpenLessonId((prevLessonId) =>
       prevLessonId === lessonId ? null : lessonId
     );
-    console.log('MAO NI ANG MGA TOPIC: ', topics)
+    console.log('MAO NI ANG MGA TOPIC: ', topics);
     console.log('Toggled openLessonId:', lessonId);
   };
 
@@ -170,7 +170,9 @@ function Syllabus({
                     className={`lesson-item`}
                     role="button"
                     tabIndex={0}
-                    onClick={() => toggleDropdown(lesson.lesson_id, lesson.topics)}
+                    onClick={() =>
+                      toggleDropdown(lesson.lesson_id, lesson.topics)
+                    }
                   >
                     <FaBookOpen className="lesson-icon" />
                     <h3 className="lesson-title">{lesson.lesson_title}</h3>
@@ -199,7 +201,7 @@ function Syllabus({
                           </ul>
                         </div>
                       ) : (
-                        <p>  </p>
+                        <p> </p>
                       )}
 
                       {lesson.topics.map((topic) => {
@@ -255,7 +257,9 @@ function Syllabus({
                                         : ''
                                     }`}
                                     onClick={() =>
-                                      (hasPreassessment || userType === "C" || userType === "T") &&
+                                      (hasPreassessment ||
+                                        userType === 'C' ||
+                                        userType === 'T') &&
                                       onSubtopicClick(subtopic.subtopic_id)
                                     }
                                     role="button"
@@ -269,6 +273,14 @@ function Syllabus({
                                     )}
                                   </div>
                                 ))}
+                                <button
+                                  className="quiz-button-2"
+                                  onClick={() =>
+                                    handleQuizClick(lesson.lesson_id)
+                                  }
+                                >
+                                  Take quiz
+                                </button>
 
                                 {userType === 'C' && (
                                   <button
