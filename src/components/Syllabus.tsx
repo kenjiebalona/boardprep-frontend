@@ -227,9 +227,11 @@ function Syllabus({
                     {lesson.completed && (
                       <BsCheckCircleFill className="completed-icon" />
                     )}
+                    {userType === 'S' && (
                     <button className="mastery-button" onClick={() => handleMasteryClick(lesson.lesson_id)}>
                       {isLoading ? '⏳' : '🏅'}
                     </button>
+                    )}
                     {openLessonId === lesson.lesson_id ? (
                       <FaChevronUp className="chevron-icon" />
                     ) : (

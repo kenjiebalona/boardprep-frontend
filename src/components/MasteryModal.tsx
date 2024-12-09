@@ -24,14 +24,15 @@ const MasteryModal: React.FC<MasteryModalProps> = ({ isOpen, masteryData, onClos
 
   const renderLesson = (lesson: any) => (
     <div key={lesson.lesson_id} className="lesson-card">
+      <div className='mastery-card'>
       <div className="card-content">
-        <div className="left-side">
+        <div className="left-side-two">
           <h3 className='header-mastery'>⭐{lesson.lesson_title}</h3>
           <div className={`mastery-indicator-two ${getArrowAndColor(lesson.mastery).color}`}>
             <span>{lesson.mastery}% </span>
           </div>
         </div>
-        <div className="right-side">
+        <div className="right-side-two">
         <span
               className={`mastery-indicator ${getArrowAndColor(lesson.mastery).color}`}
             >
@@ -40,18 +41,19 @@ const MasteryModal: React.FC<MasteryModalProps> = ({ isOpen, masteryData, onClos
         </div>
       </div>
     </div>
+    </div>
   );
 
   const renderTopic = (topic: any) => (
     <div key={topic.topic_id} className="topic-card">
       <div className="card-content">
-        <div className="left-side">
+        <div className="left-side-two">
           <h4 className='header-mastery-two'>🌟{topic.topic_title}</h4>
           <div className={`mastery-indicator-two ${getArrowAndColor(topic.mastery).color}`}>
             <span>{topic.mastery}% </span>
           </div>
         </div>
-        <div className="right-side">
+        <div className="right-side-two">
         <span
               className={`mastery-indicator ${getArrowAndColor(topic.mastery).color}`}
             >
@@ -65,13 +67,13 @@ const MasteryModal: React.FC<MasteryModalProps> = ({ isOpen, masteryData, onClos
   const renderSubtopic = (subtopic: any) => (
     <div key={subtopic.subtopic_id} className="subtopic-card">
       <div className="card-content">
-        <div className="left-side">
+        <div className="left-side-two">
           <h5 className='header-mastery-three'>✨{subtopic.subtopic_title}</h5>
           <div className={`mastery-indicator-two ${getArrowAndColor(subtopic.mastery).color}`}>
             <span>{subtopic.mastery}% </span>
           </div>
         </div>
-        <div className="right-side">
+        <div className="right-side-two">
         <span
               className={`mastery-indicator ${getArrowAndColor(subtopic.mastery).color}`}
             >
