@@ -248,6 +248,7 @@ function Syllabus({
                             {openTopicId === topic.topic_id && (
                               <div className="subtopics-container">
                                 {topic.subtopics.map((subtopic) => (
+                                  <div>
                                   <div
                                     key={subtopic.subtopic_id}
                                     style={{ cursor: 'pointer' }}
@@ -272,8 +273,7 @@ function Syllabus({
                                       <FaLock />
                                     )}
                                   </div>
-                                ))}
-                                <button
+                                  <button
                                   className="quiz-button-2"
                                   onClick={() =>
                                     handleQuizClick(lesson.lesson_id)
@@ -281,7 +281,8 @@ function Syllabus({
                                 >
                                   Take quiz
                                 </button>
-
+                                </div>
+                                ))}
                                 {userType === 'C' && (
                                   <button
                                     className="subtopic-button"
