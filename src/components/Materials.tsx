@@ -477,7 +477,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             </button>
           )}
         </div>
-      ) : (
+      ) : !showQuizContent &&
+        !showExamContent && (
         <div className="lesson-content-container">
           <button className="btn-mat" onClick={handleBackButtonClick}>
             {currentPage === 1 ? "Go Back" : "Back to Syllabus"}
