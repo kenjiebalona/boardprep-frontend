@@ -326,6 +326,7 @@ function Syllabus({
                                       <FaLock />
                                     )}
                                   </div>
+                                  {userType !== 'C' && userType !== 'T' && (
                                   <button
                                   className="quiz-button-2"
                                   onClick={() =>
@@ -334,6 +335,7 @@ function Syllabus({
                                 >
                                   Take quiz
                                 </button>
+                                  )}
                                 </div>
                                 ))}
                                 {userType === 'C' && (
