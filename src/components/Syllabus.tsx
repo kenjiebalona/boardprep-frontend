@@ -6,7 +6,8 @@ import { selectUser } from '../redux/slices/authSlice';
 import '../styles/syllabus.scss';
 import AddTopicModal from './AddTopicModal';
 import AddSubtopicModal from './AddSubtopicModal';
-
+import axiosInstance from '../axiosInstance';
+import MasteryModal from '../components/MasteryModal';
 interface Objective {
   text: string;
 }
@@ -36,6 +37,11 @@ interface Subtopic {
   order: number;
 }
 
+interface Course {
+  course_id: string;
+  course_title: string;
+}
+
 interface SyllabusProps {
   lessons: Lesson[];
   onLessonClick: (lessonId: string) => Promise<void>;
@@ -46,6 +52,7 @@ interface SyllabusProps {
   currentSubtopic: string | null;
   handleQuizClick: (lessonID: string) => void;
   hasPreassessment: boolean;
+  courseId: string;
 }
 
 function Syllabus({
@@ -58,6 +65,7 @@ function Syllabus({
   currentSubtopic,
   handleQuizClick,
   hasPreassessment,
+  courseId,
 }: SyllabusProps) {
   const [openLessonId, setOpenLessonId] = useState<string | null>(null);
   const [openTopicId, setOpenTopicId] = useState<string | null>(null);
@@ -69,7 +77,47 @@ function Syllabus({
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [lessonList, setLessonList] = useState<Lesson[]>(lessons);
   const [learningObjective, setLearningObjective] = useState<number>(0);
+  const [courseTitle, setCourseTitle] = useState<string | null>(null);
 
+  const [isMasteryModalOpen, setIsMasteryModalOpen] = useState(false);
+  const [masteryData, setMasteryData] = useState<any>(null);
+  const [currentMasteryLessonId, setCurrentMasteryLessonId] = useState<string | null>(null);
+
+  const [isLoading, setIsLoading] = useState<boolean>(false); 
+
+  const handleMasteryClick = async (lessonId: string) => {
+    setCurrentMasteryLessonId(lessonId); 
+    setIsLoading(true);
+
+    const studentId = user.token.id; 
+  
+    try {
+      const { data } = await axiosInstance.get(
+        `/mastery/?student_id=${studentId}&course_id=${courseId}`
+      );
+  
+      console.log('Fetched Mastery Data:', data);
+  
+      const masteryData = data.masteries.syllabus;
+  
+      if (Array.isArray(masteryData)) {
+        const selectedLesson = masteryData.find((lesson: any) => lesson.lesson_id === lessonId);
+        if (selectedLesson) {
+          setMasteryData([selectedLesson]);
+          setIsMasteryModalOpen(true); 
+        } else {
+          console.error('Lesson not found in the mastery data');
+        }
+      } else {
+        console.error('Mastery data is not in the expected format (array)');
+      }
+    } catch (error) {
+      console.error('Error fetching mastery data:', error);
+    } finally {
+      setIsLoading(false); 
+    }
+  };  
+  
   useEffect(() => {
     setLessonList(lessons);
   }, [lessons]);
@@ -179,6 +227,9 @@ function Syllabus({
                     {lesson.completed && (
                       <BsCheckCircleFill className="completed-icon" />
                     )}
+                    <button className="mastery-button" onClick={() => handleMasteryClick(lesson.lesson_id)}>
+                      {isLoading ? '⏳' : '🏅'}
+                    </button>
                     {openLessonId === lesson.lesson_id ? (
                       <FaChevronUp className="chevron-icon" />
                     ) : (
@@ -330,6 +381,13 @@ function Syllabus({
           );
         })}
       </div>
+
+        <MasteryModal 
+          isOpen={isMasteryModalOpen} 
+          masteryData={masteryData} 
+          onClose={() => setIsMasteryModalOpen(false)} 
+        />
+
       {isModalOpen && (
         <AddTopicModal
           lessons={lessonList}

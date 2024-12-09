@@ -93,6 +93,36 @@
     border-color: transparent;
   }
 
+  .mastery-button {
+  margin-right: 20px;
+  padding: 5px 15px;
+  background-color: #6c63ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.mastery-button:hover {
+  background-color: #5d3fd3;
+}
+
+.mastery-data {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  max-width: 90%;
+  margin: 20px auto;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+
   .topic-item {
     display: flex;
     align-items: center;

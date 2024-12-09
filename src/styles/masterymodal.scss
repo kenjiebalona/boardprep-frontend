@@ -1,0 +1,252 @@
+.mastery-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.mastery-modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.mastery-modal h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: bold;
+}
+
+.mastery-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.left-side {
+    flex: 1;
+}
+
+.right-side {
+    width: 70px; 
+    height: 70px;  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.mastery-indicator {
+    font-size: 5rem;
+    font-weight: bold;
+    margin-left: 12rem;
+    padding: 10px 20px;  
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    color: #333;
+    animation: selfRotate 3s linear infinite; 
+}
+
+@keyframes selfRotate {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(180deg); 
+  }
+  100% {
+    transform: rotateY(360deg); 
+  }
+}
+  
+  .mastery-indicator.green {
+    color: #28a745;
+  }
+  
+  .mastery-indicator.red {
+    color: #dc3545;
+  }
+  
+  .mastery-indicator.orange {
+    color: #fd7e14;
+  }
+  
+  .mastery-indicator:hover {
+    transform: scale(1.1);
+    color: #333;
+  }
+  
+  .mastery-indicator span {
+    font-size: 2.5rem; 
+    margin-right: 5px;
+  }
+  
+  .mastery-indicator span.arrow {
+    font-size: 3.5rem; 
+    display: inline-block;
+  }
+  
+  .mastery-indicator.green .arrow {
+    color: #28a745;
+  }
+  
+  .mastery-indicator.red .arrow {
+    color: #dc3545;
+  }
+  
+  .mastery-indicator.orange .arrow {
+    color: #fd7e14;
+  }
+  
+
+.mastery-indicator-two {
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 5px;
+    margin-left: 6px;
+}
+
+.mastery-indicator-two.green {
+    color: green;
+}
+
+.mastery-indicator-two.red {
+    color: red;
+}
+
+.mastery-indicator-two.orange {
+    color: orange;
+}
+
+.filter-container-three {
+    margin-bottom: 20px;
+    background-color: #f4f4f8;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-buttons-three {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.filter-button-three {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #e0e0f7;
+    color: #333;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.filter-button-three:hover {
+    background-color: #d0d0f0;
+    transform: scale(1.05);
+}
+
+.filter-button-three.selected {
+    background-color: #6a5acd;
+    color: white;
+    font-weight: bold;
+}
+
+.lesson-card,
+.topic-card,
+.subtopic-card {
+    background-color: #f9f9fc;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    margin-bottom: 20px;
+}
+
+.lesson-card:hover,
+.topic-card:hover,
+.subtopic-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+}
+
+.header-mastery {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4a4a8a;
+}
+
+.header-mastery-two {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4a4a8a;
+}
+
+.header-mastery-three {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4a4a8a;
+}
+
+.learning-objectives-container {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #fafafa;
+    border-left: 4px solid #6a5acd;
+    border-radius: 8px;
+    color: #3C3D37;
+    font-size: 14px;
+}
+
+.objective-card {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f0f0fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff5f5f;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.close-btn:hover {
+    background-color: #ff3f3f;
+    color: white;
+}

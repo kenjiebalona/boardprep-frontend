@@ -124,6 +124,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
+        console.log("21312412412",courseId);
         const courseResponse = await axiosInstance.get(`/courses/${courseId}/`);
         const courseData: Course = courseResponse.data;
         setCourseTitle(courseData.course_title);
@@ -461,6 +462,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             currentSubtopic={currentSubtopic}
             handleQuizClick={(lessonID: string) => handleQuizClick(lessonID)}
             hasPreassessment={hasPreassessment}
+            courseId={courseId} 
           />
           {userType == "S" && !hasPreassessment ? (
             <button
