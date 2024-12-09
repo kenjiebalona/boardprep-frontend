@@ -83,28 +83,28 @@ function Syllabus({
   const [masteryData, setMasteryData] = useState<any>(null);
   const [currentMasteryLessonId, setCurrentMasteryLessonId] = useState<string | null>(null);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false); 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleMasteryClick = async (lessonId: string) => {
-    setCurrentMasteryLessonId(lessonId); 
+    setCurrentMasteryLessonId(lessonId);
     setIsLoading(true);
 
-    const studentId = user.token.id; 
-  
+    const studentId = user.token.id;
+
     try {
       const { data } = await axiosInstance.get(
         `/mastery/?student_id=${studentId}&course_id=${courseId}`
       );
-  
+
       console.log('Fetched Mastery Data:', data);
-  
+
       const masteryData = data.masteries.syllabus;
-  
+
       if (Array.isArray(masteryData)) {
         const selectedLesson = masteryData.find((lesson: any) => lesson.lesson_id === lessonId);
         if (selectedLesson) {
           setMasteryData([selectedLesson]);
-          setIsMasteryModalOpen(true); 
+          setIsMasteryModalOpen(true);
         } else {
           console.error('Lesson not found in the mastery data');
         }
@@ -114,10 +114,10 @@ function Syllabus({
     } catch (error) {
       console.error('Error fetching mastery data:', error);
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
     }
-  };  
-  
+  };
+
   useEffect(() => {
     setLessonList(lessons);
   }, [lessons]);
@@ -324,14 +324,16 @@ function Syllabus({
                                       <FaLock />
                                     )}
                                   </div>
+                                  {userType !== 'C' && userType !== 'T' && (
                                   <button
                                   className="quiz-button-2"
                                   onClick={() =>
-                                    handleQuizClick(lesson.lesson_id)
+                                    handleQuizClick(subtopic.subtopic_id)
                                   }
                                 >
                                   Take quiz
                                 </button>
+                                )}
                                 </div>
                                 ))}
                                 {userType === 'C' && (
@@ -383,10 +385,10 @@ function Syllabus({
         })}
       </div>
 
-        <MasteryModal 
-          isOpen={isMasteryModalOpen} 
-          masteryData={masteryData} 
-          onClose={() => setIsMasteryModalOpen(false)} 
+        <MasteryModal
+          isOpen={isMasteryModalOpen}
+          masteryData={masteryData}
+          onClose={() => setIsMasteryModalOpen(false)}
         />
 
       {isModalOpen && (

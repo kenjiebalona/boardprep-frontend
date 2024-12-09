@@ -110,15 +110,15 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [masteries, setMasteries] = useState<Mastery[]>([]);
   const [filterType, setFilterType] = useState<Set<string>>(new Set());
 
-  const [showMoreMaterials, setShowMoreMaterials] = useState(false); 
+  const [showMoreMaterials, setShowMoreMaterials] = useState(false);
 
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
   const userType = user.token.type;
 
   const handleMoreMaterialsClick = () => {
-    setCurrentPage(1); 
-    setShowMoreMaterials(true); 
+    setCurrentPage(1);
+    setShowMoreMaterials(true);
   };
 
   useEffect(() => {
@@ -220,7 +220,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       );
 
       setPages(response.data.pages);
-      console.log("Fetched pages:", response.data.pages); 
+      console.log("Fetched pages:", response.data.pages);
       setShowLessonContent(true);
       setPageMapping(pageMapping);
       if (response.data.length > 0) {
@@ -367,9 +367,9 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   const handleBackButtonClick = () => {
     if (currentPage === 1) {
-      setCurrentPage(0); 
+      setCurrentPage(0);
     } else {
-      setShowLessonContent(false); 
+      setShowLessonContent(false);
       setShowQuizContent(false);
       setShowQuizResult(false);
       setShowExamContent(false);
@@ -462,7 +462,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             currentSubtopic={currentSubtopic}
             handleQuizClick={(lessonID: string) => handleQuizClick(lessonID)}
             hasPreassessment={hasPreassessment}
-            courseId={courseId} 
+            courseId={courseId}
           />
           {userType == "S" && !hasPreassessment ? (
             <button
@@ -489,13 +489,13 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             >
               More Materials
             </button>
-      
+
           <div className="filter-container">
             <h3 className='block-type-label-two'>Filter Content</h3>
             <div className="filter-options">
               <div
                 className={`filter-button ${filterType.size === 0 ? "selected" : ""}`}
-                onClick={() => setFilterType(new Set())} 
+                onClick={() => setFilterType(new Set())}
               >
                 All
               </div>
@@ -538,9 +538,9 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
                 filterType.size === 0 || filterType.has(block.block_type)
             )
             .sort((a, b) => {
-              if (a.block_type === "lesson" && b.block_type !== "lesson") return -1; 
-              if (a.block_type !== "lesson" && b.block_type === "lesson") return 1; 
-              return 0; 
+              if (a.block_type === "lesson" && b.block_type !== "lesson") return -1;
+              if (a.block_type !== "lesson" && b.block_type === "lesson") return 1;
+              return 0;
             })
             .map((block: ContentBlock, idx: number) => (
               <div className="tiptap-content" key={idx}>
@@ -557,17 +557,17 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
           {!showQuizContent && !showExamContent && pageCount > 1 && showLessonContent && (
             <ReactPaginate
-              previousLabel={""} 
-              nextLabel={""} 
-              breakLabel={""} 
-              pageCount={1} 
+              previousLabel={""}
+              nextLabel={""}
+              breakLabel={""}
+              pageCount={1}
               onPageChange={handleMaterialsPageClick}
               containerClassName={"materials-pagination"}
               activeClassName={"materials-active"}
-              forcePage={0} 
+              forcePage={0}
             />
           )}
-          
+
           {showQuizContent && (
             <QuizContent
               lessonId={currentLesson}

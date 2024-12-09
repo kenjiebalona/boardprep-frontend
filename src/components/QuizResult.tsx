@@ -18,7 +18,7 @@ interface Question {
 interface QuizResultProps {
   questions: Question[];
   answers: { [questionId: string]: string };
-  results: { [questionId: string]: boolean }; 
+  results: { [questionId: string]: boolean };
   score: number;
   totalQuestions: number;
   passed: boolean;
@@ -34,7 +34,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
   totalQuestions,
   passed,
   onTryAgain,
-  onNextLesson
+  onNextLesson,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
 
@@ -50,7 +50,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
       <div className={`results-card ${passed ? "passed" : "failed"}`}>
         <div className="results-summary">
           <div className="progressbar-container">
-            <CircularProgressbar 
+            <CircularProgressbar
               value={percentage}
               text={`${score} / ${totalQuestions}`}
               styles={{
@@ -77,7 +77,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
             {questions.map((question, index) => {
               const userAnswer = answers[question.id];
               const isCorrect = results[question.id];
-              const highlightColor = isCorrect ? "#4caf50" : "#f44336"; 
+              const highlightColor = isCorrect ? "#4caf50" : "#f44336";
 
               return (
                 <div
