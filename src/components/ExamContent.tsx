@@ -3,6 +3,7 @@ import axiosInstance from "../axiosInstance";
 import ExamResult from "./ExamResult";
 import "../styles/exam-content.scss";
 import axios, { AxiosError } from 'axios';
+import Loader from "./Loader";
 
 
 interface Choice {
@@ -68,6 +69,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const questionsPerPage = 2;
 
@@ -244,6 +246,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
 
   useEffect(() => {
     createExamAndAttempt();
+    setIsLoading(false);
   }, [studentId, classInstanceId, courseId, title]);
 
   const handleAnswerChange = (questionId: string, choiceId: string) => {
@@ -265,6 +268,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     if (!exam || !attempt) {
       console.error("Exam or attempt data is missing.");
       return;
@@ -398,6 +402,11 @@ const ExamContent: React.FC<ExamContentProps> = ({
         />
       ) : (
         <>
+        { isLoading ? (
+            <Loader />
+          ) : (
+
+          <>
           <h2>{exam.title}</h2>
           <div className="exam-body">
             <div className="questions-section">
@@ -472,6 +481,8 @@ const ExamContent: React.FC<ExamContentProps> = ({
               &gt;
             </button>
           </div>
+          </>
+          )}
         </>
       )}
     </div>

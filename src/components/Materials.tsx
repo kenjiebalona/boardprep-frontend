@@ -477,20 +477,22 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             </button>
           )}
         </div>
-      ) : !showQuizContent &&
-        !showExamContent && (
+      ) :
         <div className="lesson-content-container">
           <button className="btn-mat" onClick={handleBackButtonClick}>
             {currentPage === 1 ? "Go Back" : "Back to Syllabus"}
           </button>
 
+          { !showQuizContent && !showExamContent && (
             <button
-              className="btn-more-materials"
-              onClick={handleMoreMaterialsClick}
-            >
-              More Materials
-            </button>
+            className="btn-more-materials"
+            onClick={handleMoreMaterialsClick}
+          >
+            More Materials
+          </button>
+          )}
 
+          { !showQuizContent && !showExamContent && (
           <div className="filter-container">
             <h3 className='block-type-label-two'>Filter Content</h3>
             <div className="filter-options">
@@ -526,6 +528,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
               ))}
             </div>
           </div>
+          )}
 
 
           {!showExamContent && !showQuizContent && currentPage === 0 && renderObjectives()}
@@ -591,7 +594,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             />
           )}
         </div>
-      )}
+      }
 
       {/*
           {showLessonContent && currentLesson && pages.length > 0 && (

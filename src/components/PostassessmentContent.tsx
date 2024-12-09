@@ -3,6 +3,7 @@ import axiosInstance from "../axiosInstance";
 import PostassessmentResult from "./PostassessmentResult";
 import "../styles/challenge-content.scss";
 import axios, { AxiosError } from "axios";
+import Loader from "./Loader";
 
 interface Choice {
   id: string;
@@ -54,6 +55,7 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const questionsPerPage = 3;
 
@@ -115,7 +117,7 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
         } else {
           console.log("Existing attempt found:", attemptData);
         }
-
+        setIsLoading(false);
         setAttempt(attemptData);
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -152,6 +154,7 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
       if (!attempt?.mocktestID) {
         console.error("Attempt ID is undefined. Aborting submission.");
@@ -245,6 +248,11 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
         />
       ) : (
         <>
+          { isLoading ? (
+            <Loader />
+          ) : (
+
+          <>
           <h2>MOCK TEST</h2>
           <div className="challenge-body">
             <div className="questions-section">
@@ -329,6 +337,8 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
               &gt;
             </button>
           </div>
+          </>
+          )}
         </>
       )}
     </div>

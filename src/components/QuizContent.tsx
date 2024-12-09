@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import QuizResult from "./QuizResult";
 import "../styles/quiz-content.scss";
+import Loader from "./Loader";
 
 interface Choice {
   id: string;
@@ -62,6 +63,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
+  const [isLoading, setIsLoading] = useState(true);
   const objective_ids = objectives.map((objective) => objective.id);
 
   const questionsPerPage = 2;
@@ -125,6 +127,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
         setQuiz(quizData);
         setAttempt(attemptData);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching quiz and attempt:", error);
       } finally {
@@ -154,6 +157,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
       const answersPayload = Object.entries(answers).map(
         ([questionId, choiceId]) => {
@@ -241,6 +245,11 @@ const QuizContent: React.FC<QuizContentProps> = ({
         />
       ) : (
         <>
+          { isLoading ? (
+            <Loader />
+          ) : (
+
+          <>
           <h2>{quiz.title}</h2>
           <div className="quiz-body">
             <div className="questions-section">
@@ -315,6 +324,8 @@ const QuizContent: React.FC<QuizContentProps> = ({
               &gt;
             </button>
           </div>
+          </>
+          )}
         </>
       )}
     </div>
