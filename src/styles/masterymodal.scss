@@ -44,11 +44,11 @@
     gap: 20px;
 }
 
-.left-side {
+.left-side-two {
     flex: 1;
 }
 
-.right-side {
+.right-side-two {
     width: 70px; 
     height: 70px;  
     display: flex;
@@ -60,7 +60,7 @@
 .mastery-indicator {
     font-size: 5rem;
     font-weight: bold;
-    margin-left: 12rem;
+    margin-left: -3rem;
     padding: 10px 20px;  
     border-radius: 50%;
     display: flex;
@@ -144,7 +144,7 @@
 
 .filter-container-three {
     margin-bottom: 20px;
-    background-color: #f4f4f8;
+    background-color: #1E201E;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -160,7 +160,7 @@
     padding: 10px 20px;
     border-radius: 10px;
     font-size: 16px;
-    background-color: #e0e0f7;
+    background-color: #F5F5F5;
     color: #333;
     border: none;
     cursor: pointer;
@@ -178,10 +178,35 @@
     font-weight: bold;
 }
 
-.lesson-card,
-.topic-card,
+.lesson-card {
+    background-color: #181C14;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    margin-bottom: 20px;
+}
+
+.mastery-card{
+    background-color: #F5F5F5;
+    margin-top: -5px !important;
+    padding: 15px;
+    margin: -14px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.topic-card {
+    background-color: #F5F5F5;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    margin-bottom: 20px;
+}
 .subtopic-card {
-    background-color: #f9f9fc;
+    background-color: #F5F5F5;
     padding: 15px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -199,25 +224,25 @@
 .header-mastery {
     font-size: 20px;
     font-weight: bold;
-    color: #4a4a8a;
+    color: #1E201E;
 }
 
 .header-mastery-two {
     font-size: 18px;
     font-weight: bold;
-    color: #4a4a8a;
+    color: #1E201E;
 }
 
 .header-mastery-three {
     font-size: 16px;
     font-weight: bold;
-    color: #4a4a8a;
+    color: #1E201E;
 }
 
 .learning-objectives-container {
     margin-top: 10px;
     padding: 10px;
-    background-color: #fafafa;
+    background-color: #E9EFEC;
     border-left: 4px solid #6a5acd;
     border-radius: 8px;
     color: #3C3D37;
