@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.post-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  max-height: 575px;
+  min-height: 575px;
+
+  .bottomd {
+    margin-top: 5px;
+    border-top: 1px solid #302c4e;
+  }
+
+  .add-post {
+    border: none;
+    display: flex;
+    margin-top: 20px;
+    margin-left: 24.75vw;
+    height: 54px;
+    padding: 0.75rem 1.5rem;
+    background-color: #B650F4;
+    color: #ffffff;
+    font-size: .9rem;
+    line-height: 1rem;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    user-select: none;
+    gap: 0.75rem;
+    transition: all .3s ease;
+  
+    &:hover {
+      background-color: #5e4dcd;
+    }
+  
+    &:focus, &:active {
+      opacity: .85;
+      box-shadow: none;
+    }
+  }
+
+  .input-container {
+    display: flex;
+    margin-top: 20px;
+    margin-left: 24.75vw;
+
+    textarea {
+      font-family: 'Montserrat', sans-serif;
+      resize: none;
+      min-height: 50px;
+      width: 61.4%;
+      padding: 10px 20px;
+      color: #fff;
+      border: 1px solid #B650F4;
+      border-radius: 6px 0 0 6px;
+      background-color: transparent;
+      animation: spread 0.3s ease-in-out forwards;
+
+      &:focus, &:focus-visible {
+        border-color: #5e4dcd;
+        outline: none;
+      }
+    }
+
+    .send-post {
+      display: flex;
+      gap: 5px;
+      min-height: 50px;
+      padding: .5em 1em;
+      border: none;
+      border-radius: 0 6px 6px 0;
+      background-color: #B650F4;
+      align-items: center ;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color .3s ease-in-out;
+
+      &:hover {
+        background-color: #5e4dcd;
+      }
+    }
+  }
+
+  @keyframes spread {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: 61.4%;
+    }
+  }
+
+  @keyframes slide-left {
+    0% {
+      margin-left: 68vw;
+    }
+    100% {
+      margin-left: 24.75vw;
+    }
+  }
+
+  .animate-button {
+    animation: slide-left 0.3s ease-in-out forwards;
+  }
+}
+
+.posts-tab {
+  display: block;
+  width: 100%;
+  min-height: 200px;
+  max-height: 575px;
+  overflow: auto;
+
+  &--center {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;  
+    align-items: center;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: rgba($color: #B650F4, $alpha: .75);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba($color: #B650F4, $alpha: 1); 
+}
+

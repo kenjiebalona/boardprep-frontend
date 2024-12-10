@@ -1,0 +1,222 @@
+*{
+    margin:0;
+    padding:0;
+    text-decoration: none;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #0D0B1C;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar {
+    background: #0D0B1C;
+    color: #fff;
+    height: 100vh;
+    width: 215px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    transition: width 0.3s ease;
+    box-shadow: 5px 0 15px rgba(128, 0, 128, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+}
+
+.sidebar.collapsed {
+    width: 85px;
+}
+
+.main-content {
+    flex-grow: 1;
+    margin-left: 180px;
+    transition: margin-left 0.3s ease;
+    height: 100vh;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    display: flex;
+}
+
+.sidebar.collapsed + .main-content {
+    margin-left: 75px;
+    margin-bottom: -30rem;
+}
+
+.top_section {
+    display: flex;
+    align-items: center;
+    padding: 20px 15px;
+    justify-content: space-between;
+}
+
+.mastery_sidebar {
+    background-color: #7D67FF;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    gap: 15px;
+}
+
+.logo {
+    font-size: 24px;
+    margin-bottom: 1px;
+    margin-left: -10px;
+}
+
+.bars {
+    display: flex;
+    font-size: 25px;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.link {
+    display: flex;
+    color: #fff;
+    padding: 10px 15px;
+    gap: 15px;
+    transition: all 0.5s;
+}
+
+.link:hover {
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    transition: all 0.5s;
+    margin-top: 10px;
+
+}
+
+.active {
+    background: white;
+    color: #000;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.profile-pic2 {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    overflow: hidden;
+    cursor: pointer;
+
+    img {
+      height: 50px;
+      width: 60px;
+      background-size: stretch;
+      margin-left: -5px;
+    }
+}
+
+.icon {
+    font-size: 20px;
+    margin-top: 8px;
+    margin-left: 3px;
+}
+
+.icon-mastery {
+    font-size: 20px;
+    margin-left: 3px;
+}
+
+.link_text {
+    font-size: 14px;
+    text-decoration: none;
+    margin-top: 8px;
+
+}
+
+
+@media screen and (min-width: 300px) {
+    .main-content {
+        margin-right: -100px;
+        margin-bottom: -100px;
+    }
+        .profile-container {
+            display: none;
+            margin-right: -100px;
+    }
+}
+
+.dropDownProfile {
+    position: absolute;
+    left: 0;
+    width: 215px;
+    background: #0D0B1C;
+    color: #fff;
+    border: 1px solid #7D67FF;
+    z-index: 10;
+    box-shadow: 0 5px 15px rgba(128, 0, 128, 0.7);
+    transition: width 0.3s ease;
+    height: 180px;
+    bottom: 70px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.profile-name-unique {
+    color: white;
+    font-size: 14px;
+    margin-left: 15px;
+    margin-top: 16px;
+}
+
+.profile-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.dropDownProfile.collapsed {
+    width: 85px;
+}
+
+.d-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.d-item {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.d-item:hover {
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+
+}
+
+.icon-two {
+    font-size: 20px;
+    margin-left: 7px;
+}
+
+.link_text-two {
+    display: block;
+    font-size: 14px;
+    margin-left: 20px;
+    margin-left: 3px;
+}
+

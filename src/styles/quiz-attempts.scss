@@ -1,0 +1,50 @@
+.quiz-attempts-table {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+  
+      th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        color: black;
+      }
+  
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+  
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+  
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+  
+      td {
+        color: #555;
+      }
+  
+      td:nth-child(3) {
+        text-align: left;
+        font-weight: bold;
+        color: #000;
+      }
+    }
+  }
+  

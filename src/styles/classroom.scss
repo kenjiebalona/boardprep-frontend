@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.class-background {
+  overflow: auto;
+
+  .header-classroom {
+    color: #ffffff;
+    display: flex;
+    width: 90%;
+    margin: auto;
+    padding-top: 25px;
+    align-items: center;
+    justify-content: space-between;
+    .left-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 70px;
+
+      &--title {
+        margin-top: 21px;
+
+        h1 {
+          margin-bottom: 3px;
+        }
+      }
+    }
+
+    .class-nav {
+      ul {
+        list-style: none;
+        display: flex;
+        gap: 60px;
+        font-size: 18px;
+  
+        li {
+          text-decoration: none;
+          color: white;
+          cursor: pointer;
+          padding: 10px 0px;
+          border-bottom: 1px solid transparent;
+  
+          &:hover {
+            color: #B650F4;
+            border-bottom: 1px solid #B650F4;
+          }
+        }
+
+        .active {
+          color: #B650F4;
+          border-bottom: 1px solid #B650F4;
+          background-color: transparent;
+        }
+      }
+    }
+  }
+
+  .class-content {
+    margin-top: 20px;
+    color: white;
+  }
+}

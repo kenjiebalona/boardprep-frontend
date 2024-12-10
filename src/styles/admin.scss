@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.admin-dashboard-background {
+  width: 100vw;
+  height: 100vh;
+  background: #0d0b1c;
+  overflow-y: auto;
+}
+
+.search{
+    margin-left: 20%;
+    width: 40%;
+}
+
+
+.create-course-btn {
+  color: #ffffff;
+  font-size: 23px;
+  width: 240px;
+  height: 115px;
+  border-radius: 14px;
+  background: transparent;
+  border: 1px solid white;
+  transition: all 0.3s ease;
+  margin-top: 20px; 
+  grid-column: span 4;
+  justify-self: center;
+  
+  &:hover {
+    background-color: #fff;
+    color: #201c1c;
+  }
+}
+
+.course-list {
+  width: 90%;
+  display: grid;
+  grid-template-columns: repeat(4, 240px);
+  gap: 20px; 
+  margin: auto;
+  margin-top: 30px;
+  padding-top: 20px;
+  justify-content: start;
+}
+
+.coursecard {
+  height: 350px;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-right: -20px;
+
+  img {
+    height: 175px;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .card-text {
+    height: 175px;
+    background: white;
+    padding: 25px 15px 20px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    color: #b650f4;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .card-description {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #4d4d4d;
+  }
+
+  .card-button {
+    color: #ffffff;
+    width: 100px;
+    height: 34px;
+    border-radius: 5px;
+    background: #b650f4;
+    cursor: pointer;
+    border: none;
+    align-self: flex-end;
+  }
+}
+
+.admin-header {
+  overflow: hidden;
+  display: flex;
+}

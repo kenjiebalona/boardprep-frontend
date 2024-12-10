@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+@property --gradient-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+:root {
+  --clr-1: #3a0d3e;
+  --clr-2: #4e1657;
+  --clr-3: #6a2974;
+  --clr-4: #9b6aa6;
+  --clr-5: #b387b6;
+  --clr-6: #7c4891;
+  --clr-7: #a64da3;
+  --clr-8: #c77fb7;
+  --clr-9: #e8c3d3;
+  --clr-10: #f7e7f2;
+  --clr-11: #8f356d;
+  --clr-12: #6d1f51;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #fbfaf9;
+  overflow: hidden;
+}
+
+.background {
+  width: 100vw;
+  height: 100vh;
+  background: #0d0b1c;
+}
+
+.button {
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #0d0b1c;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid white;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #fff;
+    color: #201c1c;
+  }
+}
+
+.content {
+  height: 100vh;
+  color: white;
+  display: flex;
+  overflow: hidden;
+  margin-top: 70px;
+}
+.ct {
+  font-weight: 600;
+  line-height: 55px;
+  margin-right: 50px;
+  margin-left: 70px;
+
+  .ct-title {
+    margin-top: 30px;
+    font-size: 32px;
+    line-height: 2  ;
+  }
+
+  .ct-p {
+    padding-top: 20px;
+    color: gray;
+    font-size: 13px;
+    line-height: 2;
+  }
+}
+
+.user {
+  display: flex;
+  gap: 15px;
+}
+
+.user-c {
+  color: #ffffff;
+  font-size: 20px;
+  width: 125px;
+  height: 55px;
+  border-radius: 14px;
+  background: transparent;
+  border: 1px solid white;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  cursor: pointer;
+
+
+  &:hover {
+    background-color: #fff;
+    color: #201c1c;
+  }
+}
+
+h1 {
+  font-size: 40px;
+}
+
+
+.bp-img {
+  position: absolute;
+  width: 500px;
+  height: 350px;
+  z-index: 100;
+}
+
+.cardo {
+  position: absolute;
+  width: 500px;
+  height: 350px;
+  background: var(--clr-1);
+}
+
+.dalisay::before,
+.dalisay::after {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  background: linear-gradient(
+    45deg,
+    var(--clr-1),
+    var(--clr-2),
+    var(--clr-3),
+    var(--clr-4),
+    var(--clr-5),
+    var(--clr-6),
+    var(--clr-7),
+    var(--clr-8),
+    var(--clr-9),
+    var(--clr-10),
+    var(--clr-11),
+    var(--clr-12)
+  );
+  background-size: 400%;
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
+  animation: animate 20s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.dalisay::after {
+  filter: blur(40px);
+}
+
+.homer {
+  text-decoration: none;
+  color: white;
+}

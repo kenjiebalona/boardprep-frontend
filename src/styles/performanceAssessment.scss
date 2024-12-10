@@ -1,0 +1,253 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.performance-assessment-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .performance-assessment-content {
+    background-color: #100D1F;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 20px #B62AB9;
+    text-align: center;
+    color: #fff;
+    width: 85%;
+    height: 85%;
+
+    .assessment-header {
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+
+      h2 {
+        background-color: #B62AB9;
+        display: block;
+        width: 100%;
+        padding: 10px 0;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+
+      .score-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        width: 20%;
+        margin-bottom: 20px;
+
+        .score {
+          margin-bottom: 20px;
+          margin-left: 30px;
+          padding: 10px;
+          border-radius: 10px;
+        }
+
+        .scoreTitle {
+           margin-bottom: -10px;
+           font-size: 1.2em;
+           color: rgba(#FFFFFF, 0.5);
+           text-align: left;
+        }
+
+        .scoreValue {
+           font-size: 3.5em;
+           text-align: left;
+           margin-bottom: -10px;
+        }
+
+        .scorePercentage {
+           color: rgba(#FFFFFF, 0.5);
+           font-style: italic;
+           text-align: left;
+
+           .scorePercent {
+             font-weight: bold;
+             color: #FFFFFF;
+             text-align: left;
+           }
+        }
+
+        .dividerTop {
+           border: 2px solid #B62AB9;
+           border-radius: 10px;
+           width: 80%;
+           margin: 0 0 20px 40px;
+        }
+
+        .dividerBottom {
+           border: 2px solid #B62AB9;
+           border-radius: 10px;
+           width: 80%;
+           margin: 10px 0 10px 40px;
+        }
+
+        .difficulty-percentages {
+          width: 80%;
+          margin-left: 30px;
+          justify-content: center;
+
+          .difficultyEasy {
+            color: #3BB143;
+            text-align: left;
+            font-weight: bold;
+            font-size: 1em;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+
+            .easyValue {
+              font-size: 2em;
+              font-weight: bold;
+              color: #FFFFFF;
+              text-align: left;
+              margin-left: 29px;
+            }
+          }
+
+          .difficultyMedium {
+            color: #FCD12A;
+            text-align: left;
+            font-weight: bold;
+            font-size: 1em;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+
+            .medValue {
+              font-size: 2em;
+              font-weight: bold;
+              color: #FFFFFF;
+              text-align: left;
+              margin-left: 32px;
+            }
+          }
+
+          .difficultyHard {
+            color: #FF2400;
+            text-align: left;
+            font-weight: bold;
+            font-size: 1em;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+
+            .hardValue {
+              font-size: 2em;
+              font-weight: bold;
+              color: #FFFFFF;
+              text-align: left;
+              margin-left: 20px;
+            }
+          }
+        }
+      }
+
+      .subjects-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+        width: 70%;
+
+        .subject {
+          background: #B62AB9;
+          font-size: 1.2em;
+          color: #FFFFFF;
+          text-align: left;
+          margin-bottom: 20px;
+          margin-left: 40px;
+          padding: 10px;
+          border-radius: 10px;
+        }
+      }
+    }
+
+    .feedback-section {
+      flex-direction: column;
+      align-items: right;
+      padding: 20px;
+      margin-left: 23.5em;
+      margin-top: -31.5em;
+      background-color: rgba(#B650F4, 0.2);
+      border-radius: 10px;
+      width: 70%;
+      max-height: 80%;
+      overflow: auto;
+
+
+      .feedback {
+        text-align: justify;
+        height: auto;
+      }
+
+      .feedbackTitle {
+        text-align: center;
+      }
+
+      .dividerFeedback {
+        border: 3px solid #B62AB9;
+        border-radius: 10px;
+        width: 50%;
+        margin: 15px 0px 5px 12.9em;
+      }
+    }
+
+    .buttonDesign {
+      display: flex;
+      flex-direction: row;
+      align-items: left;
+      justify-content: space-between;
+    }
+
+    .designBar {
+      border: 3px solid #B62AB9;
+      border-radius: 10px;
+      width: 80%;
+      height: 5px;
+      margin: 45px 0 0 40px;
+    }
+
+    button {
+        background-color: #B62AB9;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 1em;
+        width: 100%;
+        max-width: 150px;
+        margin: 25px 5px 0 10px;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #ffffff;
+          color: #B62AB9;
+        }
+      }
+  }
+}
+
+@media (max-width: 768px) {
+  .performance-assessment-content {
+    width: 90%;
+    .score-section,
+    .subjects-section {
+      flex-direction: column;
+
+      .score, .subject, .difficulty {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}

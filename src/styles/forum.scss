@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #fbfaf9;
+  overflow: hidden;
+}
+
+.form-pili {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-post{
+  margin-right: 50px;
+}
+
+.form-pili-item {
+  color: #ffffff;
+  font-size: 20px;
+  width: 125px;
+  height: 55px;
+  border-radius: 14px;
+  background: transparent;
+  border: 1px solid white;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #fff;
+    color: #201c1c;
+  }
+}
+
+.forum-post {
+  position: relative;
+  background-color: rgba(182, 80, 244, 0.2);
+  border-radius: 30px;
+  margin-bottom: 50px;
+  margin-top: 40px;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #440e48;
+  display: flex;
+  align-items: start;
+}
+
+.forum-post-image {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-top: 22px;
+  margin-right: 20px;
+}
+
+.forum-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.forum-post-details {
+  color: white;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.forum-author-and-date {
+  display: flex;
+  align-items: center;
+}
+
+.forum-post-author {
+  font-weight: bold;
+  margin-right: 25px;
+}
+
+.forum-post-date {
+  color: #EAEAEA;
+  font-size: 0.9em;
+  opacity: 87%;
+}
+
+.forum-post-title {
+  font-size: 1.5em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.forum-post-tags-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.forum-post-tags {
+  color: black;
+  background: #eee;
+  border-radius: 3px;
+  padding: 5px;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.forum-post-tags-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.forum-post-tags {
+  background: #eee;
+  border-radius: 3px;
+  padding: 5px;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.forum-button {
+  background-color: #5C6BC0;
+  color: white;
+  border: none;
+  margin: 0 4px;
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+  outline: none;
+}
+
+.forum-posta-anay {
+  overflow-y: auto;
+  max-height: 90%;
+  margin-right: 6rem;
+  margin-left: 2.5rem;
+}

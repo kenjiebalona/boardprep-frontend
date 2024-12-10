@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.submission-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(#1c1e33, #272a46);
+    padding: 20px;
+    border-radius: 14px;
+    width: auto;
+    height: auto;
+    max-height: 600px;
+
+    button {
+        color: #ffffff;
+        width: 120px;
+        height: 34px;
+        border-radius: 5px;
+        background: #b650f4;
+        margin-left: auto;
+        cursor: pointer;
+        border: none;
+        transition: all .3s ease;
+
+        &:hover {
+            background-color: #5e4dcd;
+        }
+    }
+}
+
+.submission-container {
+    max-height: 500px;
+    overflow: auto;
+}
+
+.no-submissions {
+    width: 600px;
+}

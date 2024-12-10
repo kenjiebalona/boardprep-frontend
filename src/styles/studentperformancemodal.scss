@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.dashboard {
+  margin-top: 15px;
+  display: flex;
+  gap: 20px;
+
+  .group {
+    background-color: #2b2e49;
+    border-radius: 20px;
+    padding: 10px 20px;
+    box-shadow: 0px 0px 5px 0px rgba(153, 153, 153, 0.5);
+  }
+
+  .left {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+    .group1 {
+      display: flex;
+      gap: 15px;
+  
+      &__data {
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        justify-content: center;
+        font-size: 14px;
+        gap: 3px;
+      }
+    }
+  }
+
+  .group3 {
+    max-height: 660px;
+    width: 500px;
+
+    .title{
+      margin-top: 10px;
+      color: #B650F4;
+    }
+
+    .feedback {
+      font-size: 14px;
+      max-height: 570px;
+      overflow-y: scroll;
+    }
+  }
+}

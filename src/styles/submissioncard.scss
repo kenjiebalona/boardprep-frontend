@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.submission-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    background: #180c24;
+    padding: 20px;
+    border-radius: 5px;
+    width: 600px;
+
+    &--header {
+        display: flex;
+        justify-content: space-between;
+
+        &__left {
+            .date {
+                font-size: 13px;
+                color: rgb(194, 194, 194);
+            }
+        }
+
+        &__right {
+            input {
+                font-family: "Montserrat", sans-serif;
+                border-radius: 5px;
+                padding: 5px;
+                text-align: center;
+                width: 50px;
+                border: 0;
+                background: transparent;
+                outline: 1px solid white;
+                color: #dfdfdf;
+
+                &:focus {
+                    outline: 2px solid #b650f4;
+                }
+
+                &::placeholder {
+                    color: #424d6e;
+                }
+            }
+        }
+    }
+
+    &--body {
+        .view {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: rgb(194, 194, 194);
+            transition: all 0.3 ease-in;
+            margin-bottom: 5px;
+            cursor: pointer;
+
+            &:hover {
+                color: white;
+            }
+        }
+
+        .attachment {
+            width: 100%;
+        }
+    }
+    
+    &--feedback {
+        #feedback {
+            resize: none;
+            font-family: "Montserrat", sans-serif;
+            border-radius: 5px;
+            padding: 5px;
+            margin-top: 5px;
+            width: 100%;
+            border: 0;
+            background: transparent;
+            outline: 1px solid white;
+            color: #dfdfdf;
+
+            &:focus {
+                outline: 2px solid #b650f4;
+            }
+        }
+
+        .feed {
+            font-size: 14px;
+            color: rgb(194, 194, 194);
+        }
+    }
+}

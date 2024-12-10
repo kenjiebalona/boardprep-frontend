@@ -1,0 +1,57 @@
+.leaderboard-container {
+  .table-body {
+    color: white;
+  }
+
+  .MuiTableRow-root {
+    padding: 10px;
+  }
+
+  .MuiTableRow-head {
+    font-weight: bold !important;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  .table-container {
+    box-shadow: 0px 13px 20px 0px #80808029;
+    border-radius: 0.7rem !important;
+    background-color: #29273C;
+    color: white;
+  }
+
+  th, tr {
+    color: white;
+  }
+
+  .MuiTableCell-root {
+    border: none !important;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .leaderboard-container {
+      width: 100%;
+      margin-top: 2rem;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .leaderboard-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 23rem;
+    }
+  }
+
+  &.larger {
+    .table-container {
+      width: 33rem; 
+      max-width: 1200px; 
+      margin: 0 auto; 
+    }
+  }
+}

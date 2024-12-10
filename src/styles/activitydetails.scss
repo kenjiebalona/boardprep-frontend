@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.activity-details {
+  height: auto;
+  min-height: 80vh;
+  width: 50vw;
+  border: 1px solid #302c4e;
+  border-radius: 10px;
+  padding: 20px 30px;
+  background: #130F26;
+
+  &--header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &__left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+
+      &--back {
+        transition: all .3s ease-in-out;
+      }
+
+      svg {
+        transition: all .3s ease-in-out;
+      }
+
+      &:hover {
+        svg {
+          color: #5e4dcd;
+        }
+
+        .activity-details--header__left--back {
+          color: #5e4dcd;
+        }
+      }
+    }
+
+    &__button {
+      border: none;
+      padding: .5rem 1.5rem;
+      background-color: #B650F4;
+      color: #ffffff;
+      font-weight: 500;
+      text-align: center;
+      vertical-align: middle;
+      align-items: center;
+      border-radius: 3px;
+      transition: all .3s ease;
+
+      &:hover {
+        background-color: #5e4dcd;
+      }
+    }
+
+    button[disabled] {
+      background-color: grey;
+      cursor: not-allowed;
+
+      &:hover {
+        background-color: rgb(90, 90, 90);
+      }
+    }
+  }
+
+  &--title {
+    margin-top: 20px;
+
+    .due_date {
+      font-size: 15px;
+      color: #b0b9bf;
+      margin-top: 2px;
+    }
+
+    .flexify {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .status {
+        font-size: 10px;
+        padding: 6px;
+        border-radius: 20px;
+      }
+    }
+  }
+
+  &--work-area {
+    .attach-file, .attach-link {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .3s ease;
+
+      &:hover {
+          color: white;
+          text-decoration: underline;
+      }
+    }
+  }
+
+  .scroller {
+    max-height: 520px;
+    overflow: auto;
+
+    &::-webkit-scrollbar-track {
+      background: #130F26;
+    }
+  }
+}
+
+.subheader {
+  font-size: 15px;
+  font-weight: 900;
+  margin-top: 30px;
+  margin-bottom: 8px;
+}
+
+.right-side {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  .edit {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all .3s ease;
+
+    &:hover {
+      color: #5e4dcd;
+    }
+  }
+}

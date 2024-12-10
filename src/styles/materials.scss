@@ -1,0 +1,431 @@
+
+.tiptap-content{
+  margin-bottom: 10px;
+  background-color: white;
+  color: white;
+}
+
+.materials-page {
+  margin-top: -50px;
+  display: flex;
+  flex-direction: column; 
+  overflow: auto;
+  height: 100%;
+  position: relative;
+  padding: 50px;
+
+  .objectives-container {
+    background-color: #f4f8fc;
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  
+    .h3-obj {
+      color: #007bff; 
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+  
+      span {
+        font-size: 2rem; 
+      }
+    }
+  
+    .objectives-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+  
+    .objective-item {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border-radius: 5px;
+      transition: background-color 0.2s ease;
+  
+      &:hover {
+        background-color: rgba(0, 123, 255, 0.1); 
+      }
+  
+      .objective-icon {
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+
+  .progress-bar-container {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    height: 28px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    width: 66rem;
+    padding: 3px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    overflow: visible; 
+  
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(179, 66, 245, 0.8), rgba(117, 70, 212, 0.8));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: width 0.5s ease;
+      padding: 4px 12px;
+      border-radius: 12px;
+      position: relative;
+  
+      animation: pulse 2s ease-in-out infinite;
+  
+      box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.6), 0 4px 8px rgba(179, 66, 245, 0.4);
+  
+      .progress-text {
+        flex-grow: 1;
+        text-align: center;
+      }
+  
+      .progress-icon {
+        font-size: 2.5rem;
+        position: absolute;
+        right: -1px; 
+        top: 50%;
+        transform: translate(50%, -50%);
+        color: #fff;
+        z-index: 2; 
+  
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 15px rgba(255, 255, 255, 0.6);
+        filter: brightness(120%);
+      }
+    }
+  
+    @keyframes pulse {
+      0% {
+        box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.6), 0 4px 8px rgba(179, 66, 245, 0.4);
+      }
+      50% {
+        box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.8), 0 6px 12px rgba(179, 66, 245, 0.5);
+      }
+      100% {
+        box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.6), 0 4px 8px rgba(179, 66, 245, 0.4);
+      }
+    }
+  }
+  
+
+  .syllabus-main {
+    position: relative;
+    margin-top: 4%;
+    margin-right: 2%;
+    margin-left: 1%;
+    margin-bottom: 1%;
+    transition: margin-left 0.3s, width 0.3s ease;
+    flex: 0 0 10%; 
+    min-width: 200px;
+    z-index: 10; 
+    cursor: pointer;
+
+    .syllabus-container {
+      padding-top: 60px;
+      transition: margin 0.3s ease;
+    }
+
+    &.collapsed {
+      margin-left: -200px; 
+      width: 0;
+      flex-basis: 0;
+    }
+  }
+
+  .lesson-content-container {
+    flex: 1 1 90%;
+    height: fit-content;
+    border-radius: 10px;
+    margin-right: 5%;
+    padding: 40px;
+    transition: margin 0.3s ease, flex-basis 0.3s ease;
+    box-shadow: 11px 5px 9px 0px rgba(230,104,230,1), -1px -1px 10px rgb(144, 129, 129);
+    overflow: auto; 
+    background-color: white;
+
+
+    .ck-content {
+      padding-left: 30px;
+      padding-right: 30px;
+      margin-top: 30px;
+        max-width: 100%;
+        overflow: hidden; 
+        @if color == hsl(0, 0%, 0%) { 
+          color: #fff; 
+        }
+
+    }
+
+    .pagination {
+      position: absolute; 
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%); 
+      color: yellow;
+    }
+  }
+
+  &.collapsed .lesson-content-container {
+    flex: 1; 
+    margin-left: 20px; 
+  }
+}
+
+.pagination-container {
+  position: fixed; 
+  bottom: 20px; 
+  left: 50%;
+  transform: translateX(-50%); 
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  padding: 10px;
+  z-index: 999; 
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.materials-pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  color: yellow;
+  margin-bottom: 5px;
+  
+  li {
+    margin: 0 5px;
+
+    a {
+      cursor: pointer;
+      padding: 3px 12px;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      background-color: #f0f0f0; 
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      font-size: 13px; 
+      color: #333;
+      text-decoration: none;
+      font-weight: bold;
+
+      &:hover {
+        background-color: #d3d3d3; 
+      }
+    }
+
+    &.materials-active a {
+      background-color: #5D3FD3;
+      color: white;
+      border-color: #5D3FD3; 
+    }
+  }
+}
+
+
+.checkbox {
+  display: none;
+}
+
+.toggle {
+  position: absolute;
+  margin-top: 6%;
+  margin-left: 5%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  z-index: 11; 
+  transition: right 0.2s ease;
+
+  .materials-page:not(.collapsed) & {
+    margin-top: 5.5%;
+    margin-left: 2%;
+  }
+}
+
+
+.bars {
+  width: 100%;
+  height: 4px;
+  background-color: rgb(176, 92, 255);
+  border-radius: 4px;
+  transition-duration: .5s;
+}
+
+#bar2 {
+  transition-duration: .8s;
+}
+
+#bar1, #bar3 {
+  width: 70%;
+}
+
+.checkbox:not(:checked) + .toggle .bars {
+  position: absolute;
+  transition-duration: .5s;
+}
+
+.checkbox:not(:checked) + .toggle #bar2 {
+  transform: scaleX(0);
+}
+
+.checkbox:not(:checked) + .toggle #bar1 {
+  width: 100%;
+  transform: rotate(45deg);
+}
+
+.checkbox:not(:checked) + .toggle #bar3 {
+  width: 100%;
+  transform: rotate(-45deg);
+}
+
+.checkbox:not(:checked) + .toggle {
+  transform: rotate(180deg);
+}
+
+.btn-mat {
+  color: #ffffff;
+  width: 120px;
+  height: 34px;
+  border-radius: 5px;
+  background: #7D67FF;
+  margin-left: auto;
+  cursor: pointer;
+  border: none;
+  margin-bottom: 20px;
+
+  &:hover {
+    background-color: #5D3FD3;
+    color: white;
+  }
+}
+
+.block-type-label-two {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #6c63ff; 
+  border-radius: 12px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+  &::before {
+    content: '🧩'; 
+    margin-right: 6px;
+  }
+}
+
+.btn-more-materials {
+  margin-left: 15px;
+  border-radius: 10px;
+  padding: 10px 20px;
+  border: 2px solid transparent;
+  background: linear-gradient(white, white),
+    linear-gradient(to right, #6c63ff, #5D3FD3);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, background 0.3s ease;
+
+  box-shadow: 0 0 20px rgba(108, 99, 255, 0.4),
+    0 0 20px rgba(108, 99, 255, 0.4), 0 0 30px rgba(93, 63, 211, 0.4);
+}
+
+.btn-more-materials:hover {
+  background: linear-gradient(to right, #5D3FD3, #6c63ff); 
+  color: white;
+  border: 2px solid transparent;
+
+  box-shadow: 0 0 15px rgba(108, 99, 255, 0.6),
+    0 0 25px rgba(108, 99, 255, 0.6), 0 0 40px rgba(93, 63, 211, 0.8);
+}
+
+.filter-container {
+  margin: 0.5rem 0;
+  background-color: #f4f8fc;
+  padding: 20px 22px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.filter-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-button {
+  padding: 5px 10px;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  color: black;
+  font-size: 15px;
+}
+
+.filter-button:hover {
+  border-color: #ccc;
+}
+
+.filter-button.selected {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
+}
+
+.filter-button:not(.selected) {
+  border-color: #ccc;
+  background-color: transparent;
+}
+
+  // ... Rest of your existing styles
+  .preassessment-button {
+    background-color: #7D67FF;
+    height: 60px;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    width: 100%;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #5D3FD3;
+    }
+  }
+
+

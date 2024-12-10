@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  background: #fbfaf9;
+  overflow: hidden;
+}
+
+.background {
+  width: 100vw;
+  height: 100vh;
+  background: #0d0b1c;
+}
+
+.button {
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #0d0b1c;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 20px;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid white;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #fff;
+    color: #201c1c;
+  }
+}
+
+.user {
+  display: flex;
+  gap: 15px;
+}
+
+.user-c {
+  color: #ffffff;
+  font-size: 20px;
+  width: 125px;
+  height: 55px;
+  border-radius: 14px;
+  background: transparent;
+  border: 1px solid white;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+
+  &:hover {
+    background-color: #fff;
+    color: #201c1c;
+  }
+}
+
+.homer {
+  text-decoration: none;
+  color: white;
+}
+
+
+.bp-img-user {
+  position: absolute;
+  width: 500px;
+  height: 350px;
+  z-index: 100;
+}
+
+.cardo-user {
+  position: absolute;
+  width: 500px;
+  height: 350px;
+  background: var(--clr-1);
+}
+
+.dalisay-user::before,
+.dalisay-user::after {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  background: linear-gradient(
+    45deg,
+    var(--clr-1),
+    var(--clr-2),
+    var(--clr-3),
+    var(--clr-4),
+    var(--clr-5),
+    var(--clr-6),
+    var(--clr-7),
+    var(--clr-8),
+    var(--clr-9),
+    var(--clr-10),
+    var(--clr-11),
+    var(--clr-12)
+  );
+  background-size: 400%;
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
+  animation: animate 20s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.dalisay-user::after {
+  filter: blur(40px);
+}

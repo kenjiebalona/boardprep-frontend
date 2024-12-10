@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.activity-row {
+  height: auto;
+  width: 50vw;
+  border: 1px solid #302c4e;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 20px 30px;
+  background: #130F26;
+  
+  cursor: pointer;
+  transition: all .3s ease-in-out;
+
+  &:hover {
+    border: 1px solid rgba($color: #B650F4, $alpha: .75);
+    box-shadow: 0px 5px 7px rgba($color: #cb82f8, $alpha: .25);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &--left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      &__title {
+        font-size: 20px;
+        font-weight: 900;
+      }
+
+      &__status {
+        font-size: 10px;
+        padding: 6px;
+        border-radius: 20px;
+      }
+    }
+
+    &--points {
+      font-size: 14px;
+      color: #b0b9bf;
+    }
+  }
+
+  &__class {
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #b0b9bf;
+  }
+
+  &__start {
+    font-size: 15px;
+    color: #b0b9bf;
+    margin-top: 8px;
+  }
+
+  &__end {
+    font-size: 15px;
+    color: #b0b9bf;
+  }
+}

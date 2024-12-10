@@ -1,0 +1,173 @@
+$dashboard_bg: #0D0B1C;
+$main_bg: #1C1B29;
+$headtext_bg: #0B7077;
+$box_bg: #F7F7FE;
+$p_color: #4D4D4D;
+
+
+@mixin float{
+  position: absolute;
+  top: 20px;
+  z-index: 10;
+}
+
+.dashboard-nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: $dashboard_bg;
+  padding: 0 2rem;
+  height: 100vh;
+  width: 15%;
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  a {
+    color: whitesmoke;
+    text-decoration: none;
+    font-size: 1.5rem;
+
+    &:hover {
+      color: $headtext_bg;
+    }
+  }
+
+  .nav-link {
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.searchbar {
+  display: flex;
+  margin-left: 15%;
+  margin-top: 3%;
+  justify-content: center;
+  width: 70%;
+  height: 35px;
+  border-radius: 5px;
+  background-color: white;
+  border-bottom: 1px solid black;
+  box-shadow: 0 1px 0 0 black;
+
+  h2 {
+    font-family: Arial;
+  }
+}
+
+// .coursecard {
+//   display: flex;
+//   position: relative;
+//   align-items: center;
+//   width: 270px;
+//   height: 250px;
+//   border-radius: 7%;
+//   flex-direction: column;
+//   overflow: hidden;
+//   background-color: $box_bg;
+//   transition: transform 0.3s ease, box-shadow 0.3s ease;
+//   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+//   &:hover {
+//     color: grey;
+//     transform: translateY(-10px);
+//     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+//   }
+
+//   .imagebox {
+//     border-radius: 5%;
+//     height: 55%;
+//     width: 100%;
+//     overflow: hidden;
+
+//     img { 
+//       height: 100%;
+//       width: 100%;
+//       object-fit: fill;
+//     }
+//   }
+
+//   .defbox {
+  
+// }
+
+.coursecards-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin: 5%;
+}
+
+.carousel {
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: 200px;
+  
+    .carousel-items {
+      display: flex;
+      transition: transform 0.5s ease;
+      width: 100%;
+    }
+  
+    .carousel-item {
+      flex: 0 0 100%;
+      height: 100%;
+      transition: transform 0.5s ease;
+      backface-visibility: hidden; 
+      object-fit: fill;
+      overflow: hidden;
+      will-change: transform; 
+    }
+
+    .img{
+      object-fit: fill;
+      overflow: hidden;
+    }
+  
+    .carousel-item:not(.active) {
+      transform: translateX(100%); // Hide non-active items to the right
+    }
+  
+    .carousel-controls {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  
+      .carousel-control {
+        cursor: pointer;
+        margin: 0 5px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #000;
+        transition: background-color 0.3s ease;
+  
+        &.active {
+          background-color: #fff;
+        }
+      }
+    }
+  }
+
+

@@ -1,0 +1,34 @@
+/* Flex container */
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1000; 
+  transform: translate3d(-50%, -50%, 0);
+}
+
+/* Adjust your .course-list-popup */
+.course-list-popup {
+  position: static; /* Changed from fixed to static */
+  width: 70vw !important;/* Example fixed height */
+  background-color: #0d0b1c;
+  border: 1px solid #c9a9a9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  border-radius: 50px;
+  overflow: hidden;
+
+  // ... other styles ...
+
+    .popupclose {
+      margin-left: 95%;
+      color: antiquewhite;
+      font-size: 30px;
+      cursor: pointer;
+    }
+    /* Additional styles as needed */
+}
+

@@ -1,0 +1,61 @@
+.lesson-container {
+    background-color: #080420;
+    padding: 30px;
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+  
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+  
+    .lesson-content {
+      margin-top: 30px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      
+      p {
+        margin-bottom: 20px;
+      }
+     
+    }
+  }
+
+  .btn-students-quiz-attempts{
+    color: #ffffff;
+    width: 200px;
+    height: 34px;
+    border-radius: 5px;
+    background: #7D67FF;
+    margin-left: auto;
+    margin-bottom: 30px;
+    cursor: pointer;
+    border: none;
+    margin: 5px;
+  
+    &:hover {
+      background-color: #5D3FD3;
+      color: white;
+    }
+  }
+
+  .btn-back {
+    color: #ffffff;
+    width: 120px;
+    height: 34px;
+    border-radius: 5px;
+    background: #7D67FF;
+    margin-left: auto;
+    margin-bottom: 30px;
+    cursor: pointer;
+    border: none;
+    margin: 5px;
+  
+    &:hover {
+      background-color: #5D3FD3;
+      color: white;
+    }
+  }
+  

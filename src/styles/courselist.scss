@@ -1,0 +1,19 @@
+.coursepage-container{
+   
+    border-radius: 50px;
+    width: 100%;
+    height: 500px;
+    padding: 3%;
+    background: #0d0b1c;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    
+}
+.coursecards-container {
+    gap: 30px;
+    margin: 5%;
+  }
+  

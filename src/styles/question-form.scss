@@ -1,0 +1,91 @@
+.question-form-container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 40rem;
+  height: 29rem;
+}
+
+
+.question-form-container .MuiButton-root {
+  margin-right: 10px;
+}
+
+.question-form-container .save-question-btn {
+  margin-top: 20px;
+  background-color: #7D67FF;
+  color: #fff;
+  &:hover {
+    background-color: #5D3FD3;
+    color: #fff;
+  }
+  &:disabled {
+    background-color: #7D67FF;
+    color: #fff;  
+  }
+}
+
+.question-form-container .plus-question-btn{
+  margin-top: 20px;
+  font-weight: bold;
+  &:hover {
+    background-color: #5D3FD3;
+    color: white;
+  }
+}
+
+.question-form-container .minus-question-btn{
+  font-weight: bold;
+  &:hover {
+    background-color: #5D3FD3;
+    color: white;
+  }
+}
+
+.question-form-container .choice-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; 
+}
+
+.question-form-container .choice-input {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
+.question-form-container .form-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.question-form-container .form-control {
+  flex: 1;
+  &:first-child {
+    margin-right: 20px;
+  }
+}
+
+.question-form-container .form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px; 
+}
+
+.question-form-container .add-remove-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.save-question-btn {
+  align-self: flex-end; 
+}
+
+.question-form-container .choice-container{
+  overflow-y: auto;
+  height: calc(18rem - 170px);
+  margin-top: 10px;
+  padding: 10px;
+}
+

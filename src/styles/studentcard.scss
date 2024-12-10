@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+.student-card {
+  border: 1px solid white;
+  height: 60px;
+  width: 50vw;
+  background: #130F26;
+
+  &__name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    &--pic {
+      border-radius: 50%;
+      height: 35px;
+      width: 35px;
+      overflow: hidden;
+    
+      img {
+        height: 100%;
+        width: 100%;
+        background-size: stretch;
+      }
+    }
+  }
+
+  &__req-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .request_btn {
+      all: unset;
+      font-size: 20px;
+      line-height: 1px;
+      padding: 5px;
+    }
+  
+    .accept {
+      border: 1px solid #08d46c;
+      border-radius: 50%;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        background-color: #08d46c;
+        color: white;
+      }
+    }
+  
+    .reject {
+      border: 1px solid #e04434;
+      border-radius: 50%;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        background-color: #e04434;
+        color: white;
+      }
+    }
+  }
+}
+
+.ellipsis {
+  position: relative;
+  .menu-dropdown {
+    position: absolute;
+    right: 0;
+    background-color: #180c24;
+    border: 1px solid rgb(170, 170, 170);
+    color: white;
+    border-radius: 4px;
+    padding: 5px 0;
+    z-index: 1000;
+  
+    ul {
+      list-style: none;
+      padding: 0 5px;
+      margin: 0;
+  
+      li {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 3px;
+        font-size: 14px;
+        padding: 8px 15px;
+        width: 160px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #33174e;
+        }
+      }
+    }
+  }
+}
