@@ -23,6 +23,7 @@ interface QuizResultProps {
   totalQuestions: number;
   passed: boolean;
   onTryAgain: () => void;
+  feedback: string | null;
   onNextLesson: () => void;
 }
 
@@ -34,6 +35,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
   totalQuestions,
   passed,
   onTryAgain,
+  feedback,
   onNextLesson,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -43,6 +45,14 @@ const QuizResult: React.FC<QuizResultProps> = ({
   };
 
   const percentage = (score / totalQuestions) * 100;
+
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+
+  const handleToggleFeedback = () => {
+    setShowFeedback(!showFeedback);
+  };
+
 
   return (
     <div className="quiz-result">
@@ -72,6 +82,13 @@ const QuizResult: React.FC<QuizResultProps> = ({
         <button className="view-results-button" onClick={handleToggleDetails}>
           {showDetails ? "Hide Details" : "View Results"}
         </button>
+        <button
+            className="view-results-button"
+            onClick={handleToggleFeedback}
+            disabled={loadingFeedback}
+          >
+            {showFeedback ? "Hide Feedback" : "View Feedback"}
+          </button>
         {showDetails && (
           <div className="questions-review">
             {questions.map((question, index) => {
@@ -104,6 +121,12 @@ const QuizResult: React.FC<QuizResultProps> = ({
                 </div>
               );
             })}
+          </div>
+        )}
+        {showFeedback && feedback && (
+          <div className="feedback-section">
+            <h3>Feedback</h3>
+            <p>{feedback}</p>
           </div>
         )}
         <div className="quiz-result-buttons">

@@ -70,6 +70,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
   const [isLoading, setIsLoading] = useState(true);
   const objective_ids = objectives.map((objective) => objective.id);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   const questionsPerPage = 2;
 
@@ -224,10 +225,11 @@ const QuizContent: React.FC<QuizContentProps> = ({
         );
 
         if (scoreResponse.status === 200) {
-          const { score, total_questions, passed } = scoreResponse.data;
+          const { score, total_questions, passed, feedback } = scoreResponse.data;
           setAttempt((prevAttempt) =>
             prevAttempt ? { ...prevAttempt, score, passed } : null
           );
+          setFeedback(feedback);
           setResults(resultsData);
           setShowResults(true);
         }
@@ -274,6 +276,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
             setShowResults(false);
             onNextLesson();
           }}
+          feedback={feedback}
         />
       ) : (
         <>

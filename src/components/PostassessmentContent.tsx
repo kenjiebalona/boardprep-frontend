@@ -56,6 +56,7 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   const questionsPerPage = 3;
 
@@ -194,10 +195,11 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
         );
 
         if (scoreResponse.status === 200) {
-          const { score, total_questions, passed } = scoreResponse.data;
+          const { score, total_questions, passed, feedback } = scoreResponse.data;
           setAttempt((prevAttempt) =>
             prevAttempt ? { ...prevAttempt, score, passed } : null
           );
+          setFeedback(feedback);
           setResults(resultsData);
           setShowResults(true);
         }
@@ -245,6 +247,7 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
           score={attempt.score}
           totalQuestions={mocktest.questions.length}
           onDone={onDone}
+          feedback={feedback}
         />
       ) : (
         <>

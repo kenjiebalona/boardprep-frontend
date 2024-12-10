@@ -49,11 +49,11 @@ const Mastery = () => {
     24: 'Learn methods to convert between decimal numbers and other numeral systems, including binary and hexadecimal.',
     25: 'Recognize the importance of radix in computer processing for data representation​.',
     26: 'Explore fixed-point and floating-point representation methods in binary systems.',
-    27: 'Learn how negative numbers are represented using complements (e.g., two\'s complement).',
+    27: "Learn how negative numbers are represented using complements (e.g., two's complement).",
     28: 'Understand the concept of mantissa and exponent in floating-point representations.',
     29: 'Master the definitions and applications of basic logical operations: AND, OR, NOT, and XOR.',
     30: 'Learn truth tables and their usage in computing logical outcomes.',
-    31: 'Understand De Morgan\'s laws and their application in simplifying logical expressions​.',
+    31: "Understand De Morgan's laws and their application in simplifying logical expressions​.",
     32: 'Understand BNF as a formal language for defining programming grammar.',
     33: 'Learn to represent syntax rules unambiguously using sequence, repetition, and selection constructs.',
     34: 'Explore the distinction between terminal and non-terminal symbols in syntax definitions.',
@@ -103,8 +103,8 @@ const Mastery = () => {
       return (
         <p>
           It looks like you need more practice. Consider revisiting the
-          fundamentals and working through additional examples to build a stronger
-          understanding.
+          fundamentals and working through additional examples to build a
+          stronger understanding.
         </p>
       );
     }
@@ -127,7 +127,24 @@ const Mastery = () => {
                 className="mastery-item"
                 onClick={() => openModal(item)}
               >
-                <h4>Learning Objective: {item.learning_objective}</h4>
+                <h4>
+                  Learning Objective:{' '}
+                  {learningObjectives[
+                    item.learning_objective as
+                      | 23
+                      | 24
+                      | 25
+                      | 26
+                      | 27
+                      | 28
+                      | 29
+                      | 30
+                      | 31
+                      | 32
+                      | 33
+                      | 34
+                  ] || 'Unknown Learning Objective'}
+                </h4>
                 <div className="progress-bar-container">
                   <div
                     className="progress-bar"

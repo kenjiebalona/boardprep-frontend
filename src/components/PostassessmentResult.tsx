@@ -22,6 +22,7 @@ interface PostassessmentResultProps {
   results: { [questionId: string]: boolean };
   score: number;
   totalQuestions: number;
+  feedback: string | null;
   onDone: () => void;
 }
 
@@ -31,6 +32,7 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
   results,
   score,
   totalQuestions,
+  feedback,
   onDone,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -42,6 +44,13 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
 
   const handleToggleAnalysis = () => {
     setShowAnalysis(!showAnalysis);
+  };
+
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+
+  const handleToggleFeedback = () => {
+    setShowFeedback(!showFeedback);
   };
 
   const percentage = (score / totalQuestions) * 100;
@@ -98,6 +107,13 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
         <button className="view-results-button" onClick={handleToggleAnalysis}>
           {showAnalysis ? 'Hide Details' : 'View Analysis'}
         </button>
+        <button
+            className="view-results-button"
+            onClick={handleToggleFeedback}
+            disabled={loadingFeedback}
+          >
+            {showFeedback ? "Hide Feedback" : "View Feedback"}
+          </button>
         {showDetails && (
           <div className="questions-review">
             {questions.map((question, index) => {
@@ -140,6 +156,12 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
         )}
         {showAnalysis && (
           <Mastery />
+        )}
+        {showFeedback && feedback && (
+          <div className="feedback-section">
+            <h3>Feedback</h3>
+            <p>{feedback}</p>
+          </div>
         )}
 
         <div className="challenge-result-buttons">

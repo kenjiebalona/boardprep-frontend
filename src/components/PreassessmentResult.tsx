@@ -22,6 +22,7 @@ interface PreassessmentResultProps {
   results: { [questionId: string]: boolean };
   score: number;
   totalQuestions: number;
+  feedback: string | null;
   onDone: () => void;
 }
 
@@ -31,6 +32,7 @@ const PreassessmentResult: React.FC<PreassessmentResultProps> = ({
   results,
   score,
   totalQuestions,
+  feedback,
   onDone,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -42,6 +44,13 @@ const PreassessmentResult: React.FC<PreassessmentResultProps> = ({
 
   const handleToggleAnalysis = () => {
     setShowAnalysis(!showAnalysis);
+  };
+
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+
+  const handleToggleFeedback = () => {
+    setShowFeedback(!showFeedback);
   };
 
   const percentage = (score / totalQuestions) * 100;
@@ -98,6 +107,13 @@ const PreassessmentResult: React.FC<PreassessmentResultProps> = ({
         <button className="view-results-button" onClick={handleToggleAnalysis}>
           {showAnalysis ? 'Hide Details' : 'View Analysis'}
         </button>
+        <button
+            className="view-results-button"
+            onClick={handleToggleFeedback}
+            disabled={loadingFeedback}
+          >
+            {showFeedback ? "Hide Feedback" : "View Feedback"}
+          </button>
         {showDetails && (
           <div className="questions-review">
             {questions.map((question, index) => {
@@ -141,7 +157,13 @@ const PreassessmentResult: React.FC<PreassessmentResultProps> = ({
         {showAnalysis && (
           <Mastery />
         )}
-        
+        {showFeedback && feedback && (
+          <div className="feedback-section">
+            <h3>Feedback</h3>
+            <p>{feedback}</p>
+          </div>
+        )}
+
         <div className="challenge-result-buttons">
           <button className="view-results-button" onClick={onDone}>
             Done
