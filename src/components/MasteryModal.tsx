@@ -12,7 +12,9 @@ const MasteryModal: React.FC<MasteryModalProps> = ({
   masteryData,
   onClose,
 }) => {
-  const [filter, setFilter] = useState<string>("lesson");
+  const [filter, setFilter] = useState<"lesson" | "topic" | "subtopic">(
+    "lesson"
+  );
 
   if (!isOpen || !masteryData || masteryData.length === 0) return null;
 
@@ -160,20 +162,19 @@ const MasteryModal: React.FC<MasteryModalProps> = ({
             <div key={lesson.lesson_id} className="lesson-card">
               {filter === "lesson" && renderLesson(lesson)}
 
-              {filter === "lesson" || filter === "topic"
-                ? lesson.topics?.map((topic: any) => (
-                    <div key={topic.topic_id}>
-                      {filter !== "subtopic" && renderTopic(topic)}
+              {(filter === "lesson" || filter === "topic") &&
+                lesson.topics?.map((topic: any) => (
+                  <div key={topic.topic_id}>
+                    {filter !== "subtopic" && renderTopic(topic)}
 
-                      {(filter === "lesson" ||
-                        filter === "topic" ||
-                        filter === "subtopic") &&
-                        topic.subtopics?.map((subtopic: any) =>
-                          renderSubtopic(subtopic)
-                        )}
-                    </div>
-                  ))
-                : null}
+                    {(filter === "lesson" ||
+                      filter === "topic" ||
+                      filter === "subtopic") &&
+                      topic.subtopics?.map((subtopic: any) =>
+                        renderSubtopic(subtopic)
+                      )}
+                  </div>
+                ))}
 
               {filter === "subtopic" &&
                 lesson.topics?.map((topic: any) =>
