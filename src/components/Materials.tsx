@@ -159,8 +159,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         console.error('Error fetching course data:', error);
       }
     };
-    getExamAttempts(studentId);
     getQuizAttempts(studentId);
+    getExamAttempts(studentId);
     fetchCourseData();
   }, [courseId]);
 

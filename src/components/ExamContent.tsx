@@ -165,7 +165,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
           passed: false,
           attempt_number: attemptNumber
         });
-        await fetchExamQuestions(existingExam.id, attemptNumber);
+        await fetchExamQuestions(existingExam.id, 1);
         return true;
       }
       return false;
