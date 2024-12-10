@@ -81,6 +81,15 @@ interface Mastery {
   learning_objective: number;
 }
 
+interface Attempt {
+  id: number;
+  exam: number;
+  score: number;
+  feedback: string;
+  start_time: Date;
+  end_time: Date;
+}
+
 function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -102,6 +111,10 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const [testStarted, setTestStarted] = useState(false);
   const [hasPreassessment, setHasPreassessment] = useState(false);
+  const [hasQuiz, setHasQuiz] = useState(false);
+  const [hasExam, setHasExam] = useState(false);
+  const [showExamAttempts, setShowExamAttempts] = useState(false);
+  const [examAttempts, setExamAttempts] = useState<Attempt[]>([]);
   const [objectives, setObjectives] = useState<LearningObjective[]>([]);
   const [progress, setProgress] = useState(0);
   const [clickedSubtopics, setClickedSubtopics] = useState<Set<string>>(
@@ -146,7 +159,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         console.error('Error fetching course data:', error);
       }
     };
-
+    getExamAttempts(studentId);
+    getQuizAttempts(studentId);
     fetchCourseData();
   }, [courseId]);
 
@@ -155,7 +169,6 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
       const completed = lessons.every((lesson) => lesson.completed);
       setAllLessonsCompleted(completed);
     };
-
     checkAllLessonsCompleted();
   }, [lessons]);
 
@@ -248,6 +261,57 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
     fetchPages(subtopicId);
   };
+
+  const getExamAttempts = async (studentId: string) => {
+    let exam_id: number = 0;
+    let attempts: Attempt[] = [];
+    try {
+      const exams = await axiosInstance.get(`/exams/`);
+
+      for (const exam of exams.data) {
+        if(exam.student === studentId) {
+          exam_id = exam.id;
+          break;
+        }
+      }
+
+      const attempt_req = await axiosInstance.get(`/studentExamAttempt/`);
+
+      for(const attempt of attempt_req.data) {
+        if(attempt.exam === exam_id && attempt.score !== null) {
+          attempt.start_time = new Date(attempt.start_time);
+          attempt.end_time = new Date(attempt.end_time);
+          attempts.push(attempt);
+        }
+      }
+
+      if(attempts.length > 0) {
+        setHasExam(true);
+        setExamAttempts(attempts);
+      } else {
+        console.log("NO EXAM ATTEMPT");
+      }
+
+      console.log("EXAM ATTEMPT: ", attempts);
+    } catch (error) {
+      console.error('Error fetching exam attempts:', error);
+    }
+  }
+
+  const getQuizAttempts = async (studentId: string) => {
+    try {
+      const quizzes = await axiosInstance.get(`/studentQuizAttempt/by-id/?id=${studentId}`);
+
+      if(quizzes.data.length > 0) {
+        console.log("QUIZ ATTEMPT: ", quizzes.data);
+        setHasQuiz(true);
+      } else {
+        console.log("NO QUIZ ATTEMPT");
+      }
+    } catch (error) {
+      console.error('Error fetching exam attempts:', error);
+    }
+  }
 
   useEffect(() => {
     if (lessons.length > 0) {
@@ -448,6 +512,14 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     console.log('HANDLE EXAM CLICKED');
   };
 
+  const handleToggleShowExamAttempts = () => {
+    setShowExamAttempts(!showExamAttempts);
+  };
+
+  const closeShowExamAttempts = () => {
+    setShowExamAttempts(false);
+  }
+
   return (
     <div className="materials-page">
       {userType === "S" && (
@@ -479,10 +551,17 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             >
               Take preassessment
             </button>
-          ) : userType == "S" && (
-            <button className="preassessment-button" onClick={handleExam}>
-              Take exam
-            </button>
+          ) : userType == "S" && hasQuiz && (
+            <>
+              <button className="preassessment-button" onClick={handleExam}>
+                Take exam
+              </button>
+              {hasExam && (
+                <button className="attempts-button" onClick={handleToggleShowExamAttempts}>
+                  Show Exam Attempts
+                </button>
+              )}
+            </>
           )}
         </div>
       ) :
@@ -621,7 +700,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             />
           )} */}
 
-      {showQuizResult && quizResult && (
+      {/* {showQuizResult && quizResult && (
         <QuizResult
           questions={quizResult.questions}
           answers={quizResult.answers}
@@ -632,6 +711,33 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           onTryAgain={handleTryAgain}
           onNextLesson={handleNextLesson}
         />
+      )} */}
+
+      {showExamAttempts && (
+        <div className="modal-mastery-overlay-exam">
+          <div className="modal-mastery-exam">
+          <button className="close-btn" onClick={closeShowExamAttempts}>
+              X
+            </button>
+          <h3>Exam Attempts</h3>
+            <ul className='exam-ul'>
+              <li className='exam-li'>
+                <span className="exam-attempt-header">Date</span>
+                <span className="exam-attempt-header">Score</span>
+                <span className="exam-attempt-header">Time Taken</span>
+              </li>
+              {examAttempts.map((attempt, idx) => (
+                <li className='exam-li' key={idx}>
+                  <span>{attempt.start_time.getUTCMonth() + 1}/
+                    {attempt.start_time.getUTCDate()}/
+                    {attempt.start_time.getUTCFullYear()}</span>
+                  <span>{attempt.score}</span>
+                  <span>{Math.floor((attempt.end_time.getTime() - attempt.start_time.getTime()) / 60000)} minutes</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       )}
     </div>
   );
