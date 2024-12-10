@@ -3,6 +3,7 @@ import axiosInstance from "../axiosInstance";
 import QuizResult from "./QuizResult";
 import "../styles/quiz-content.scss";
 import Loader from "./Loader";
+import { is } from "@blocknote/core/types/src/i18n/locales";
 
 interface Choice {
   id: string;
@@ -45,6 +46,8 @@ interface QuizContentProps {
   onTryAgain: () => void;
   onNextLesson: () => void;
   objectives: LearningObjective[];
+  isSubtopic: boolean;
+  subtopicId: string | null;
 }
 
 const QuizContent: React.FC<QuizContentProps> = ({
@@ -54,6 +57,8 @@ const QuizContent: React.FC<QuizContentProps> = ({
   onTryAgain,
   onNextLesson,
   objectives,
+  isSubtopic,
+  subtopicId
 }) => {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [attempt, setAttempt] = useState<StudentQuizAttempt | null>(null);
@@ -89,15 +94,29 @@ const QuizContent: React.FC<QuizContentProps> = ({
         let quizData = quizResponse.data[0];
 
         if (!quizData) {
-
-          const createQuizResponse = await axiosInstance.post("/quizzes/", {
-            student: studentId,
-            lesson: lessonId,
-            class_instance: classInstanceId,
-            title: `Quiz - New`,
-          });
-          createQuizResponse.data.questions = shuffleArray(createQuizResponse.data.questions);
-          quizData = createQuizResponse.data;
+          let createQuizResponse;
+          if(!isSubtopic) {
+            console.log("NAAKO DIRI");
+            createQuizResponse = await axiosInstance.post("/quizzes/", {
+              student: studentId,
+              lesson: lessonId,
+              class_instance: classInstanceId,
+              title: `Quiz - New`,
+            });
+            createQuizResponse.data.questions = shuffleArray(createQuizResponse.data.questions);
+            quizData = createQuizResponse.data;
+          } else {
+            console.log("WALA KO DIRI");
+            createQuizResponse = await axiosInstance.post(`/quizzes/subtopic/?id=${subtopicId}`, {
+              student: studentId,
+              lesson: lessonId,
+              class_instance: classInstanceId,
+              title: `Quiz - New`,
+              objectives: objective_ids
+            });
+            createQuizResponse.data.questions = shuffleArray(createQuizResponse.data.questions);
+            quizData = createQuizResponse.data;
+          }
         }
 
         let attemptData = allAttempts.find(
@@ -105,15 +124,28 @@ const QuizContent: React.FC<QuizContentProps> = ({
         );
 
         if (!attemptData || attemptData.end_time) {
-
-          const createQuizResponse = await axiosInstance.post("/quizzes/", {
-            student: studentId,
-            lesson: lessonId,
-            class_instance: classInstanceId,
-            title: `Quiz - New`,
-          });
-          createQuizResponse.data.questions = shuffleArray(createQuizResponse.data.questions);
-          quizData = createQuizResponse.data;
+          let createQuizResponse;
+          if (!isSubtopic) {
+            console.log("NAAKO DIRI");
+            createQuizResponse = await axiosInstance.post("/quizzes/", {
+              student: studentId,
+              lesson: lessonId,
+              class_instance: classInstanceId,
+              title: `Quiz - New`,
+            });
+            createQuizResponse.data.questions = shuffleArray(createQuizResponse.data.questions);
+            quizData = createQuizResponse.data;
+          } else {
+            console.log("WALA KO DIRI");
+            createQuizResponse = await axiosInstance.post(`/quizzes/subtopic/?id=${subtopicId}`, {
+              student: studentId,
+              lesson: lessonId,
+              class_instance: classInstanceId,
+              title: `Quiz - New`,
+            });
+            createQuizResponse.data.questions = shuffleArray(createQuizResponse.data.questions);
+            quizData = createQuizResponse.data;
+          }
 
           const createAttemptResponse = await axiosInstance.post(
             "/studentQuizAttempt/",

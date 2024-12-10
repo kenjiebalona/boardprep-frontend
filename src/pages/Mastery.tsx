@@ -43,18 +43,20 @@ const Mastery = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const learningObjectives: {
-    [key in 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14]: string;
+    [key in 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34]: string;
   } = {
-    5: 'Extend the Concept of a Free Body Diagram (FBD).',
-    6: 'Identify and Break Down Different Types of Forces Acting on an Object.',
-    7: 'Draw Free Body Diagrams for Objects in Equilibrium and Motion on an Incline.',
-    8: 'Label Forces Correctly Using Vector Components in 2D FBDs.',
-    9: 'Apply Rules for Determining Force Directions on Objects in Complex Scenarios.',
-    10: 'Understand what a vector is and how it differs from a scalar quantity.',
-    11: 'Break a force vector into horizontal and vertical components.',
-    12: 'Use basic trigonometric functions (sine and cosine) to find the vector components of forces.',
-    13: 'Visualize and draw simple vector diagrams showing the components of a force.',
-    14: 'Solve basic equilibrium problems using vector components (e.g., forces acting on a box being pushed or pulled).',
+    23: 'Understand the relationship between binary, decimal, and hexadecimal systems.',
+    24: 'Learn methods to convert between decimal numbers and other numeral systems, including binary and hexadecimal.',
+    25: 'Recognize the importance of radix in computer processing for data representation​.',
+    26: 'Explore fixed-point and floating-point representation methods in binary systems.',
+    27: 'Learn how negative numbers are represented using complements (e.g., two\'s complement).',
+    28: 'Understand the concept of mantissa and exponent in floating-point representations.',
+    29: 'Master the definitions and applications of basic logical operations: AND, OR, NOT, and XOR.',
+    30: 'Learn truth tables and their usage in computing logical outcomes.',
+    31: 'Understand De Morgan\'s laws and their application in simplifying logical expressions​.',
+    32: 'Understand BNF as a formal language for defining programming grammar.',
+    33: 'Learn to represent syntax rules unambiguously using sequence, repetition, and selection constructs.',
+    34: 'Explore the distinction between terminal and non-terminal symbols in syntax definitions.',
   };
 
   useEffect(() => {
@@ -152,16 +154,18 @@ const Mastery = () => {
               {' '}
               {learningObjectives[
                 selectedMastery.learning_objective as
-                  | 5
-                  | 6
-                  | 7
-                  | 8
-                  | 9
-                  | 10
-                  | 11
-                  | 12
-                  | 13
-                  | 14
+                  | 23
+                  | 24
+                  | 25
+                  | 26
+                  | 27
+                  | 28
+                  | 29
+                  | 30
+                  | 31
+                  | 32
+                  | 33
+                  | 34
               ] || 'Unknown Learning Objective'}
             </h3>
             <p>

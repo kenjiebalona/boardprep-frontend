@@ -111,6 +111,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [filterType, setFilterType] = useState<Set<string>>(new Set());
 
   const [showMoreMaterials, setShowMoreMaterials] = useState(false);
+  const [isSubtopic, setIsSubtopic] = useState(false);
+  const [quizSubtopicId, setQuizSubtopicId] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const user = useAppSelector(selectUser);
@@ -180,8 +182,11 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
 
   const fetchPreassessment = async () => {
     try {
+      // const response = await axiosInstance.get(
+      //   `/studentPreassessmentAttempt/?student_id=${studentId}&course_id=${courseId}`
+      // );
       const response = await axiosInstance.get(
-        `/studentPreassessmentAttempt/?student_id=${studentId}&course_id=${courseId}`
+        `/studentPreassessmentAttempt/?student_id=${studentId}&course_id=FME101`
       );
       if (response.data.length > 0) {
         setHasPreassessment(true);
@@ -412,12 +417,15 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     }
   };
 
-  const handleQuizClick = (lessonID: string) => {
+  const handleQuizClick = (lessonID: string, subtopicID: string, isSubtopic: boolean) => {
+
     setShowLessonContent(true);
     setShowQuizContent(true);
     setShowQuizResult(false);
     setShowExamContent(false);
     setCurrentLesson(lessonID);
+    setQuizSubtopicId(subtopicID);
+    if(subtopicID.length !== 0) { setIsSubtopic(true); }
     console.log('HANDLE QUIZ CLICKED');
     console.log(
       showQuizContent,
@@ -460,7 +468,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
             currentLesson={currentLesson}
             currentTopic={currentTopic}
             currentSubtopic={currentSubtopic}
-            handleQuizClick={(lessonID: string) => handleQuizClick(lessonID)}
+            handleQuizClick={(lessonID: string, subtopicID: string, isSubtopic: boolean) => handleQuizClick(lessonID, subtopicID, isSubtopic)}
             hasPreassessment={hasPreassessment}
             courseId={courseId}
           />
@@ -580,6 +588,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
               onTryAgain={handleTryAgain}
               onNextLesson={handleNextLesson}
               objectives={objectives}
+              isSubtopic={isSubtopic}
+              subtopicId={quizSubtopicId}
             />
           )}
 

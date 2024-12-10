@@ -50,7 +50,7 @@ interface SyllabusProps {
   currentLesson: string | null;
   currentTopic: string | null;
   currentSubtopic: string | null;
-  handleQuizClick: (lessonID: string) => void;
+  handleQuizClick: (lessonID: string, subtopicID: string, isSubtopic: boolean) => void;
   hasPreassessment: boolean;
   courseId: string;
 }
@@ -326,11 +326,11 @@ function Syllabus({
                                       <FaLock />
                                     )}
                                   </div>
-                                  {userType !== 'C' && userType !== 'T' && (
+                                  {userType !== 'C' && userType !== 'T' && hasPreassessment && (
                                   <button
                                   className="quiz-button-2"
                                   onClick={() =>
-                                    handleQuizClick(subtopic.subtopic_id)
+                                    handleQuizClick(lesson.lesson_id, subtopic.subtopic_id, true)
                                   }
                                 >
                                   Take quiz
@@ -353,10 +353,10 @@ function Syllabus({
                           </div>
                         );
                       })}
-                      {userType !== 'C' && userType !== 'T' && (
+                      {userType !== 'C' && userType !== 'T' && hasPreassessment && (
                         <button
                           className="quiz-button"
-                          onClick={() => handleQuizClick(lesson.lesson_id)}
+                          onClick={() => handleQuizClick(lesson.lesson_id, '', false)}
                         >
                           Take quiz
                         </button>

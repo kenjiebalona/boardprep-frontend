@@ -3,6 +3,7 @@ import axiosInstance from "../axiosInstance";
 import PreassessmentResult from "./PreassessmentResult";
 import "../styles/challenge-content.scss";
 import axios, { AxiosError } from "axios";
+import Loader from "./Loader";
 
 interface Choice {
   id: string;
@@ -54,6 +55,7 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const questionsPerPage = 3;
 
@@ -65,8 +67,11 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
     const fetchPreassessmentAndAttempt = async () => {
       try {
         console.log("Fetching preassessment...");
+        // const preassessmentResponse = await axiosInstance.get(
+        //   `/preassessment/today/?course_id=${courseId}`
+        // );
         const preassessmentResponse = await axiosInstance.get(
-          `/preassessment/today/?course_id=${courseId}`
+          `/preassessment/today/?course_id=FME101`
         );
         const preassessmentData = preassessmentResponse.data;
 
@@ -115,7 +120,7 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
         } else {
           console.log("Existing attempt found:", attemptData);
         }
-
+        setIsLoading(false);
         setAttempt(attemptData);
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -152,6 +157,7 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
       if (!attempt?.preassessmentID) {
         console.error("Attempt ID is undefined. Aborting submission.");
@@ -245,6 +251,11 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
         />
       ) : (
         <>
+          { isLoading ? (
+            <Loader />
+          ) : (
+
+          <>
           <h2>PRE-ASSESSMENT</h2>
           <div className="challenge-body">
             <div className="questions-section">
@@ -329,6 +340,8 @@ const PreassessmentContent: React.FC<PreassessmentContentProps> = ({
               &gt;
             </button>
           </div>
+          </>
+          )}
         </>
       )}
     </div>
