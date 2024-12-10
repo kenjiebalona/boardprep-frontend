@@ -342,6 +342,7 @@ function Syllabus({
                                         <button
                                           className="quiz-button-2"
                                           onClick={() =>
+                                            handleQuizClick &&
                                             handleQuizClick(
                                               lesson.lesson_id,
                                               subtopic.subtopic_id,
@@ -375,6 +376,7 @@ function Syllabus({
                           <button
                             className="quiz-button"
                             onClick={() =>
+                              handleQuizClick &&
                               handleQuizClick(lesson.lesson_id, "", false)
                             }
                           >
