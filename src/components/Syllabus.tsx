@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { BsCheckCircleFill } from 'react-icons/bs';
-import { FaBookOpen, FaChevronDown, FaChevronUp, FaLock } from 'react-icons/fa';
-import { useAppSelector } from '../redux/hooks';
-import { selectUser } from '../redux/slices/authSlice';
-import '../styles/syllabus.scss';
-import AddTopicModal from './AddTopicModal';
-import AddSubtopicModal from './AddSubtopicModal';
-import axiosInstance from '../axiosInstance';
-import MasteryModal from '../components/MasteryModal';
+import { useState, useEffect } from "react";
+import { BsCheckCircleFill } from "react-icons/bs";
+import { FaBookOpen, FaChevronDown, FaChevronUp, FaLock } from "react-icons/fa";
+import { useAppSelector } from "../redux/hooks";
+import { selectUser } from "../redux/slices/authSlice";
+import "../styles/syllabus.scss";
+import AddTopicModal from "./AddTopicModal";
+import AddSubtopicModal from "./AddSubtopicModal";
+import axiosInstance from "../axiosInstance";
+import MasteryModal from "../components/MasteryModal";
 interface Objective {
   text: string;
 }
@@ -50,9 +50,13 @@ interface SyllabusProps {
   currentLesson: string | null;
   currentTopic: string | null;
   currentSubtopic: string | null;
-  handleQuizClick: (lessonID: string, subtopicID: string, isSubtopic: boolean) => void;
-  hasPreassessment: boolean;
-  courseId: string;
+  handleQuizClick?: (
+    lessonID: string,
+    subtopicID: string,
+    isSubtopic: boolean
+  ) => void;
+  hasPreassessment?: boolean;
+  courseId?: string;
 }
 
 function Syllabus({
@@ -81,7 +85,9 @@ function Syllabus({
 
   const [isMasteryModalOpen, setIsMasteryModalOpen] = useState(false);
   const [masteryData, setMasteryData] = useState<any>(null);
-  const [currentMasteryLessonId, setCurrentMasteryLessonId] = useState<string | null>(null);
+  const [currentMasteryLessonId, setCurrentMasteryLessonId] = useState<
+    string | null
+  >(null);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -96,23 +102,25 @@ function Syllabus({
         `/mastery/?student_id=${studentId}&course_id=${courseId}`
       );
 
-      console.log('Fetched Mastery Data:', data);
+      console.log("Fetched Mastery Data:", data);
 
       const masteryData = data.masteries.syllabus;
 
       if (Array.isArray(masteryData)) {
-        const selectedLesson = masteryData.find((lesson: any) => lesson.lesson_id === lessonId);
+        const selectedLesson = masteryData.find(
+          (lesson: any) => lesson.lesson_id === lessonId
+        );
         if (selectedLesson) {
           setMasteryData([selectedLesson]);
           setIsMasteryModalOpen(true);
         } else {
-          console.error('Lesson not found in the mastery data');
+          console.error("Lesson not found in the mastery data");
         }
       } else {
-        console.error('Mastery data is not in the expected format (array)');
+        console.error("Mastery data is not in the expected format (array)");
       }
     } catch (error) {
-      console.error('Error fetching mastery data:', error);
+      console.error("Error fetching mastery data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -148,8 +156,8 @@ function Syllabus({
     setOpenLessonId((prevLessonId) =>
       prevLessonId === lessonId ? null : lessonId
     );
-    console.log('MAO NI ANG MGA TOPIC: ', topics);
-    console.log('Toggled openLessonId:', lessonId);
+    console.log("MAO NI ANG MGA TOPIC: ", topics);
+    console.log("Toggled openLessonId:", lessonId);
   };
 
   const toggleTopicDropdown = (topicId: string) => {
@@ -190,11 +198,11 @@ function Syllabus({
   };
 
   const handleSubtopicClick = (subtopicId: string) => {
-    console.log('naa ko diri: ', subtopicId);
+    console.log("naa ko diri: ", subtopicId);
     onSubtopicClick(subtopicId);
   };
 
-  console.log('Lessons data:', lessons);
+  console.log("Lessons data:", lessons);
 
   return (
     <div className="syllabus-container">
@@ -204,7 +212,7 @@ function Syllabus({
 
       <div className="lesson-list">
         {lessonList.map((lesson) => {
-          console.log('sadasdasdasdsa:', lessonList);
+          console.log("sadasdasdasdsa:", lessonList);
           console.log(
             `Learning objectives for lesson "${lesson.lesson_title}":`,
             lesson.learning_objectives
@@ -227,10 +235,13 @@ function Syllabus({
                     {lesson.completed && (
                       <BsCheckCircleFill className="completed-icon" />
                     )}
-                    {userType === 'S' && (
-                    <button className="mastery-button" onClick={() => handleMasteryClick(lesson.lesson_id)}>
-                      {isLoading ? '⏳' : '🏅'}
-                    </button>
+                    {userType === "S" && (
+                      <button
+                        className="mastery-button"
+                        onClick={() => handleMasteryClick(lesson.lesson_id)}
+                      >
+                        {isLoading ? "⏳" : "🏅"}
+                      </button>
                     )}
                     {openLessonId === lesson.lesson_id ? (
                       <FaChevronUp className="chevron-icon" />
@@ -267,7 +278,7 @@ function Syllabus({
                           <div key={topic.topic_id}>
                             <div
                               className={`topic-item ${
-                                currentTopic === topic.topic_id ? 'active' : ''
+                                currentTopic === topic.topic_id ? "active" : ""
                               }`}
                               onClick={() =>
                                 toggleTopicDropdown(topic.topic_id)
@@ -302,43 +313,48 @@ function Syllabus({
                               <div className="subtopics-container">
                                 {topic.subtopics.map((subtopic) => (
                                   <div>
-                                  <div
-                                    key={subtopic.subtopic_id}
-                                    style={{ cursor: 'pointer' }}
-                                    className={`subtopic-item ${
-                                      currentSubtopic === subtopic.subtopic_id
-                                        ? 'active'
-                                        : ''
-                                    }`}
-                                    onClick={() =>
-                                      (hasPreassessment ||
-                                        userType === 'C' ||
-                                        userType === 'T') &&
-                                      onSubtopicClick(subtopic.subtopic_id)
-                                    }
-                                    role="button"
-                                    tabIndex={0}
-                                  >
-                                    <span style={{ marginRight: 10 }}>
-                                      {subtopic.subtopic_title}
-                                    </span>
-                                    {!hasPreassessment && userType === 'S' && (
-                                      <FaLock />
-                                    )}
+                                    <div
+                                      key={subtopic.subtopic_id}
+                                      style={{ cursor: "pointer" }}
+                                      className={`subtopic-item ${
+                                        currentSubtopic === subtopic.subtopic_id
+                                          ? "active"
+                                          : ""
+                                      }`}
+                                      onClick={() =>
+                                        (hasPreassessment ||
+                                          userType === "C" ||
+                                          userType === "T") &&
+                                        onSubtopicClick(subtopic.subtopic_id)
+                                      }
+                                      role="button"
+                                      tabIndex={0}
+                                    >
+                                      <span style={{ marginRight: 10 }}>
+                                        {subtopic.subtopic_title}
+                                      </span>
+                                      {!hasPreassessment &&
+                                        userType === "S" && <FaLock />}
+                                    </div>
+                                    {userType !== "C" &&
+                                      userType !== "T" &&
+                                      hasPreassessment && (
+                                        <button
+                                          className="quiz-button-2"
+                                          onClick={() =>
+                                            handleQuizClick(
+                                              lesson.lesson_id,
+                                              subtopic.subtopic_id,
+                                              true
+                                            )
+                                          }
+                                        >
+                                          Take quiz
+                                        </button>
+                                      )}
                                   </div>
-                                  {userType !== 'C' && userType !== 'T' && hasPreassessment && (
-                                  <button
-                                  className="quiz-button-2"
-                                  onClick={() =>
-                                    handleQuizClick(lesson.lesson_id, subtopic.subtopic_id, true)
-                                  }
-                                >
-                                  Take quiz
-                                </button>
-                                )}
-                                </div>
                                 ))}
-                                {userType === 'C' && (
+                                {userType === "C" && (
                                   <button
                                     className="subtopic-button"
                                     onClick={() =>
@@ -353,15 +369,19 @@ function Syllabus({
                           </div>
                         );
                       })}
-                      {userType !== 'C' && userType !== 'T' && hasPreassessment && (
-                        <button
-                          className="quiz-button"
-                          onClick={() => handleQuizClick(lesson.lesson_id, '', false)}
-                        >
-                          Take quiz
-                        </button>
-                      )}
-                      {userType === 'C' && (
+                      {userType !== "C" &&
+                        userType !== "T" &&
+                        hasPreassessment && (
+                          <button
+                            className="quiz-button"
+                            onClick={() =>
+                              handleQuizClick(lesson.lesson_id, "", false)
+                            }
+                          >
+                            Take quiz
+                          </button>
+                        )}
+                      {userType === "C" && (
                         <button
                           className="topic-button"
                           onClick={() => handleAddTopicClick(lesson.lesson_id)}
@@ -387,11 +407,11 @@ function Syllabus({
         })}
       </div>
 
-        <MasteryModal
-          isOpen={isMasteryModalOpen}
-          masteryData={masteryData}
-          onClose={() => setIsMasteryModalOpen(false)}
-        />
+      <MasteryModal
+        isOpen={isMasteryModalOpen}
+        masteryData={masteryData}
+        onClose={() => setIsMasteryModalOpen(false)}
+      />
 
       {isModalOpen && (
         <AddTopicModal
