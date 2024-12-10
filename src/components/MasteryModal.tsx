@@ -165,11 +165,9 @@ const MasteryModal: React.FC<MasteryModalProps> = ({
               {(filter === "lesson" || filter === "topic") &&
                 lesson.topics?.map((topic: any) => (
                   <div key={topic.topic_id}>
-                    {filter !== "subtopic" && renderTopic(topic)}
+                    {renderTopic(topic)}
 
-                    {(filter === "lesson" ||
-                      filter === "topic" ||
-                      filter === "subtopic") &&
+                    {(filter === "lesson" || filter === "topic") &&
                       topic.subtopics?.map((subtopic: any) =>
                         renderSubtopic(subtopic)
                       )}
