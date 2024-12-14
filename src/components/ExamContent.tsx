@@ -52,6 +52,33 @@ const shuffleArray = (array: any[]) => {
   }
 };
 
+interface PerformanceTrends {
+  strong_learning_objectives: string[];
+  weak_learning_objectives: string[];
+  hardest_difficulty: [string, number] | null;
+  easiest_difficulty: [string, number] | null;
+}
+
+interface TimeSpent {
+  total_time: number;
+  average_time_per_question: number;
+}
+
+interface DifficultyAnalysis {
+  correct: Record<number, number>;
+  wrong: Record<number, number>;
+}
+
+interface AnalyticsProps {
+  total_questions: number;
+  correct_answers: number;
+  wrong_answers: number;
+  score_percentage: number;
+  time_spent: TimeSpent;
+  difficulty_analysis: DifficultyAnalysis;
+  performance_trends: PerformanceTrends;
+}
+
 const ExamContent: React.FC<ExamContentProps> = ({
   studentId,
   classInstanceId,
@@ -69,6 +96,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [analytics, setAnalytics] = useState<AnalyticsProps | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const questionsPerPage = 2;
@@ -294,7 +322,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
       console.log("SUBMIT:", submitExamResponse.data);
 
       if (submitExamResponse.status === 200 || submitExamResponse.status === 201) {
-        const { score, feedback, total_questions, start_time, end_time, passed } = submitExamResponse.data;
+        const { score, feedback, total_questions, start_time, end_time, passed, analytics } = submitExamResponse.data;
 
         await fetchDetailedResults(exam.id, attempt.attempt_number);
 
@@ -304,6 +332,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
             : null
         );
         setFeedback(feedback);
+        setAnalytics(analytics);
         setShowResults(true);
       } else {
         alert("Failed to submit exam. Please try again later.");
@@ -388,6 +417,7 @@ const ExamContent: React.FC<ExamContentProps> = ({
           results={results}
           score={attempt.score ?? 0}
           feedback={feedback}
+          analytics={analytics}
           totalQuestions={exam.questions.length}
           passed={attempt.passed ?? false}
           onTryAgain={() => {

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
 import "../styles/quiz-result.scss";
+import Analytics from "./Analytics";
 
 interface Choice {
   id: string;
@@ -15,6 +16,33 @@ interface Question {
   correct_option: string;
 }
 
+interface PerformanceTrends {
+  strong_learning_objectives: string[];
+  weak_learning_objectives: string[];
+  hardest_difficulty: [string, number] | null;
+  easiest_difficulty: [string, number] | null;
+}
+
+interface TimeSpent {
+  total_time: number;
+  average_time_per_question: number;
+}
+
+interface DifficultyAnalysis {
+  correct: Record<number, number>;
+  wrong: Record<number, number>;
+}
+
+interface AnalyticsProps {
+  total_questions: number;
+  correct_answers: number;
+  wrong_answers: number;
+  score_percentage: number;
+  time_spent: TimeSpent;
+  difficulty_analysis: DifficultyAnalysis;
+  performance_trends: PerformanceTrends;
+}
+
 interface QuizResultProps {
   questions: Question[];
   answers: { [questionId: string]: string };
@@ -24,6 +52,7 @@ interface QuizResultProps {
   passed: boolean;
   onTryAgain: () => void;
   feedback: string | null;
+  analytics: AnalyticsProps | null;
   onNextLesson: () => void;
 }
 
@@ -36,6 +65,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
   passed,
   onTryAgain,
   feedback,
+  analytics,
   onNextLesson,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -129,6 +159,9 @@ const QuizResult: React.FC<QuizResultProps> = ({
             <p>{feedback}</p>
           </div>
         )}
+        {
+          analytics && showFeedback && <Analytics analytics={analytics} />
+        }
         <div className="quiz-result-buttons">
           {!passed && (
             <button className="view-results-button" onClick={onTryAgain}>

@@ -3,6 +3,7 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import '../styles/challenge-result.scss';
 import Mastery from '../pages/Mastery';
+import Analytics from "./Analytics";
 
 interface Choice {
   id: string;
@@ -16,6 +17,33 @@ interface Question {
   correct_option: string;
 }
 
+interface PerformanceTrends {
+  strong_learning_objectives: string[];
+  weak_learning_objectives: string[];
+  hardest_difficulty: [string, number] | null;
+  easiest_difficulty: [string, number] | null;
+}
+
+interface TimeSpent {
+  total_time: number;
+  average_time_per_question: number;
+}
+
+interface DifficultyAnalysis {
+  correct: Record<number, number>;
+  wrong: Record<number, number>;
+}
+
+interface AnalyticsProps {
+  total_questions: number;
+  correct_answers: number;
+  wrong_answers: number;
+  score_percentage: number;
+  time_spent: TimeSpent;
+  difficulty_analysis: DifficultyAnalysis;
+  performance_trends: PerformanceTrends;
+}
+
 interface PostassessmentResultProps {
   questions: Question[];
   answers: { [questionId: string]: string };
@@ -23,6 +51,7 @@ interface PostassessmentResultProps {
   score: number;
   totalQuestions: number;
   feedback: string | null;
+  analytics: AnalyticsProps | null;
   onDone: () => void;
 }
 
@@ -33,6 +62,7 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
   score,
   totalQuestions,
   feedback,
+  analytics,
   onDone,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -163,7 +193,9 @@ const PostassessmentResult: React.FC<PostassessmentResultProps> = ({
             <p>{feedback}</p>
           </div>
         )}
-
+        {
+          analytics && showFeedback && <Analytics analytics={analytics} />
+        }
         <div className="challenge-result-buttons">
           <button className="view-results-button" onClick={onDone}>
             Done
