@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
+import 'react-circular-progressbar/dist/styles.css';
 import "../styles/quiz-result.scss";
+import Analytics from "./Analytics";
 
 interface Choice {
   id: string;
@@ -15,6 +16,33 @@ interface Question {
   correct_option: string;
 }
 
+interface PerformanceTrends {
+  strong_learning_objectives: string[];
+  weak_learning_objectives: string[];
+  hardest_difficulty: [string, number] | null;
+  easiest_difficulty: [string, number] | null;
+}
+
+interface TimeSpent {
+  total_time: number;
+  average_time_per_question: number;
+}
+
+interface DifficultyAnalysis {
+  correct: Record<number, number>;
+  wrong: Record<number, number>;
+}
+
+interface AnalyticsProps {
+  total_questions: number;
+  correct_answers: number;
+  wrong_answers: number;
+  score_percentage: number;
+  time_spent: TimeSpent;
+  difficulty_analysis: DifficultyAnalysis;
+  performance_trends: PerformanceTrends;
+}
+
 interface QuizResultProps {
   questions: Question[];
   answers: { [questionId: string]: string };
@@ -23,7 +51,8 @@ interface QuizResultProps {
   totalQuestions: number;
   passed: boolean;
   onTryAgain: () => void;
-  feedback?: string | null;
+  feedback: string | null;
+  analytics: AnalyticsProps | null;
   onNextLesson: () => void;
 }
 
@@ -36,8 +65,9 @@ const QuizResult: React.FC<QuizResultProps> = ({
   passed,
   onTryAgain,
   feedback,
+  analytics,
   onNextLesson,
-}: QuizResultProps) => {
+}) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const handleToggleDetails = () => {
@@ -52,6 +82,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
   const handleToggleFeedback = () => {
     setShowFeedback(!showFeedback);
   };
+
 
   return (
     <div className="quiz-result">
@@ -68,30 +99,26 @@ const QuizResult: React.FC<QuizResultProps> = ({
                 },
                 text: {
                   fill: "black",
-                  fontSize: "16px",
+                  fontSize: '16px',
                 },
                 trail: {
-                  stroke: "#d6d6d6",
+                  stroke: '#d6d6d6',
                 },
               }}
             />
           </div>
-          <p>
-            {passed
-              ? "Congratulations, you passed!"
-              : "You did not pass. Try again!"}
-          </p>
+          <p>{passed ? "Congratulations, you passed!" : "You did not pass. Try again!"}</p>
         </div>
         <button className="view-results-button" onClick={handleToggleDetails}>
           {showDetails ? "Hide Details" : "View Results"}
         </button>
         <button
-          className="view-results-button"
-          onClick={handleToggleFeedback}
-          disabled={loadingFeedback}
-        >
-          {showFeedback ? "Hide Feedback" : "View Feedback"}
-        </button>
+            className="view-results-button"
+            onClick={handleToggleFeedback}
+            disabled={loadingFeedback}
+          >
+            {showFeedback ? "Hide Feedback" : "View Feedback"}
+          </button>
         {showDetails && (
           <div className="questions-review">
             {questions.map((question, index) => {
@@ -102,9 +129,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
               return (
                 <div
                   key={question.id}
-                  className={`question-result ${
-                    isCorrect ? "correct" : "incorrect"
-                  }`}
+                  className={`question-result ${isCorrect ? "correct" : "incorrect"}`}
                   style={{ borderColor: highlightColor }}
                 >
                   <h3>Question {index + 1}</h3>
@@ -116,11 +141,7 @@ const QuizResult: React.FC<QuizResultProps> = ({
                         <li
                           key={choice.id}
                           className={isSelected ? "selected-choice" : ""}
-                          style={{
-                            backgroundColor: isSelected
-                              ? highlightColor
-                              : "transparent",
-                          }}
+                          style={{ backgroundColor: isSelected ? highlightColor : "transparent" }}
                         >
                           {choice.text}
                         </li>
@@ -138,6 +159,9 @@ const QuizResult: React.FC<QuizResultProps> = ({
             <p>{feedback}</p>
           </div>
         )}
+        {
+          analytics && showFeedback && <Analytics analytics={analytics} />
+        }
         <div className="quiz-result-buttons">
           {!passed && (
             <button className="view-results-button" onClick={onTryAgain}>

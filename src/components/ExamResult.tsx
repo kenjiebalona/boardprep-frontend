@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
-import "../styles/quiz-result.scss"; 
-import axios from "axios"; 
+import "../styles/quiz-result.scss";
+import axios from "axios";
+import Analytics from "./Analytics";
 
 interface Choice {
   id: string;
@@ -16,16 +17,44 @@ interface Question {
   correct_option: string;
 }
 
+interface PerformanceTrends {
+  strong_learning_objectives: string[];
+  weak_learning_objectives: string[];
+  hardest_difficulty: [string, number] | null;
+  easiest_difficulty: [string, number] | null;
+}
+
+interface TimeSpent {
+  total_time: number;
+  average_time_per_question: number;
+}
+
+interface DifficultyAnalysis {
+  correct: Record<number, number>;
+  wrong: Record<number, number>;
+}
+
+interface AnalyticsProps {
+  total_questions: number;
+  correct_answers: number;
+  wrong_answers: number;
+  score_percentage: number;
+  time_spent: TimeSpent;
+  difficulty_analysis: DifficultyAnalysis;
+  performance_trends: PerformanceTrends;
+}
+
 interface ExamResultProps {
   examId: string;
   questions: Question[];
   answers: { [questionId: string]: string };
-  results: { [questionId: string]: boolean }; 
-  feedback: string | null; 
+  results: { [questionId: string]: boolean };
+  feedback: string | null;
   score: number;
   totalQuestions: number;
   passed: boolean;
-  onTryAgain: () => void; 
+  analytics: AnalyticsProps | null;
+  onTryAgain: () => void;
   onNextLesson: () => void;
 }
 
@@ -38,11 +67,12 @@ const ExamResult: React.FC<ExamResultProps> = ({
   totalQuestions,
   passed,
   feedback,
+  analytics,
   onTryAgain,
   onNextLesson
 }) => {
   const [showDetails, setShowDetails] = useState(false);
-  const [loadingFeedback, setLoadingFeedback] = useState(false); 
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
 
   const handleToggleDetails = () => {
@@ -61,7 +91,7 @@ const ExamResult: React.FC<ExamResultProps> = ({
       <div className={`results-card ${passed ? "passed" : "failed"}`}>
         <div className="results-summary">
           <div className="progressbar-container">
-            <CircularProgressbar 
+            <CircularProgressbar
               value={percentage}
               text={`${score} / ${totalQuestions}`}
               styles={{
@@ -88,7 +118,7 @@ const ExamResult: React.FC<ExamResultProps> = ({
             {questions.map((question, index) => {
               const userAnswer = answers[question.id];
               const isCorrect = results[question.id];
-              const highlightColor = isCorrect ? "#4caf50" : "#f44336"; 
+              const highlightColor = isCorrect ? "#4caf50" : "#f44336";
 
               return (
                 <div
@@ -128,10 +158,10 @@ const ExamResult: React.FC<ExamResultProps> = ({
               Done
             </button>
           )}
-          <button 
-            className="view-results-button-two" 
+          <button
+            className="view-results-button-two"
             onClick={handleToggleFeedback}
-            disabled={loadingFeedback} 
+            disabled={loadingFeedback}
           >
             {showFeedback ? "Hide Feedback" : "View Feedback"}
           </button>
@@ -142,6 +172,9 @@ const ExamResult: React.FC<ExamResultProps> = ({
             <p>{feedback}</p>
           </div>
         )}
+        {
+          analytics && showFeedback && <Analytics analytics={analytics} />
+        }
       </div>
     </div>
   );

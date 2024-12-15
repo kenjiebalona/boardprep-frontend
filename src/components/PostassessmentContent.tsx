@@ -38,6 +38,33 @@ interface MocktestContentProps {
   courseId: string;
 }
 
+interface PerformanceTrends {
+  strong_learning_objectives: string[];
+  weak_learning_objectives: string[];
+  hardest_difficulty: [string, number] | null;
+  easiest_difficulty: [string, number] | null;
+}
+
+interface TimeSpent {
+  total_time: number;
+  average_time_per_question: number;
+}
+
+interface DifficultyAnalysis {
+  correct: Record<number, number>;
+  wrong: Record<number, number>;
+}
+
+interface AnalyticsProps {
+  total_questions: number;
+  correct_answers: number;
+  wrong_answers: number;
+  score_percentage: number;
+  time_spent: TimeSpent;
+  difficulty_analysis: DifficultyAnalysis;
+  performance_trends: PerformanceTrends;
+}
+
 const PostassessmentContent: React.FC<MocktestContentProps> = ({
   studentId,
   onDone,
@@ -57,6 +84,7 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
   const [results, setResults] = useState<{ [questionId: string]: boolean }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [analytics, setAnalytics] = useState<AnalyticsProps | null>(null);
 
   const questionsPerPage = 3;
 
@@ -195,11 +223,12 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
         );
 
         if (scoreResponse.status === 200) {
-          const { score, total_questions, passed, feedback } = scoreResponse.data;
+          const { score, total_questions, passed, feedback, analytics } = scoreResponse.data;
           setAttempt((prevAttempt) =>
             prevAttempt ? { ...prevAttempt, score, passed } : null
           );
           setFeedback(feedback);
+          setAnalytics(analytics);
           setResults(resultsData);
           setShowResults(true);
         }
@@ -248,6 +277,7 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
           totalQuestions={mocktest.questions.length}
           onDone={onDone}
           feedback={feedback}
+          analytics={analytics}
         />
       ) : (
         <>
