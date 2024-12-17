@@ -35,10 +35,10 @@
 .MuiListItem-root {
   background-color: #f9f9f9;
   margin-bottom: 8px !important;
-  border-radius: 4px !important; 
+  border-radius: 4px !important;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.12);
   transition: background-color 0.3s;
-  padding: 10px !important; 
+  padding: 10px !important;
 
   &:hover,
   &.active-question,
@@ -46,4 +46,16 @@
     background-color: #191840 !important;
     color: white !important;
   }
+  &.ai-question {
+    background-color: #BB7CED !important;
+    color: white !important;
+  }
+}
+
+.ai-bottom-right {
+  position: absolute;
+  bottom: 8px; /* Adjust as needed */
+  right: 8px; /* Adjust as needed */
+  font-size: 0.875rem; /* Optional: Adjust font size */
+  color: black; /* Optional: Style the text */
 }

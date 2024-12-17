@@ -111,7 +111,7 @@ const Mastery = () => {
   };
 
   return (
-    <div className="MainDash">
+    <div className="MasteryDash">
       <div className="mastery-container">
         <h3>Mastery Levels</h3>
         <div className="mastery-list">

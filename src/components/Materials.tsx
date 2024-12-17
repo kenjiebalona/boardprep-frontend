@@ -81,6 +81,18 @@ interface Mastery {
   learning_objective: number;
 }
 
+interface Choice {
+  id: string;
+  text: string;
+}
+
+interface Question {
+  id: string;
+  text: string;
+  choices: Choice[];
+  correct_option: string;
+}
+
 interface Attempt {
   id: number;
   exam: number;
@@ -88,6 +100,7 @@ interface Attempt {
   feedback: string;
   start_time: Date;
   end_time: Date;
+  questions: Question[];
 }
 
 function Materials({ courseId, studentId, classId }: MaterialsProps) {
@@ -114,6 +127,8 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
   const [hasQuiz, setHasQuiz] = useState(false);
   const [hasExam, setHasExam] = useState(false);
   const [showExamAttempts, setShowExamAttempts] = useState(false);
+  const [showExamAttemptQuestions, setShowExamAttemptQuestions] = useState(false);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [examAttempts, setExamAttempts] = useState<Attempt[]>([]);
   const [objectives, setObjectives] = useState<LearningObjective[]>([]);
   const [progress, setProgress] = useState(0);
@@ -262,15 +277,21 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     fetchPages(subtopicId);
   };
 
+  function shuffleQuestions(questions: Question[]): Question[] {
+    return questions.sort(() => Math.random() - 0.5);
+  }
+
   const getExamAttempts = async (studentId: string) => {
     let exam_id: number = 0;
     let attempts: Attempt[] = [];
+    let questions: Question[] = [];
     try {
       const exams = await axiosInstance.get(`/exams/`);
 
       for (const exam of exams.data) {
         if(exam.student === studentId) {
           exam_id = exam.id;
+          questions = exam.questions;
           break;
         }
       }
@@ -281,6 +302,7 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
         if(attempt.exam === exam_id && attempt.score !== null) {
           attempt.start_time = new Date(attempt.start_time);
           attempt.end_time = new Date(attempt.end_time);
+          attempt.questions = shuffleQuestions([...questions]);
           attempts.push(attempt);
         }
       }
@@ -296,6 +318,16 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
     } catch (error) {
       console.error('Error fetching exam attempts:', error);
     }
+  }
+
+  const handleViewQuestions = (questions: Question[]) => {
+    setQuestions(questions);
+    setShowExamAttemptQuestions(true);
+    console.log("QUESTIONS: ", questions);
+  }
+
+  const handleCloseViewQuestions = () => {
+    setShowExamAttemptQuestions(false);
   }
 
   const getQuizAttempts = async (studentId: string) => {
@@ -719,12 +751,45 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
           <button className="close-btn" onClick={closeShowExamAttempts}>
               X
             </button>
+          { showExamAttemptQuestions && (
+            <>
+              <button onClick={handleCloseViewQuestions} className='btn-mat'>Back</button>
+              <div className="questions-review">
+              {questions.map((question, index) => {
+                return (
+                  <div
+                    key={question.id}
+                    className='question-body-exam'
+                  >
+                    <h3>Question {index + 1}</h3>
+                    <p className='question-exam-p'>{question.text}</p>
+                    <ul>
+                      {question.choices.map((choice) => {
+                        return (
+                          <li
+                            key={choice.id}
+                            className='question-exam-li'
+                          >
+                            {choice.text}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+            </>
+          )}
+           { !showExamAttemptQuestions && (
+            <>
           <h3>Exam Attempts</h3>
             <ul className='exam-ul'>
               <li className='exam-li'>
                 <span className="exam-attempt-header">Date</span>
                 <span className="exam-attempt-header">Score</span>
                 <span className="exam-attempt-header">Time Taken</span>
+                <span className="exam-attempt-header"></span>
               </li>
               {examAttempts.map((attempt, idx) => (
                 <li className='exam-li' key={idx}>
@@ -733,9 +798,12 @@ function Materials({ courseId, studentId, classId }: MaterialsProps) {
                     {attempt.start_time.getUTCFullYear()}</span>
                   <span>{attempt.score}</span>
                   <span>{Math.floor((attempt.end_time.getTime() - attempt.start_time.getTime()) / 60000)} minutes</span>
+                  <button className="btn-more-materials" onClick={() => handleViewQuestions(attempt.questions)}>View Questions</button>
                 </li>
               ))}
             </ul>
+            </>
+            )}
           </div>
         </div>
       )}

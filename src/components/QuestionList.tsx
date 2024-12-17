@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { List, ListItem, ListItemText, Button, TextField } from '@mui/material';
-import "../styles/question-list.scss"; 
+import "../styles/question-list.scss";
 
 interface QuestionListProps {
   questions: any[];
@@ -42,9 +42,12 @@ const QuestionList: React.FC<QuestionListProps> = ({
               key={question.id}
               button
               onClick={() => onSelectQuestion(question)}
-              className={selectedQuestion && selectedQuestion.id === question.id ? 'active-question' : ''}
+              className={`${
+                selectedQuestion && selectedQuestion.id === question.id ? 'active-question' : ''
+              } ${question.isai ? 'ai-question' : ''}`}
             >
-              <ListItemText primary={question.text} />
+              <ListItemText className={question.isai ? 'ai-question' : ''} slot={question.isai ? 'secondary' : ''} primary={question.text} />
+              {question.isai && <span className="ai-bottom-right">AI</span>}
             </ListItem>
           ))}
         </List>

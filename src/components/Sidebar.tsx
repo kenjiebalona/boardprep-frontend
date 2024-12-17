@@ -20,6 +20,7 @@ interface MenuItem {
     path: string;
     name: string;
     icon: JSX.Element;
+    requiresClasses?: boolean;
 }
 
 interface Mastery {
@@ -29,6 +30,17 @@ interface Mastery {
     last_updated: string;
     student: string;
     learning_objective: number;
+  }
+
+  interface Class {
+    classId: number;
+    className: string;
+    classDescription: string;
+    teacher_name: string;
+    course: string;
+    image: string;
+    students: string[];
+    classCode: string;
   }
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
@@ -41,6 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
     const navigate = useNavigate();
     const [level, setLevel] = useState<string>('Beginner');
     const [hasPreassessment, setHasPreassessment] = useState(false);
+     const [classes, setClasses] = useState<Class[]>([]);
 
     const menuItems: MenuItem[] = (() => {
         if (userType === 'T') {
@@ -59,7 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 { path: "/dashboard", name: "Overview", icon: <FaTh /> },
                 { path: "/classes", name: "Classes", icon: <SiGoogleclassroom /> },
                 { path: "/daily-challenge", name: "Challenges", icon: <TbTargetArrow /> },
-                { path: "/postassessment", name: "Mocktest", icon: <PiExam /> },
+                { path: "/postassessment", name: "Mocktest", icon: <PiExam />, requiresClasses: true },
             ];
         }
     })();
@@ -68,6 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         if (!user.isAuth) {
             navigate('/home');
         }
+        fetchClasses();
         fetchPreassessment();
         fetchMastery();
         getDetails();
@@ -120,6 +134,19 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
           }
         } catch (error) {
           console.error('Error fetching preassessment data:', error);
+        }
+      };
+
+      const fetchClasses = async () => {
+        try {
+          const response = await axiosInstance.get(
+            `/classes/?${user.token.type === "T" ? "teacher_id" : "student_id"}=${
+              user.token.id
+            }`
+          );
+          setClasses(response.data);
+        } catch (err) {
+          console.error(err);
         }
       };
 
@@ -177,7 +204,9 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                         <div style={{ display: isOpen ? "block" : "none" }} className="link_text">Mastery Level: {level}</div>
                     </div>
                 )}
-                {menuItems.map((item, index) => (
+                {menuItems
+                .filter((item) => !(item.requiresClasses && classes.length === 0))
+                .map((item, index) => (
                     <NavLink
                         to={item.path}
                         key={index}

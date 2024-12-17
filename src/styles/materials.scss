@@ -461,7 +461,7 @@
     background-color: #161444;
     padding: 30px;
     border-radius: 12px;
-    max-width: 600px;
+    max-width: 1000px;
     width: 100%;
     height: 50vh;
     overflow-y: auto;
@@ -471,7 +471,7 @@
 
   .exam-li {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     padding: 10px 0;
     border-bottom: 1px solid #333;
   }
@@ -494,4 +494,16 @@
 
   .exam-li span:last-child {
     text-align: right; /* Align time taken to the right */
+  }
+
+  .question-body-exam {
+    margin: 20px 0;
+  }
+
+  .question-exam-li {
+    padding: 10px;
+  }
+
+  .question-exam-p {
+    font-size: 20px;
   }

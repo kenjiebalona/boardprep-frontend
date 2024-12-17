@@ -22,7 +22,7 @@
   }
   &:disabled {
     background-color: #7D67FF;
-    color: #fff;  
+    color: #fff;
   }
 }
 
@@ -46,13 +46,13 @@
 .question-form-container .choice-container {
   display: flex;
   flex-direction: column;
-  gap: 5px; 
+  gap: 5px;
 }
 
 .question-form-container .choice-input {
   display: flex;
   align-items: center;
-  gap: 10px; 
+  gap: 10px;
 }
 
 .question-form-container .form-row {
@@ -70,7 +70,7 @@
 .question-form-container .form-actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px; 
+  margin-top: 20px;
 }
 
 .question-form-container .add-remove-buttons {
@@ -79,7 +79,7 @@
 }
 
 .save-question-btn {
-  align-self: flex-end; 
+  align-self: flex-end;
 }
 
 .question-form-container .choice-container{
@@ -89,3 +89,81 @@
   padding: 10px;
 }
 
+.modal-mastery-overlay-question {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-mastery-question {
+  background-color: #161444;
+  padding: 30px;
+  border-radius: 12px;
+  max-width:1000px;
+  width: 100%;
+  height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.question-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-typo {
+  color: white;
+}
+
+.generated-question-li {
+  display: grid;
+  grid-template-columns: 0.3fr 1fr 1fr;
+  padding: 10px 0;
+  border-bottom: 1px solid #333;
+  align-items: center;
+  margin: auto;
+}
+
+.generated-question-ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.generated-question-attempt-header {
+  font-weight: bold;
+  color: #ddd; /* Lighter text for headers */
+  text-align: center;
+}
+
+.generated-question-li span {
+  text-align: center;
+  color: #f5f5f5; /* Light text for data */
+}
+
+.generated-question-li span:last-child {
+  text-align: right; /* Align time taken to the right */
+}
+
+.generated-question-choices {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+  align-items: center;
+}
+
+.loader-container-question {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  width: 100%;
+}

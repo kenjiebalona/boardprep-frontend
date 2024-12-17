@@ -66,8 +66,9 @@ const QuestionBank: React.FC = () => {
           {isFormVisible && (
             <QuestionForm
               onSave={handleSaveQuestion}
-              onCancel={handleCancel}  
+              onCancel={handleCancel}
               existingQuestion={selectedQuestion}
+              questions={questions}
             />
           )}
         </Grid>
