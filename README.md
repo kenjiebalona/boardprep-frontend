@@ -1,46 +1,56 @@
-# Getting Started with Create React App
+BoardPrep: Enhancing Engineering Education with Adaptive Learning
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Overview:
+BoardPrep is a web-based adaptive learning platform designed to enhance the educational journey of engineering students. It integrates features such as personalized learning paths, adaptive assessments, collaborative forums, and performance analytics to bridge the gap between academic learning and real-world professional demands.
 
-## Available Scripts
+Authors:
 
-In the project directory, you can run:
+Le Bronn A. Samson - BS Computer Science, Cebu Institute of Technology - University, <lebronn.samson@cit.edu>
 
-### `npm start`
+Kenjie C. Balona - BS Computer Science, Cebu Institute of Technology - University, <kenjie.balona@cit.edu>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Joe Ed C. Secoya - BS Computer Science, Cebu Institute of Technology - University, <joeed.secoya@cit.edu>
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Features:
 
-### `npm test`
+- Personalized Learning Paths: Tailors learning experiences based on individual student performance.
+- Adaptive Assessments: Provides customized mock exams to help students prepare for licensure exams.
+- Collaborative Learning Forums: Encourages peer-to-peer discussions and knowledge sharing.
+- Performance Analytics: Uses data-driven insights to track progress and identify areas for improvement.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Technologies Used:
+Frontend: ReactJS
+Backend: Django
+Database: PostgreSQL
 
-### `npm run build`
+Task Management: ClickUp
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Version Control: Git
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Methodology:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Stakeholder Engagement: Consultations to determine essential features.
+- Design & Documentation: Modular system architecture developed.
+- Development & Programming: Agile development methodology followed.
+- Task Management: ClickUp used for tracking progress.
+- Usability Testing: Conducted with engineering students and instructors.
 
-### `npm run eject`
+Results & User Feedback:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+User Satisfaction: 4.4/5 average rating
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Key Strengths:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- Intuitive interface.
+- Effective adaptive assessments.
+- Strong engagement through collaborative tools.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Areas for Improvement:
 
-## Learn More
+- Enhanced UI consistency.
+- Improved onboarding for new users.
+- Optimized mobile responsiveness.
+- Performance enhancements.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Conclusion:
+BoardPrep successfully integrates adaptive learning techniques to support engineering students in their licensure exam preparation. With targeted refinements, it has the potential to become a leading solution in engineering education.
