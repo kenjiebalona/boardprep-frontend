@@ -97,7 +97,8 @@ const PostassessmentContent: React.FC<MocktestContentProps> = ({
       try {
         console.log("Fetching mocktest...");
         const mocktestResponse = await axiosInstance.get(
-          `/mocktest/today/`
+          // `/mocktest/today/`
+          `/mocktest/generate_from_set/`
         );
         const mocktestData = mocktestResponse.data;
 

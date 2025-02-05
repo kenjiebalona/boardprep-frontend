@@ -37,7 +37,11 @@ const Attempt: React.FC<{ studentId: string; showTimeTaken?: boolean }> = ({
           entry.end_time = new Date(entry.end_time);
         });
         console.log('Attempts data:', data);
-        setMocktestData(data);
+        const sortedData = data.sort((a: MockTestResult, b: MockTestResult) =>
+          b.start_time.getTime() - a.start_time.getTime()
+        );
+        console.log('Sorted attempts data:', sortedData);
+        setMocktestData(sortedData);
       } catch (error) {
         console.error('Error fetching leaderboard data:', error);
         setMocktestData([]);

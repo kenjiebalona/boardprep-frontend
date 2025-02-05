@@ -1,0 +1,96 @@
+.mocktest-form-container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 65rem;
+  height: 40rem;
+  display: flex;
+}
+
+.mocktest-form-container .form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+// .mocktest-form-container .form-control {
+//   flex: 1;
+//   &:first-child {
+//     margin-right: 20px;
+//   }
+// }
+
+.form-one-container {
+  padding: 16px;
+  height: 90%;
+  overflow-y: auto;
+}
+
+.form-two-container {
+  outline: 2px solid #ccc;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+// .question-form-container .choice-container{
+//   overflow-y: auto;
+//   height: calc(18rem - 170px);
+//   margin-top: 10px;
+//   padding: 10px;
+// }
+
+.mocktest-form-container .save-question-btn {
+  background-color: #7D67FF;
+  margin-right: 15px;
+  color: #fff;
+  &:hover {
+    background-color: #5D3FD3;
+    color: #fff;
+  }
+  &:disabled {
+    background-color: #7D67FF;
+    color: #fff;
+  }
+}
+
+.mocktest-form-container .plus-question-btn{
+  margin-right: 15px;
+  font-weight: bold;
+  &:hover {
+    background-color: #5D3FD3;
+    color: white;
+  }
+}
+
+.mocktest-set-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  cursor: pointer;
+  border: none;
+  color: #ff0000;
+  background: transparent;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.question-body-exam-mocktest {
+  color: white;
+  border-top: 2px solid #ccc; /* Adds a line above each question */
+  padding-top: 10px; /* Adds some spacing */
+  margin-top: 10px;
+}
+
+.loading-state-mocktestset {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white
+}

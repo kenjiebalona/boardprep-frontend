@@ -38,6 +38,7 @@ import QuestionBank from "./pages/QuestionBank";
 import DailyChallenge from "./pages/DailyChallenge";
 import Preassessment from "./pages/Preassessment";
 import Postassessment from "./pages/Postassessment";
+import MocktestSet from "./pages/MocktestSet";
 // import Dashboard from "./pages/Dashboard";
 
 function App() {
@@ -84,6 +85,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <QuestionBank />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/mocktest"
+                element={
+                  <PrivateRoute>
+                    <MocktestSet />
                   </PrivateRoute>
                 }
               />
